@@ -1,6 +1,40 @@
 % docs/texte/40_qa/tests.tex -- chapter "Tests and Validation" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-12) -- running the tests
+%   0.1.0: placeholder
 % ================================================================
+\label{ch:tests}
+\index{tests}
 
 Unit tests of the core package (pytest) and automated notebook runs
-(nbval). \emph{Follows in phase~5.}
+(nbval). The notebook runs follow in phase~5.
+
+\section{Running the tests}
+
+In the project folder with the project environment active
+(\texttt{.venv\textbackslash Scripts\textbackslash Activate.ps1}):
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+pytest -q                                   # all tests, short output
+pytest -v                                   # one line per test
+pytest tests/test_sky.py -v                 # one module
+pytest tests/test_sky.py::test_render_conserves_flux -v   # one test
+.venv\Scripts\python.exe -m pytest -q       # without activating .venv
+\end{lstlisting}
+The tests are run before every commit; a release is only made when all
+tests pass.
+
+\section{Current tests}
+
+\begin{center}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{9.5cm}@{}}
+\toprule
+File & Content \\
+\midrule
+\texttt{tests/test\_import.py} & package version, import of all
+  sub-packages, constants, all configuration files readable \\
+\texttt{tests/test\_sky.py} & AAS6 file format and JSON round trip,
+  demo field, flux conservation of the rendering, pixel positions,
+  visibilities (analytic formulas, FFT of the rendered image, first null
+  of the disc), map functions, command line tool \\
+\bottomrule
+\end{tabular}
+\end{center}

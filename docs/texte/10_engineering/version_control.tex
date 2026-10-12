@@ -1,0 +1,99 @@
+% docs/texte/10_engineering/version_control.tex -- chapter "Version Control" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% ================================================================
+
+\index{version control}\index{git}\index{GitHub}
+\section{Repository}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Remote repository & \url{https://github.com/eschubi/interferosim} (private) \\
+Default branch & \texttt{main} \\
+Local working copy & project folder \texttt{\ldots\textbackslash sem11\textbackslash open-source\textbackslash interferosim} \\
+Tools & GitHub Desktop or the \texttt{git} command line \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The repository is private until the licence questions (code licence,
+third-party figures) are settled; for OSSDA it will be made public.
+
+\section{What is under version control}
+
+The rules are in \texttt{.gitignore} and \texttt{.gitattributes} in the
+project root.
+\begin{itemize}
+  \item \textbf{Included:} source code (\texttt{src/}), tests,
+        notebooks, configuration files (\texttt{configs/}), the \LaTeX{}
+        sources of the documentation including the local style copy
+        (\texttt{docs/style/}), figures made in the project, README,
+        CHANGELOG, LICENSE, CITATION.cff and the set-up scripts.
+  \item \textbf{Excluded:} the virtual environment \texttt{.venv},
+        Python caches, Jupyter checkpoints, \LaTeX{} auxiliary files,
+        built PDFs (\texttt{docs/*.pdf}, they are generated from the
+        sources), archives (\texttt{*.zip}, \texttt{*.tar.gz}) and all
+        files in \texttt{docs/images/} except those made in the project.
+        Third-party images stay local until their licences are clarified;
+        a new project figure must be released explicitly in
+        \texttt{.gitignore} (line \texttt{!docs/images/<name>}).
+  \item \textbf{Line endings:} \texttt{.gitattributes} stores text files
+        with LF; \texttt{.bat} and \texttt{.ps1} are checked out with CRLF,
+        \texttt{.sh} with LF, PNG and PDF files are treated as binary.
+\end{itemize}
+
+\section{Daily work with GitHub Desktop}
+
+\begin{enumerate}
+  \item \textbf{Once:} \emph{File $\rightarrow$ Add local repository}
+        and select the project folder. The repository is already
+        connected to \texttt{origin} (GitHub).
+  \item \textbf{Before starting:} \emph{Fetch origin} and, if offered,
+        \emph{Pull origin}, so that the working copy is up to date.
+  \item \textbf{Work}, then run the tests (chapter~\ref{ch:tests}).
+  \item \textbf{Commit:} in the \emph{Changes} tab select only the files
+        that belong to the change, write a summary and a description
+        (see below), \emph{Commit to main}.
+  \item \textbf{Push:} \emph{Push origin}.
+\end{enumerate}
+
+\paragraph*{Command-line equivalents} (in the project folder):
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+git status                    # what has changed
+git pull                      # update the working copy
+git add <files>               # select files for the commit
+git commit -m "Summary"       # commit (opens an editor without -m)
+git push                      # upload to GitHub
+git log --oneline             # history
+\end{lstlisting}
+
+\section{Commits and releases}
+
+\begin{itemize}
+  \item One commit per self-contained change (a module, a chapter, a
+        fix). Files of unfinished work, test output and scratch notebooks
+        (\texttt{Untitled.ipynb}) are not committed.
+  \item Commit message: first line a short summary in English, e.\,g.\
+        \texttt{sky: add DiscSource}; for a release the version number,
+        e.\,g.\ \texttt{Interferosim 0.2.1: ...}. Further lines explain
+        what and why.
+  \item Every release increases the version in \texttt{pyproject.toml}
+        and \texttt{src/interferosim/\_\_init\_\_.py} (chapter
+        \enquote{Development Guidelines}) and gets an entry in
+        \texttt{CHANGELOG.md}.
+  \item Releases are tagged \texttt{v<major>.<minor>.<patch>}
+        (GitHub Desktop: \emph{History}, right-click on the commit,
+        \emph{Create Tag}; command line: \texttt{git tag v0.2.1} and
+        \texttt{git push --tags}).
+\end{itemize}
+
+\section{Git and Dropbox}
+
+The working copy lies in a Dropbox folder, so the \texttt{.git} folder is
+synchronised as well. This is harmless as long as only one computer
+works on the repository at a time. If several computers are used, each
+should either wait until Dropbox has finished synchronising before
+running git, or use its own clone outside Dropbox (\emph{File
+$\rightarrow$ Clone repository} in GitHub Desktop) and exchange changes
+only via GitHub. The virtual environment can be excluded from Dropbox
+with \texttt{setup\_venv.bat -DropboxIgnore}.

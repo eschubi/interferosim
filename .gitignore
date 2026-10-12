@@ -46,3 +46,7 @@ docs/*.pdf
 docs/images/*
 !docs/images/.gitkeep
 !docs/images/sky_demo_overview.png
+# Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
+/*.png
+notebooks/my_example_sky.json
+notebooks/Untitled*.ipynb
