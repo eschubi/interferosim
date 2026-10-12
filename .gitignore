@@ -50,3 +50,5 @@ docs/images/*
 /*.png
 notebooks/my_example_sky.json
 notebooks/Untitled*.ipynb
+# Generated API documentation (doxygen Doxyfile)
+docs/api/

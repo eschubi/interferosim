@@ -1,0 +1,70 @@
+% docs/texte/10_engineering/api_docs.tex -- chapter "API Documentation" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% ================================================================
+
+\index{Doxygen}\index{API documentation}
+The documentation of the source code (modules, classes, functions) is
+generated with Doxygen from the docstrings of the package
+\texttt{src/interferosim}. The configuration is the file
+\texttt{Doxyfile} in the project root.
+
+\section{Installation}
+
+\begin{itemize}
+  \item \textbf{Doxygen} (required): Windows installer from
+        \url{https://www.doxygen.nl/download.html}; the directory
+        \texttt{\ldots\textbackslash doxygen\textbackslash bin} must be on
+        the \texttt{PATH} (the installer offers this). Linux:
+        \texttt{sudo apt install doxygen}.
+  \item \textbf{Graphviz} (optional): for collaboration and call graphs
+        (\url{https://graphviz.org}); then set \texttt{HAVE\_DOT = YES}
+        in the \texttt{Doxyfile}. Without Graphviz Doxygen draws the
+        class diagrams itself.
+  \item \textbf{\LaTeX} (optional): for the PDF reference manual
+        (MiKTeX is sufficient).
+\end{itemize}
+
+\section{Generating the documentation}
+
+In the project folder:
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+doxygen Doxyfile                       # HTML and LaTeX into docs/api/
+start docs\api\html\index.html         # open in the browser (Windows)
+
+cd docs\api\latex                      # optional: PDF reference manual
+make.bat                               # -> refman.pdf
+\end{lstlisting}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Output & Content \\
+\midrule
+\texttt{docs/api/html/index.html} & HTML with tree view, search, class
+  diagrams, source browser \\
+\texttt{docs/api/latex/refman.pdf} & PDF reference manual (after
+  \texttt{make.bat}) \\
+\texttt{docs/api/doxygen\_warnings.txt} & warnings of the last run \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The folder \texttt{docs/api/} is generated and therefore excluded from
+version control (\texttt{.gitignore}). The main page is the project
+\texttt{README.md}. The version shown (\texttt{PROJECT\_NUMBER}) is
+raised together with the package version.
+
+\section{Docstrings}
+
+Doxygen takes the Python docstrings as documentation
+(\texttt{PYTHON\_DOCSTRING = YES}):
+\begin{itemize}
+  \item every module starts with a docstring describing its content,
+        origin and version history;
+  \item every public class and function has a docstring; the first
+        sentence is the short description shown in the overview lists
+        (\texttt{JAVADOC\_AUTOBRIEF = YES});
+  \item parameters, units and conventions are described in the
+        docstring (e.\,g.\ \enquote{u, v in wavelengths}, \enquote{Jy per
+        pixel}).
+\end{itemize}

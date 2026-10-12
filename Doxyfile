@@ -1,0 +1,69 @@
+# Doxyfile -- API documentation of the Python package interferosim (Doxygen)
+# Version 1.0.0 (2026-10-12)
+#
+# Usage (in the project folder):   doxygen Doxyfile
+# Output:  docs/api/html/index.html      (HTML, open in a browser)
+#          docs/api/latex/refman.tex     (LaTeX; PDF with make.bat / make)
+# Only the settings that differ from the Doxygen defaults are listed;
+# "doxygen -x Doxyfile" shows them, "doxygen -g full.cfg" writes all.
+
+#---- project -----------------------------------------------------------
+PROJECT_NAME           = "Interferosim"
+PROJECT_NUMBER         = 0.2.1
+PROJECT_BRIEF          = "Open-source simulator for radio interferometry"
+OUTPUT_DIRECTORY       = docs/api
+OUTPUT_LANGUAGE        = English
+CREATE_SUBDIRS         = NO
+
+#---- Python ------------------------------------------------------------
+# Python is documented best in "Java mode"; docstrings ("""...""") are
+# taken as the documentation of modules, classes and functions.
+OPTIMIZE_OUTPUT_JAVA   = YES
+PYTHON_DOCSTRING       = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = NO
+SORT_MEMBER_DOCS       = NO
+JAVADOC_AUTOBRIEF      = YES
+MARKDOWN_SUPPORT       = YES
+
+#---- input -------------------------------------------------------------
+INPUT                  = README.md src/interferosim
+USE_MDFILE_AS_MAINPAGE = README.md
+FILE_PATTERNS          = *.py *.md
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */__pycache__/* */.ipynb_checkpoints/*
+STRIP_FROM_PATH        = src
+FULL_PATH_NAMES        = YES
+
+#---- source browsing -----------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+#---- output ------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES
+GENERATE_LATEX         = YES
+LATEX_OUTPUT           = latex
+PAPER_TYPE             = a4
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+
+#---- diagrams ----------------------------------------------------------
+# Class diagrams are drawn by Doxygen itself. With Graphviz installed
+# (dot on the PATH) set HAVE_DOT = YES for collaboration and call graphs.
+CLASS_GRAPH            = YES
+HAVE_DOT               = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+#---- messages ----------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_LOGFILE           = docs/api/doxygen_warnings.txt

@@ -4,6 +4,14 @@
 All versions use three-part numbers (major.minor.patch); every release is
 strictly higher than the previous one.
 
+## [Unreleased]
+
+### Added
+- `Doxyfile`: API documentation of the package with Doxygen
+  (HTML and LaTeX into `docs/api/`, excluded from version control).
+- Documentation: chapters "Version Control", "API Documentation",
+  "Tests and Validation" (running the tests), git workflow diagram.
+
 ## [0.2.1] — 2026-10-12
 
 ### Changed

@@ -59,6 +59,15 @@ python -m venv .venv
 
 Requires Python >= 3.11.
 
+## API documentation
+
+The source code documentation is generated with Doxygen
+(<https://www.doxygen.nl>):
+
+```
+doxygen Doxyfile                    # -> docs/api/html/index.html
+```
+
 ## Licence
 
 Creative Commons Attribution 4.0 International (CC BY 4.0), see `LICENSE`.
