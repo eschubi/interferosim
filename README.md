@@ -8,8 +8,9 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.2.1 — sky models implemented (`interferosim.sky`, maps in
-`interferosim.plotting`, notebook `notebooks/01_sky_models.ipynb`). The
+**Status:** 0.2.2 — sky models implemented (`interferosim.sky`, maps in
+`interferosim.plotting`, notebook `notebooks/01_sky_models.ipynb` with a
+selector for all example skies). The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 
@@ -29,6 +30,31 @@ Then:
 interferosim-sky configs/skies/aas6_demo.json --overview -o demo.png
 jupyter lab notebooks          # kernel "Python (interferosim)"
 ```
+
+## Example skies
+
+`configs/skies/` contains sky models in the JSON format of AAS6
+(`json/interfero/sim_sky.json`, plus the component kind `disc`):
+
+| File | Content | S (1.42 GHz) |
+|---|---|---|
+| `aas6_demo.json` | demo field of `aas6sim` around W3(OH) | 7695 Jy |
+| `w3oh_masers.json` | the three OH masers of the demo field | 135 Jy |
+| `sun_21cm.json` | quiet Sun, limb-brightened disc 34′ | 476 kJy |
+| `cas_a.json` | Cassiopeia A, supernova remnant | 1636 Jy |
+| `cyg_a.json` | Cygnus A, radio galaxy (lobes, hotspots, core) | 1556 Jy |
+| `tau_a.json` | Taurus A (Crab Nebula) | 806 Jy |
+| `vir_a.json` | Virgo A (M87): core, jet, inner lobes, halo | 210 Jy |
+| `orion_a.json` | Orion A (M42), approximate model | ~400 Jy |
+
+Flux densities of Cas A, Cyg A, Tau A and Vir A follow Perley & Butler
+(2017, ApJS 230, 7); Cas A and Tau A are corrected for their secular fading
+to epoch 2026. Each file documents sources and simplifications in `_note`.
+In notebook 01, section 6, a selector shows each sky as map, overview or
+visibility amplitude over the baseline;
+`interferosim.plotting.plot_sky_gallery()` draws all of them side by side.
+
+![Example skies](docs/images/sky_gallery.png)
 
 ## Processing chain
 

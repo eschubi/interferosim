@@ -6,12 +6,18 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.2.2] — 2026-10-12
+
 ### Added
 - Known sky regions at 1420 MHz in `configs/skies/`: `cas_a`, `cyg_a`,
   `tau_a`, `vir_a` (flux densities from Perley & Butler 2017, Cas A/Tau A
   corrected for secular fading to epoch 2026) and `orion_a` (approximate).
 - Notebook 01, section 6: selector (sky file, scale, view incl. visibility
   amplitude over the baseline) and a static gallery of all sky files.
+- `interferosim.plotting.plot_sky_gallery()`: several sky models side by
+  side; used in notebook 01 and for the documentation figure
+  `docs/images/sky_gallery.png`.
+- README: section "Example skies".
 - `Doxyfile`: API documentation of the package with Doxygen
   (HTML and LaTeX into `docs/api/`, excluded from version control).
 - Documentation: chapters "Version Control", "API Documentation",

@@ -1,5 +1,6 @@
 % docs/texte/20_core/sky.tex -- chapter "Sky Models" (Interferosim)
-% Version: 0.2.1 (2026-10-12) -- catalogue of known sources (A-team, Orion A)
+% Version: 0.2.2 (2026-10-12) -- gallery figure of all sky files (fig:sky-gallery)
+%   0.2.1: catalogue of known sources (A-team, Orion A)
 %   0.2.0: package interferosim.sky implemented
 %   0.1.0: placeholder
 % ================================================================
@@ -100,7 +101,20 @@ File & Source & $S$ [Jy] & Model \\
 
 The notebook \texttt{01\_sky\_models.ipynb} offers a selector (sky file,
 colour scale, view: map, overview, visibility amplitude over the baseline)
-and a static gallery of all files.
+and a static gallery of all files (Fig.~\ref{fig:sky-gallery}), drawn with
+\texttt{interferosim.plotting.plot\_sky\_gallery()}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/sky_gallery.png}
+  \caption{All sky files in \texttt{configs/skies/}, each with its
+           automatic field of view. Logarithmic scale for
+           \texttt{aas6\_demo}, \texttt{cyg\_a}, \texttt{vir\_a} and
+           \texttt{w3oh\_masers} (compact components in faint extended
+           emission), linear for the others. Cyan circles mark components
+           smaller than a few pixels. Axis units follow the field size.}
+  \label{fig:sky-gallery}
+\end{figure}
 
 \section{Maps}
 

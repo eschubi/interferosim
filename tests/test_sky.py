@@ -161,6 +161,13 @@ def test_plot_functions_run():
     assert len(axes) == 2
 
 
+def test_plot_gallery_runs():
+    from interferosim.plotting import plot_sky_gallery
+    skies = [SkyModel.from_json(f) for f in sorted((ROOT / "configs" / "skies").glob("*.json"))]
+    fig, axes = plot_sky_gallery(skies, npix=64, log_names={"aas6_demo"})
+    assert axes.size >= len(skies)
+
+
 def test_cli_writes_png(tmp_path):
     from interferosim.sky.cli import main
     out = tmp_path / "demo.png"

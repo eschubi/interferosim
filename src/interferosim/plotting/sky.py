@@ -7,11 +7,14 @@
   AAS6 star-map overlay), optional labels.
 * :func:`plot_sky_overview` -- full field plus a zoom on a chosen region
   (e.g. the maser group, which is far below the pixel size of the full map).
+* :func:`plot_sky_gallery` -- several sky models side by side (e.g. all
+  files in ``configs/skies/``).
 
 Axes: offset from the field centre in degrees; east is to the LEFT
 (astronomical convention, as in the notebooks).
 
 Version 0.2.0 (2026-10-12): first implementation.
+Version 0.2.2 (2026-10-12): plot_sky_gallery added.
 """
 
 from __future__ import annotations
@@ -24,7 +27,7 @@ from matplotlib import colors
 
 from ..sky import SkyModel
 
-__all__ = ["plot_sky_map", "plot_sky_overview"]
+__all__ = ["plot_sky_map", "plot_sky_overview", "plot_sky_gallery"]
 
 _SCALES = ("log", "linear", "asinh")
 
@@ -164,5 +167,27 @@ def plot_sky_overview(sky: SkyModel, *, zoom_center_deg: Optional[Tuple[float, f
                  dynamic_range=dynamic_range, ax=axes[1],
                  title=f"zoom: {zoom_fov_deg * 60:.3g}' around "
                        f"({zc[0]:+.4f}°, {zc[1]:+.4f}°)")
+    fig.tight_layout()
+    return fig, axes
+
+
+def plot_sky_gallery(skies: Sequence[SkyModel], *, ncols: int = 4, npix: int = 256,
+                     log_names: Sequence[str] = (), panel_size: float = 4.5):
+    """Several sky models side by side, one map each. Returns (fig, axes).
+
+    Each map shows the whole model (automatic field of view). Models whose
+    ``name`` is in ``log_names`` are shown on a logarithmic scale (large
+    dynamic range, e.g. compact cores in faint halos), all others linear.
+    """
+    skies = list(skies)
+    nrows = max(1, -(-len(skies) // ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(panel_size * ncols, panel_size * nrows),
+                             squeeze=False)
+    for ax, s in zip(axes.flat, skies):
+        plot_sky_map(s, npix=npix, scale="log" if s.name in log_names else "linear",
+                     ax=ax, colorbar=False, labels=False,
+                     title=f"{s.name}\n{s.total_flux_jy:,.0f} Jy, {len(s)} comp.")
+    for ax in axes.flat[len(skies):]:
+        ax.axis("off")
     fig.tight_layout()
     return fig, axes
