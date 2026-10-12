@@ -1,0 +1,58 @@
+% docs/texte/10_engineering/uml/classes_signal.tex -- UML class diagram: signal chain, spectra, visdata (basic design)
+% Version: 0.1.0 (2026-10-12) -- first draft
+% Origin: AAS6 modules/sdr/iq_record_node.py (_SimDualSource),
+% modules/interfero/skysim.py, geometry.py, correlate.py; aas6sim
+% visibility.VisData; notebook B (transit). See chapter "Basic Design".
+\begin{tikzpicture}
+  % =================== package signal ================================
+  \umlclass{iqsim}{0,0}{IQSimulator}
+    {+ sky : SkyModel\\+ array : Array\\+ f\_center\_hz : float\\+ sample\_rate\_sps : float\\+ seed : int}
+    {+ run(ra\_deg, dec\_deg, t0, duration\_s) : dict[str, IQBlock]\\+ common\_signal(n, t0) : ndarray}
+  \umlclass{stsig}{-7.4,0}{StationSignalModel}
+    {+ station : Station\\+ reference : Station\\+ antenna : Antenna\\+ receiver : Receiver}
+    {+ delay\_and\_rate(t, ra, dec) : (float, float)\\+ beam\_gain(t, ra, dec, pointing) : float\\+ apply(common, t0) : ndarray}
+  \umldata{iqblock}{7.6,0}{IQBlock}
+    {+ station : str\\+ samples : ndarray (n\_pol, n)\\+ sample\_rate\_sps : float\\+ f\_center\_hz : float\\+ t0\_unix : float}{}
+  \umlclass{fx}{0,-4.8}{FXCorrelator}
+    {+ nfft : int\\+ t\_int\_s : float\\+ model : StationSignalModel}
+    {+ correlate(a, b : IQBlock) : VisData\\+ fractional\_delay(x, d) : ndarray\\+ fringe\_stop(x, f, fs) : ndarray\\+ delay\_rate\_search(a, b) : FringeSolution}
+  \umldata{fsol}{7.6,-4.8}{FringeSolution}
+    {+ delay\_samples : float\\+ rate\_hz : float\\+ snr : float}{}
+
+  \draw[compose] (iqsim.west) -- node[mult,above,pos=0.8]{1..*} (stsig.east);
+  \draw[depend] (iqsim.east) -- node[stereo,above]{$\ll$create$\gg$} (iqblock.west);
+  \draw[depend] (fx.north) -- node[stereo,right]{$\ll$read$\gg$} (iqsim.south |- 0,-2.3) -- (iqblock.south |- 0,-2.3) -- (iqblock.south);
+  \draw[depend] (fx.east) -- node[stereo,above]{$\ll$create$\gg$} (fsol.west);
+  \draw[assoc] (fx.west) -| node[mult,right,pos=0.9]{1} (stsig.south);
+  \umlframe{sigpkg}{(iqsim)(stsig)(iqblock)(fx)(fsol)}{signal}
+
+  % =================== module visdata ================================
+  \umldata{vis}{0,-10.0}{VisData}
+    {+ time\_mjd, ha\_deg : ndarray (n\_t)\\+ u, v, w : ndarray (n\_t)\\+ freq\_hz : ndarray (n\_ch)\\+ vis : ndarray (n\_t, n\_ch), complex, Jy\\+ weight : ndarray (n\_t, n\_ch)\\+ header : fits.Header}
+    {+ n\_chan : int\\+ channel(k) : VisData\\+ average\_channels() : VisData}
+  \umlframe{vispkg}{(vis)}{visdata}
+  \draw[depend] (fx.south) -- node[stereo,right]{$\ll$create$\gg$} (vis.north);
+
+  % =================== observation: transit ===========================
+  \umlclass{transit}{7.6,-10.0}{TransitSimulator}
+    {+ array : Array\\+ dec\_deg : float\\+ ha\_range\_h : tuple\\+ t\_dump\_s : float}
+    {+ run(sky, freq\_hz) : VisData}
+  \umlframe[dashed]{obspkg}{(transit)}{observation}
+  \draw[depend] (transit.west) -- node[stereo,above]{$\ll$create$\gg$} (vis.east);
+
+  % =================== sky: spectra =====================================
+  \umlabstract{spec}{-8.2,-10.8}{Spectrum}{}
+    {+ \textit{flux\_jy(freq\_hz) : ndarray}}
+  \umlclass{cont}{-10.9,-14.0}{Continuum}
+    {+ flux\_ref\_jy : float\\+ freq\_ref\_hz : float\\+ spectral\_index : float}{}
+  \umlclass{lines}{-6.9,-14.0}{LineSpectrum}
+    {+ continuum\_jy : float\\+ lines : list}{}
+  \umldata{line}{-6.9,-17.2}{SpectralLine}
+    {+ rest\_freq\_hz : float\\+ peak\_jy : float\\+ v\_lsr\_kms : float\\+ fwhm\_kms : float}{}
+  \draw[inherit] (cont.north) |- ++(0,0.5) -| (spec.south);
+  \draw[inherit] (lines.north) |- ++(0,0.5) -| (spec.south);
+  \draw[compose] (lines.south) -- node[mult,right,pos=0.8]{0..*} (line.north);
+  \node[umlpkgbox,minimum width=2.4cm,dashed] (rsky) at (-8.2,-8.6) {SkyComponent};
+  \draw[aggregate] (rsky.south) -- node[mult,right,pos=0.75]{0..1} (spec.north);
+  \umlframe[dashed]{skypkg}{(spec)(cont)(lines)(line)(rsky)}{sky}
+\end{tikzpicture}

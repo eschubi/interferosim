@@ -1,0 +1,16 @@
+# configs/sites/aas6_sim_stations.toml -- the two stations of the AAS6 interferometer simulation
+# Version 0.1.0 (2026-10-12)
+# Source: AAS6 json/nodes/sb_iq_sim_a.json and sb_iq_sim_b.json ("sim_stations").
+# Station A is the reference; B lies about 11 km east of A (same latitude).
+name = "AAS6 simulation, two stations"
+reference = "A"
+
+[stations.A]
+latitude_deg = 48.088056
+longitude_deg = 15.756111
+height_m = 470.0
+
+[stations.B]
+latitude_deg = 48.088056
+longitude_deg = 15.905
+height_m = 470.0

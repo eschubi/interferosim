@@ -1,6 +1,9 @@
 # configs/sites/baseline_wilhelmsburg_michelbach.toml -- example long baseline, notebook A
+# Version 0.1.1 (2026-10-12): note on the station coordinates added
 name = "Wilhelmsburg - Michelbach"
 site = "wilhelmsburg"
 length_m = 11500.0
 # The notebook models the uv-track of this baseline as an east-west baseline.
 orientation = "east-west"
+# Station coordinates of the closed simulation (AAS6): aas6_sim_stations.toml
+# (baseline there about 11.1 km east-west).

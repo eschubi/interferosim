@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/uml/classes_model.tex -- UML class diagram: sky and instrument (basic design)
-% Version: 0.2.0 (2026-10-12) -- package sky as implemented (interferosim 0.2.0)
+% Version: 0.3.0 (2026-10-12) -- spectrum attribute, Yagi, Station with geodetic position
+%   0.2.0: package sky as implemented (interferosim 0.2.0)
 % Origin of the classes: aas6sim 1.1.0 (model.Component, model.Instrument)
 % and notebook B (disc profiles, horn); see chapter "Basic Design".
 \begin{tikzpicture}
@@ -7,7 +8,7 @@
   % 0.2.0: as implemented in interferosim 0.2.0 (JSON format of AAS6
   % sim_sky.json: dx_deg/dy_deg, field centre, kind "disc" added)
   \umlabstract{comp}{0,0}{SkyComponent}
-    {+ name : str\\+ dx\_deg : float\\+ dy\_deg : float\\+ flux\_jy : float\\+ \underline{kind : str}}
+    {+ name : str\\+ dx\_deg : float\\+ dy\_deg : float\\+ flux\_jy : float\\+ spectrum : Spectrum\\+ \underline{kind : str}}
     {+ \textit{render(x, y, pix\_deg, out)}\\+ \textit{visibility(u, v) : ndarray}\\+ to\_dict() : dict}
   \umlclass{point}{-3.4,-3.6}{PointSource}{}{}
   \umlclass{gauss}{0,-3.6}{GaussianSource}
@@ -34,26 +35,30 @@
     {+ name : str}
     {+ \textit{gain\_dbi(f\_hz) : float}\\+ effective\_area(f\_hz) : float\\+ hpbw\_deg(f\_hz) : float\\+ beam(theta\_deg, f\_hz) : ndarray\\+ \underline{from\_toml(path) : Antenna}}
   \umlclass{horn}{-2.0,-13.7}{Horn}{+ gain\_dbi\_nominal : float}{}
+  \umlclass{yagi}{6.4,-13.7}{Yagi}
+    {+ n\_elements : int\\+ boom\_length\_m : float\\+ gain\_dbi\_nominal : float}{}
   \umlclass{dish}{2.2,-13.7}{ParabolicDish}
     {+ diameter\_m : float\\+ aperture\_efficiency : float\\+ beam\_factor : float}
     {+ u\_max(f\_hz) : float\\+ otf(u, f\_hz) : ndarray}
-  \umlclass{station}{-4.0,-10.3}{Station}
-    {+ antenna : Antenna\\+ enu\_m : ndarray}{}
+  \umlclass{station}{-4.2,-10.6}{Station}
+    {+ name : str\\+ lat\_deg, lon\_deg : float\\+ height\_m : float\\+ antenna : Antenna}
+    {+ ecef\_m() : ndarray}
   \umlclass{array}{-4.0,-7.7}{Array}
     {+ site : Site\\+ stations : list\\+ receiver : Receiver}
     {+ baselines() : ndarray\\+ \underline{from\_toml(path) : Array}}
   \umlclass{site}{-7.9,-7.7}{Site}
     {+ name : str\\+ lat\_deg : float\\+ lon\_deg : float\\+ alt\_m : float}{}
-  \umlclass{recv}{-8.1,-10.7}{Receiver}
+  \umlclass{recv}{-8.6,-11.0}{Receiver}
     {+ name : str\\+ t\_sys\_k : float\\+ bandwidth\_hz : float\\+ sample\_rate\_sps : float\\+ rx\_channels : int}
     {+ sefd\_jy(a : Antenna, f\_hz) : float\\+ \underline{from\_toml(path) : Receiver}}
 
   \draw[inherit] (horn.north) |- ++(0,0.5) -| (ant.south);
   \draw[inherit] (dish.north) |- ++(0,0.5) -| (ant.south);
+  \draw[inherit] (yagi.north) |- ++(0,0.5) -| (ant.south);
   \draw[compose] (array.south) -- node[mult,right,pos=0.75]{1..*} (station.north);
   \draw[assoc] (station.east) -- node[mult,above,pos=0.75]{1} (ant.west);
   \draw[assoc] (array.west) -- node[mult,above,pos=0.75]{1} (site.east);
   \draw[assoc] (array.south west) -- node[mult,above,pos=0.8]{1} (recv.north east);
 
-  \umlframe{instpkg}{(ant)(horn)(dish)(station)(array)(site)(recv)}{instrument}
+  \umlframe{instpkg}{(ant)(horn)(dish)(yagi)(station)(array)(site)(recv)}{instrument}
 \end{tikzpicture}

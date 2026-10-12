@@ -1,0 +1,5 @@
+#!/bin/bash
+# binder/postBuild -- runs after the environment is built (repo2docker, project root)
+# Version 0.1.0 (2026-10-12)
+set -e
+pip install --no-deps -e .

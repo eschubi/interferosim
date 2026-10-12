@@ -1,13 +1,105 @@
 % docs/texte/10_engineering/requirements.tex -- chapter "Requirements" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-12) -- requirements with identifiers
+%   0.1.0: first short list
 % ================================================================
+\index{requirements}
 
-\begin{itemize}
-  \item Full processing chain: sky model, instrument, observation,
-        imaging, deconvolution, visualisation.
-  \item The core package is independent of the user interface.
-  \item Hardware model: Ettus USRP B210 as receiver; several antenna
-        types selectable.
-  \item Usable without programming knowledge via the notebooks.
-\end{itemize}
-\emph{Detailed requirements follow in phase~1.}
+The requirements follow from the project description, the teaching
+notebooks~A and~B, the AAS6 simulation chain and the decisions of
+chapter~\ref{ch:basic-design}. Every requirement has an identifier;
+tests and chapters refer to it. \emph{Phase} is the phase of the
+development plan in which the requirement is implemented; \emph{Status}:
+done, open.
+
+\section{Functional requirements}
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{8.6cm}cl@{}}
+\toprule
+ID & Requirement & Phase & Status \\
+\midrule
+\endfirsthead
+\toprule
+ID & Requirement & Phase & Status \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{4}{@{}l}{\textit{Sky}}\\
+F-SKY-1 & Sky model of a field centre and point, Gaussian and disc
+  components (uniform and limb-brightened). & 2 & done \\
+F-SKY-2 & Sky models are read and written in the JSON format of AAS6
+  \texttt{sim\_sky.json}. & 2 & done \\
+F-SKY-3 & Analytic visibility of every component. & 2 & done \\
+F-SKY-4 & Maps of a sky model (full field and zoom). & 2 & done \\
+F-SKY-5 & Spectrum per component: continuum (spectral index) and
+  spectral lines (HI, OH) for several frequency channels. & 2 & open \\
+\multicolumn{4}{@{}l}{\textit{Instrument}}\\
+F-INS-1 & Selectable antenna types: horn, parabolic dish, Yagi; further
+  types as subclasses. & 2 & open \\
+F-INS-2 & Receiver model with the device profile of the Ettus USRP B210
+  (two coherent channels). & 2 & open \\
+F-INS-3 & Stations with geodetic position (WGS84) and an antenna;
+  arrays of two or more stations; baselines. & 2 & open \\
+F-INS-4 & Antennas, receivers and sites are configured in files
+  (\texttt{configs/}). & 1 & done \\
+\multicolumn{4}{@{}l}{\textit{Observation}}\\
+F-OBS-1 & Hour angle, elevation and uv-coverage with Earth rotation
+  synthesis (sidereal and solar rate). & 2 & open \\
+F-OBS-2 & Direct computation of visibilities with noise (radiometer
+  equation, SEFD). & 2 & open \\
+F-OBS-3 & Transit (drift scan) of fixed antennas as time series
+  (\texttt{TransitSimulator}). & 2 & open \\
+F-OBS-4 & Adding and multiplying interferometer; fringe rate and
+  delay. & 2 & open \\
+\multicolumn{4}{@{}l}{\textit{Signal (closed simulation)}}\\
+F-SIG-1 & Simulated IQ samples per station with geometric delay, fringe
+  phase, primary beam attenuation and receiver noise. & 2 & open \\
+F-SIG-2 & FX correlator: fractional delay, fringe stopping, delay/rate
+  search, cross spectra $\rightarrow$ \texttt{VisData}. & 2 & open \\
+\multicolumn{4}{@{}l}{\textit{Imaging and deconvolution}}\\
+F-IMG-1 & Gridding; natural, uniform and Wiener weighting; dirty image
+  and dirty beam, per channel or channel average. & 3 & open \\
+F-DEC-1 & Högbom CLEAN with clean beam and restoration. & 3 & open \\
+F-DEC-2 & Wiener filter for filled apertures. & 3 & open \\
+F-DEC-3 & Comparison metrics (effective beam width, RMS error against a
+  reference). & 3 & open \\
+\multicolumn{4}{@{}l}{\textit{Data and user interface}}\\
+F-DAT-1 & One visibility data class (\texttt{VisData}) with frequency
+  axis for simulated and measured data. & 2 & open \\
+F-DAT-2 & FITS input/output compatible with \texttt{aas6sim}
+  (simulated data marked by \texttt{SIMULATD = T}). & 2 & open \\
+F-UI-1 & Interactive notebooks (ipywidgets), one per topic; usable
+  without programming knowledge. & 4 & open \\
+F-UI-2 & Notebooks~A (Wiener filter vs.\ CLEAN) and~B (the Sun as a
+  first target) reproduced with the package. & 4 & open \\
+\end{longtable}
+
+\section{Non-functional requirements}
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{8.6cm}cl@{}}
+\toprule
+ID & Requirement & Phase & Status \\
+\midrule
+\endfirsthead
+\toprule
+ID & Requirement & Phase & Status \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+N-1 & The core package does not depend on any user-interface
+  package. & 1 & done \\
+N-2 & Python $\geq$ 3.11; dependencies numpy, scipy, astropy,
+  matplotlib (plus Jupyter for the notebooks). & 1 & done \\
+N-3 & Runs on Windows, Linux and macOS, locally, on JupyterHub and on
+  Binder. & 5 & open \\
+N-4 & Every module is covered by unit tests; the notebooks are run
+  automatically (nbval). & 5 & open \\
+N-5 & Code, notebooks and documentation in English; conventions of
+  chapter \enquote{Development Guidelines}. & 1 & done \\
+N-6 & Three-part versioning, CHANGELOG, tagged releases. & 1 & done \\
+N-7 & Open-source licence and citation metadata
+  (\texttt{CITATION.cff}). & 1 & open (licence) \\
+N-8 & API documentation generated from the docstrings
+  (Doxygen). & 1 & done \\
+\end{longtable}

@@ -1,8 +1,11 @@
 % docs/texte/10_engineering/design.tex -- chapter "Basic Design" (Interferosim)
-% Version: 0.1.2 (2026-10-12) -- first draft of the software structure (UML);
+% Version: 0.2.0 (2026-10-12) -- first draft of the software structure (UML);
+%   0.2.0: package signal (closed simulation with SDR signal), spectral
+%          dimension, TransitSimulator, module visdata, Yagi; open points decided;
 %   0.1.2: note on the implemented package sky;
 %   0.1.1: unnumbered paragraphs, pipeline diagram on a landscape page
 % ================================================================
+\label{ch:basic-design}
 
 \index{basic design}\index{UML}
 This chapter describes the first basic design of the package
@@ -21,7 +24,7 @@ Figure~\ref{fig:uml-packages} shows the packages and their dependencies.
 The design follows a layered structure:
 
 \begin{itemize}
-  \item \textbf{Core} (\texttt{sky}, \texttt{instrument},
+  \item \textbf{Core} (\texttt{sky}, \texttt{instrument}, \texttt{signal},
         \texttt{observation}, \texttt{imaging}, \texttt{deconvolution}):
         the complete processing chain. The core does not depend on any
         user-interface package, so a later desktop front end can use it
@@ -29,22 +32,34 @@ The design follows a layered structure:
   \item \textbf{User interface} (\texttt{plotting}, \texttt{widgets}):
         uses the core, never the other way round. The notebooks only call
         these packages and the core.
-  \item \textbf{Support} (\texttt{io}, \texttt{constants}): FITS
-        input/output taken over from \texttt{aas6sim}, physical constants
-        and line catalogue.
-  \item \textbf{Configuration} (\texttt{configs/*.toml}): antenna types,
-        receivers and sites are data, not code. A new antenna type that
+  \item \textbf{Support} (\texttt{visdata}, \texttt{io},
+        \texttt{constants}): the visibility data class shared by all
+        stages, FITS input/output taken over from \texttt{aas6sim},
+        physical constants and line catalogue.
+  \item \textbf{Configuration} (\texttt{configs/}): sky models (JSON),
+        antenna types, receivers and sites (TOML) are data, not code. A new antenna type that
         fits an existing class needs only a new configuration file.
 \end{itemize}
 
-The dependencies inside the core follow the signal path: sky and
-instrument $\rightarrow$ observation $\rightarrow$ imaging
-$\rightarrow$ deconvolution. There are no cyclic dependencies.
+The dependencies inside the core follow the signal path. There are two
+ways from the sky to the visibilities:
+\begin{itemize}
+  \item \textbf{direct} (fast, for teaching and parameter studies):
+        sky and instrument $\rightarrow$ \texttt{observation}
+        $\rightarrow$ \texttt{VisData};
+  \item \textbf{closed simulation} (as with real hardware): sky and
+        instrument $\rightarrow$ \texttt{signal} (IQ samples per
+        station, as delivered by the B210) $\rightarrow$ FX correlator
+        $\rightarrow$ \texttt{VisData}.
+\end{itemize}
+Both end in the same data class, so imaging and deconvolution work on
+simulated, closed-loop simulated and measured data alike. There are no
+cyclic dependencies.
 
 \begin{figure}[htbp]
   \centering
   \input{texte/10_engineering/uml/packages.tex}
-  \caption{UML package diagram of \texttt{interferosim} (draft 0.1)}
+  \caption{UML package diagram of \texttt{interferosim} (draft 0.2)}
   \label{fig:uml-packages}
 \end{figure}
 
@@ -69,7 +84,7 @@ field centre is a separate class \texttt{FieldCenter}.
 receiver, site and baseline in a single class. The design separates
 them, because several antenna types must be selectable:
 \begin{itemize}
-  \item \texttt{Antenna} (abstract) with the subclasses \texttt{Horn}
+  \item \texttt{Antenna} (abstract) with the subclasses \texttt{Horn}, \texttt{Yagi}
         and \texttt{ParabolicDish}; further types are added as
         subclasses.
   \item \texttt{Receiver} with the device profile of the Ettus USRP B210
@@ -125,16 +140,84 @@ modelled as \texttt{WienerFilter}.
   \label{fig:uml-pipeline}
 \end{sidewaysfigure}
 
+\section{Signal chain, spectra and visibility data}
+
+Figure~\ref{fig:uml-signal} shows the classes added for the closed
+simulation and the spectral dimension.
+
+\paragraph*{Signal (closed simulation).} AAS6 already simulates the two
+interferometer stations at the level of the SDR samples
+(\texttt{modules/sdr/iq\_record\_node.py}, driver \texttt{sim};
+\texttt{modules/interfero/skysim.py}; \texttt{geometry.py};
+\texttt{correlate.py}). Interferosim takes this chain over:
+\begin{itemize}
+  \item \texttt{IQSimulator} creates a common sky signal and, for every
+        station, the received IQ samples (\texttt{IQBlock}): the
+        reference station gets the sky signal attenuated by its primary
+        beam, every other station additionally the geometric delay
+        $\tau_g(t)$ and the fringe phase $2\pi f_c\tau_g(t)$, computed
+        from the station positions (WGS84 $\rightarrow$ ECEF) and the
+        source direction at time $t$; receiver noise is added per
+        channel (\texttt{StationSignalModel}).
+  \item \texttt{FXCorrelator} aligns the streams (fractional delay,
+        fringe stopping), searches residual delay and rate
+        (\texttt{FringeSolution}) and forms the cross spectra, which it
+        writes as \texttt{VisData} with a frequency axis.
+\end{itemize}
+
+\paragraph*{Spectral dimension.} Every sky component may carry a
+\texttt{Spectrum}: \texttt{Continuum} (power law with spectral index) or
+\texttt{LineSpectrum} with one or more \texttt{SpectralLine}s (rest
+frequency, peak flux, LSR velocity, width) -- e.\,g.\ HI emission or the
+OH maser lines. Without a spectrum the component is flat (as
+\texttt{aas6sim}). \texttt{VisData} therefore has a frequency axis
+(\texttt{freq\_hz}, visibilities of shape $n_t\times n_{ch}$); the imaging
+works per channel or on the channel average.
+
+\paragraph*{Transit.} \texttt{TransitSimulator} (package
+\texttt{observation}) simulates a drift scan of fixed antennas, as in
+notebook~B (Sun, two horns): amplitude following the primary beam,
+phase advancing with the fringe rate, noise per dump.
+
+\paragraph*{Visibility data.} \texttt{VisData} is a module of its own
+(\texttt{interferosim.visdata}); \texttt{observation} and
+\texttt{signal} create it, \texttt{imaging} reads it and \texttt{io}
+writes and reads it as FITS.
+
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\textwidth}{!}{\input{texte/10_engineering/uml/classes_signal.tex}}
+  \caption{UML class diagram: package \texttt{signal}, module
+           \texttt{visdata}, spectra of the sky components and the
+           transit simulator (draft 0.2)}
+  \label{fig:uml-signal}
+\end{figure}
+
+\section{Decisions}
+
+The open points of draft 0.1 were decided on 2026-10-12:
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}p{9.0cm}@{}}
+\toprule
+Question & Decision \\
+\midrule
+Spectral dimension & now: \texttt{Spectrum} per component, frequency
+  axis in \texttt{VisData} \\
+Transit simulation & own class \texttt{TransitSimulator} \\
+Location of \texttt{VisData} & own module \texttt{interferosim.visdata} \\
+Antenna types & horn, parabolic dish and Yagi; further types see
+  chapter \enquote{Antennas} \\
+Closed simulation & package \texttt{signal}, taken over from the AAS6
+  simulation chain \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \section{Open points}
 
-The following points are not yet decided and will be settled in
-phase~1:
 \begin{itemize}
-  \item Spectral dimension: HI and OH line sources need several
-        frequency channels; the draft models a single frequency.
-  \item Time-domain simulation of a transit (notebook~B): own class or
-        part of \texttt{VisibilitySimulator}.
-  \item Further antenna types besides horn and parabolic dish.
-  \item Whether \texttt{VisData} stays in \texttt{io} (as in
-        \texttt{aas6sim}) or moves to \texttt{observation}.
+  \item Licence of the code (chapter \enquote{Licence}).
+  \item Dual polarisation and Zeeman splitting of the OH lines
+        (present in the AAS6 simulation, \texttt{sim\_zeeman\_b\_mgauss}):
+        later extension of \texttt{StationSignalModel}.
 \end{itemize}

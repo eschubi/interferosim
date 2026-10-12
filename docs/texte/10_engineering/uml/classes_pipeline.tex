@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/uml/classes_pipeline.tex -- UML class diagram: observation, imaging, deconvolution (basic design)
-% Version: 0.1.0 (2026-10-12) -- first draft
+% Version: 0.2.0 (2026-10-12) -- VisData in module visdata, frequency axis
+%   0.1.0: first draft
 % Origin: aas6sim 1.1.0 (visibility.VisData, model.uv_track_ew, model.elevation_deg)
 % and notebooks A/B (gridding, weightings, hogbom_fft, Wiener filter, fringe rate).
 \begin{tikzpicture}
@@ -23,8 +24,8 @@
   \umlframe{obspkg}{(obs)(uvc)(sim)(corr)}{observation}
 
   \umldata{vis}{10.6,-1.2}{VisData}
-    {+ time\_mjd, ha\_deg : ndarray\\+ u, v, w : ndarray\\+ vis : ndarray (complex, Jy)\\+ weight : ndarray\\+ header : fits.Header}{}
-  \umlframe[dashed]{iopkg}{(vis)}{io}
+    {+ time\_mjd, ha\_deg : ndarray\\+ u, v, w : ndarray\\+ freq\_hz : ndarray\\+ vis : ndarray (n\_t, n\_ch)\\+ weight : ndarray\\+ header : fits.Header}{}
+  \umlframe[dashed]{iopkg}{(vis)}{visdata}
 
   \draw[aggregate] (obs.west) -- node[mult,above,pos=0.8]{1} (rarr.east);
   \draw[depend] (sim.west) -- node[stereo,above]{$\ll$use$\gg$} (rsky.east);

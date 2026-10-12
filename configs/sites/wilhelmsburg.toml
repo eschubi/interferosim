@@ -1,4 +1,7 @@
-# configs/sites/wilhelmsburg.toml -- example site, value from notebooks A/B
+# configs/sites/wilhelmsburg.toml -- example site of the notebooks and aas6sim
+# Version 0.2.0 (2026-10-12): longitude and altitude added from aas6sim 1.3.1
+#                             (model.Instrument: lat 48.11, lon 15.61, 280 m)
 name = "Wilhelmsburg"
 latitude_deg = 48.11
-# longitude and altitude are not used by the notebooks and not yet defined
+longitude_deg = 15.61
+altitude_m = 280.0

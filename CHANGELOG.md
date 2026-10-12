@@ -11,6 +11,14 @@ strictly higher than the previous one.
   (HTML and LaTeX into `docs/api/`, excluded from version control).
 - Documentation: chapters "Version Control", "API Documentation",
   "Tests and Validation" (running the tests), git workflow diagram.
+- Documentation: requirements with identifiers, chapter "Data Formats",
+  antenna types (Yagi; proposals helix, LPDA, dipole, patch), basic design
+  0.2 (package `signal` for the closed simulation with SDR signal,
+  spectra per component, `TransitSimulator`, module `visdata`).
+- Configuration: `configs/antennas/yagi.toml` (template),
+  `configs/sites/aas6_sim_stations.toml` (stations A/B of the AAS6
+  simulation); longitude and altitude of `wilhelmsburg.toml`.
+- `binder/postBuild`; `repository-code` in `CITATION.cff`.
 
 ## [0.2.1] — 2026-10-12
 

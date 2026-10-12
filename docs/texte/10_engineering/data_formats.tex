@@ -1,0 +1,100 @@
+% docs/texte/10_engineering/data_formats.tex -- chapter "Data Formats" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% ================================================================
+\label{ch:data-formats}
+\index{data formats}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Content & Format & Location \\
+\midrule
+Sky models & JSON (AAS6 \texttt{sim\_sky.json}) & \texttt{configs/skies/} \\
+Antennas & TOML & \texttt{configs/antennas/} \\
+Receivers & TOML & \texttt{configs/receivers/} \\
+Sites and stations & TOML & \texttt{configs/sites/} \\
+Visibilities & FITS binary table & output of the simulation \\
+Maps, spectra, time series & FITS (from \texttt{aas6sim}) & output \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Sky models}
+
+See chapter~\ref{ch:sky-models}. JSON with \texttt{center}
+(\texttt{label}, \texttt{ra\_deg}, \texttt{dec\_deg}) and
+\texttt{components} (\texttt{name}, \texttt{dx\_deg}, \texttt{dy\_deg},
+\texttt{flux\_jy}, \texttt{kind} and the parameters of the kind).
+
+\section{Configuration files (TOML)}
+
+\paragraph*{Antennas} (\texttt{configs/antennas/*.toml}), common keys
+\texttt{name}, \texttt{type}; further keys depend on the type:
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\texttt{type} & Keys \\
+\midrule
+\texttt{horn} & \texttt{gain\_dbi} \\
+\texttt{dish} & \texttt{diameter\_m}, \texttt{aperture\_efficiency}, \texttt{beam\_factor} \\
+\texttt{yagi} & \texttt{n\_elements}, \texttt{boom\_length\_m}, \texttt{gain\_dbi},
+                \texttt{design\_freq\_hz}, \texttt{polarisation} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph*{Receivers} (\texttt{configs/receivers/*.toml}):
+\texttt{name}, \texttt{rx\_channels}, \texttt{sample\_rate\_sps},
+\texttt{bandwidth\_hz}, \texttt{bits}, \texttt{t\_sys\_k}, \texttt{agc},
+\texttt{dc\_offset\_correction}, \texttt{iq\_balance\_correction},
+\texttt{clock\_source}.
+
+\paragraph*{Sites and stations} (\texttt{configs/sites/*.toml}): a single
+site has \texttt{name}, \texttt{latitude\_deg}, \texttt{longitude\_deg},
+\texttt{altitude\_m}; a group of stations has \texttt{reference} and one
+table \texttt{[stations.<id>]} per station with \texttt{latitude\_deg},
+\texttt{longitude\_deg}, \texttt{height\_m} (WGS84). The two stations of
+the AAS6 simulation are in \texttt{aas6\_sim\_stations.toml}
+(from \texttt{sb\_iq\_sim\_a/b.json}).
+
+\section{Visibilities (FITS)}
+
+Format of \texttt{aas6sim} (\texttt{visibility.py}): primary HDU without
+data plus a binary table \texttt{EXTNAME = VISIBILITY}, one row per
+integration.
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Column & Unit & Content \\
+\midrule
+\texttt{TIME} & d & MJD (UTC) of the middle of the interval \\
+\texttt{HA} & deg & hour angle \\
+\texttt{UU}, \texttt{VV}, \texttt{WW} & wavelengths & baseline components \\
+\texttt{VISREAL}, \texttt{VISIMAG} & Jy & real and imaginary part \\
+\texttt{WEIGHT} & Jy$^{-2}$ & weight $1/\sigma^2$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Header keywords: \texttt{ORIGIN}, \texttt{DATE}, \texttt{SIMULATD}
+(\texttt{T} for simulated data -- a simulated file must remain
+recognisable after any number of processing steps), \texttt{TELESCOP},
+\texttt{INSTRUME}, \texttt{OBJECT}, \texttt{DATE-OBS}, \texttt{UVUNIT},
+\texttt{ANT1}, \texttt{ANT2}, \texttt{BASELINE} and the observation keys
+\texttt{RESTFRQ}, \texttt{BANDWID}, \texttt{TSYS}, \texttt{EXPOSURE},
+\texttt{OBSRA}, \texttt{OBSDEC}, \texttt{SITELAT}, \texttt{SITELONG},
+\texttt{SITEELEV}.
+
+\paragraph*{Extension for the frequency axis.} With several channels
+(F-SKY-5, F-DAT-1) the columns \texttt{VISREAL}, \texttt{VISIMAG} and
+\texttt{WEIGHT} become vectors of length $n_{ch}$ per row, and a
+second table \texttt{EXTNAME = FREQUENCY} holds the channel
+frequencies in Hz. A file with one channel remains identical to the
+\texttt{aas6sim} format.
+
+\section{Further FITS files}
+
+Taken over unchanged from \texttt{aas6sim}: maps (2D image with WCS,
+\texttt{skymap.py}), cross-spectra cubes (\texttt{spectra.py}),
+measurement time series (\texttt{timeseries.py}) and an UVFITS export
+(\texttt{uvfits.py}, random-groups without AN/FQ tables; acceptance by
+AIPS, CASA or difmap not tested).

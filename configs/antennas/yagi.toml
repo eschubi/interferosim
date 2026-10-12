@@ -1,0 +1,11 @@
+# configs/antennas/yagi.toml -- Yagi-Uda antenna (template)
+# Version 0.1.0 (2026-10-12)
+# The values are to be taken from the data sheet / design of the actual
+# antenna; "nan" marks values that are not yet known.
+name = "Yagi (template)"
+type = "yagi"
+n_elements = 0              # number of elements (reflector + driven + directors)
+boom_length_m = nan         # boom length
+gain_dbi = nan              # gain at the design frequency
+design_freq_hz = 1.4204e9   # HI line; for OH masers 1.6654e9 / 1.6674e9
+polarisation = "linear"

@@ -1,8 +1,55 @@
 % docs/texte/20_core/antennas.tex -- chapter "Antennas" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-12) -- antenna types and proposals
+%   0.1.0: placeholder
 % ================================================================
+\index{antenna types}
 
-Common base class for all antenna types (gain, effective area, HPBW,
-beam pattern); the types are configured in \texttt{configs/antennas/}.
-Starting set from the notebooks: horn (15\,dBi) and 3\,m dish.
-\emph{Follows in phase~2.}
+All antennas derive from the abstract class \texttt{Antenna} (gain,
+effective area, half-power beam width, beam pattern); the parameters are
+read from \texttt{configs/antennas/} (chapter~\ref{ch:data-formats}).
+The relations between gain, effective area and beam width are given in
+chapter \enquote{Radio Astronomical Fundamentals}.
+
+\section{Types of the first version}
+
+\begin{center}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{5.6cm}@{}}
+\toprule
+Type & Parameters & Use in the project \\
+\midrule
+Horn & gain (15\,dBi) & two-horn test with the Sun (notebook~B) \\
+Parabolic dish & diameter, aperture efficiency, beam factor
+  (3\,m, 0.60, 1.20) & mapping, long baseline (notebook~A) \\
+Yagi & number of elements, boom length, gain, design frequency;
+  linear polarisation & low-cost station antenna \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Proposals for further types}
+
+\begin{center}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{5.2cm}@{}}
+\toprule
+Type & Properties & Why for Interferosim \\
+\midrule
+Axial-mode helix & circular polarisation, gain set by the number of
+  turns, broader band than a Yagi & OH masers are often circularly
+  polarised; Zeeman splitting (later extension) needs the circular
+  components \\
+Log-periodic dipole array (LPDA) & very broadband, moderate gain &
+  one antenna for HI (1420\,MHz) and all four OH lines
+  (1612--1720\,MHz) \\
+Dipole (reference) & about 2.15\,dBi, very wide beam & reference
+  antenna, Sun observations without tracking \\
+Patch / patch array & flat, reproducible, gain grows with the number of
+  patches & compact arrays of many elements for uv-coverage
+  experiments \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Recommendation: helix and LPDA as the next two types -- the helix for the
+polarisation of the OH lines, the LPDA for the frequency range of the
+whole project. Further types need only a subclass of \texttt{Antenna}
+and a configuration file.

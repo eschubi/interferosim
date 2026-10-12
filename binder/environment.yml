@@ -1,4 +1,6 @@
 # binder/environment.yml -- environment for Binder / JupyterHub
+# Version 0.1.1 (2026-10-12): package installed by postBuild instead of
+#   'pip -e ..' (relative path not reliable); untested on mybinder.org
 name: interferosim
 channels:
   - conda-forge
@@ -10,6 +12,8 @@ dependencies:
   - matplotlib>=3.7
   - ipywidgets>=8
   - jupyterlab
+  - ipykernel
+  - nbformat
+  - pytest
   - pip
-  - pip:
-      - -e ..
+# the package itself is installed by binder/postBuild (pip install -e .)

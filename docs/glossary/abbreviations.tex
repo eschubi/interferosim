@@ -1,5 +1,5 @@
 % docs/glossary/abbreviations.tex -- project-specific list of abbreviations (Interferosim)
-% Version: 0.1.2 (2026-10-12) -- UML, IQ added
+% Version: 0.1.3 (2026-10-12) -- ECEF, LPDA, LSR, WGS84 added
 % Glossary type "abk" (defined in interferosim.tex via \newglossary). Read
 % directly after \makeglossaries. Thanks to \glsaddall every entry is
 % printed. Replaces the AAS6-wide list texte/abkuerzungen.tex, which is kept
@@ -7,22 +7,26 @@
 % a new abbreviation (alphabetical order within each group).
 
 % --- Physics and astronomy ---------------------------------------
+\newglossaryentry{abk:ecef}{name={ECEF},description={Earth-Centred, Earth-Fixed coordinate system},type=abk}
 \newglossaryentry{abk:fwhm}{name={FWHM},description={Full Width at Half Maximum},type=abk}
 \newglossaryentry{abk:hi}{name={HI},description={Neutral atomic hydrogen (21\,cm line, 1420.406\,MHz)},type=abk}
 \newglossaryentry{abk:hpbw}{name={HPBW},description={Half-Power Beam Width},type=abk}
 \newglossaryentry{abk:oh}{name={OH},description={Hydroxyl radical (18\,cm maser lines: 1612.231, 1665.402, 1667.359, 1720.530\,MHz)},type=abk}
+\newglossaryentry{abk:lsr}{name={LSR},description={Local Standard of Rest},type=abk}
 \newglossaryentry{abk:radec}{name={RA/Dec},description={Right Ascension / Declination},type=abk}
 \newglossaryentry{abk:sefd}{name={SEFD},description={System Equivalent Flux Density},type=abk}
 \newglossaryentry{abk:sfu}{name={SFU},description={Solar Flux Unit ($10^{4}$\,Jy)},type=abk}
 \newglossaryentry{abk:snr}{name={SNR},description={Signal-to-Noise Ratio},type=abk}
 \newglossaryentry{abk:utc}{name={UTC},description={Coordinated Universal Time},type=abk}
 \newglossaryentry{abk:vlbi}{name={VLBI},description={Very Long Baseline Interferometry},type=abk}
+\newglossaryentry{abk:wgs84}{name={WGS84},description={World Geodetic System 1984},type=abk}
 
 % --- Instrument --------------------------------------------------
 \newglossaryentry{abk:adc}{name={ADC},description={Analogue-to-Digital Converter},type=abk}
 \newglossaryentry{abk:agc}{name={AGC},description={Automatic Gain Control},type=abk}
 \newglossaryentry{abk:gpsdo}{name={GPSDO},description={GPS-Disciplined Oscillator},type=abk}
 \newglossaryentry{abk:iq}{name={IQ},description={In-phase/Quadrature -- complex baseband representation of a signal},type=abk}
+\newglossaryentry{abk:lpda}{name={LPDA},description={Log-Periodic Dipole Array},type=abk}
 \newglossaryentry{abk:lna}{name={LNA},description={Low-Noise Amplifier},type=abk}
 \newglossaryentry{abk:lo}{name={LO},description={Local Oscillator},type=abk}
 \newglossaryentry{abk:rx}{name={RX},description={Receive channel},type=abk}
