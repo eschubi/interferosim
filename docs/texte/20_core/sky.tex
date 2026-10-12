@@ -1,5 +1,6 @@
 % docs/texte/20_core/sky.tex -- chapter "Sky Models" (Interferosim)
-% Version: 0.2.0 (2026-10-12) -- package interferosim.sky implemented
+% Version: 0.2.1 (2026-10-12) -- catalogue of known sources (A-team, Orion A)
+%   0.2.0: package interferosim.sky implemented
 %   0.1.0: placeholder
 % ================================================================
 \label{ch:sky-models}
@@ -66,6 +67,40 @@ Example skies are in \texttt{configs/skies/}:
   \item \texttt{sun\_21cm.json} -- the quiet Sun at 21\,cm,
         $T_b = 10^5\,\mathrm{K}$, $34'$, limb brightening $+50\,\%$.
 \end{itemize}
+
+\subsection{Known sky regions}
+\index{A-team}
+Models of well-known strong radio sources at $1420\,\mathrm{MHz}$
+(Tab.~\ref{tab:known-skies}). The flux densities of the four ``A-team''
+sources follow from the polynomial fits
+$\log S = \sum_k a_k (\log \nu_{\mathrm{GHz}})^k$ of the VLA calibrator
+scale~\cite{perley2017}, epoch 2016. Cas~A and Tau~A fade secularly; their
+values are reduced to epoch 2026 with $0.67\,\%/\mathrm{yr}$~\cite{trotter2017}
+and $0.25\,\%/\mathrm{yr}$~\cite{perley2017}. The structure is reduced to a
+few components, enough for the visibility amplitude to fall off with the
+baseline length in the right range; fine structure is not modelled. Each
+file documents its sources and simplifications in \texttt{\_note}.
+
+\begin{table}[htbp]
+\centering
+\caption{Known sky regions in \texttt{configs/skies/} ($1420\,\mathrm{MHz}$).}
+\label{tab:known-skies}
+\begin{tabular}{@{}llr>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\toprule
+File & Source & $S$ [Jy] & Model \\
+\midrule
+\texttt{cas\_a.json}   & Cas A, SNR           & 1636 & limb-brightened disc, $5'$ \\
+\texttt{cyg\_a.json}   & Cyg A, radio galaxy  & 1556 & two lobes with hotspots $\approx 2'$ apart, core \\
+\texttt{tau\_a.json}   & Tau A (Crab), PWN    &  806 & elliptical Gaussian $7'\times5'$ \\
+\texttt{vir\_a.json}   & Vir A (M87)          &  210 & core, jet knot, inner lobes, halo (split estimated) \\
+\texttt{orion\_a.json} & Orion A (M42), HII   & $\approx 400$ & core, extended nebula, M43 (approximate) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The notebook \texttt{01\_sky\_models.ipynb} offers a selector (sky file,
+colour scale, view: map, overview, visibility amplitude over the baseline)
+and a static gallery of all files.
 
 \section{Maps}
 

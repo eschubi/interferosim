@@ -1,0 +1,61 @@
+{
+  "_note": "Cygnus A (3C 405), radio galaxy, at 1420 MHz. Total flux density 1556 Jy from Perley & Butler 2017, ApJS 230, 7 (arXiv:1609.05940), no secular change. Model: two Gaussian lobes on the jet axis (PA ~ -70 deg, north through east), compact hotspots at their outer ends ~62\" (west, hotspot A) and ~67\" (east, hotspot D) from the core, plus the flat-spectrum core (~0.6 Jy). The lobe/hotspot split (hotspots ~10 % of each lobe) and W:E ~ 52:48 are approximate; they give the correct total and a realistic fall-off of |V| with baseline length.",
+  "name": "cyg_a",
+  "center": {
+    "label": "Cyg A",
+    "ra_deg": 299.868167,
+    "dec_deg": 40.733917
+  },
+  "components": [
+    {
+      "name": "West lobe",
+      "dx_deg": -0.0130513,
+      "dy_deg": 0.0047503,
+      "flux_jy": 725.4,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0125,
+      "fwhm_y_deg": 0.0069444,
+      "pa_deg": -20.0
+    },
+    {
+      "name": "West hotspot A",
+      "dx_deg": -0.0161836,
+      "dy_deg": 0.0058903,
+      "flux_jy": 80.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0008333,
+      "fwhm_y_deg": 0.0005556,
+      "pa_deg": -20.0
+    },
+    {
+      "name": "East lobe",
+      "dx_deg": 0.0143564,
+      "dy_deg": -0.0052253,
+      "flux_jy": 675.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0125,
+      "fwhm_y_deg": 0.0069444,
+      "pa_deg": -20.0
+    },
+    {
+      "name": "East hotspot D",
+      "dx_deg": 0.0174887,
+      "dy_deg": -0.0063654,
+      "flux_jy": 75.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0008333,
+      "fwhm_y_deg": 0.0005556,
+      "pa_deg": -20.0
+    },
+    {
+      "name": "Core",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 0.6,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    }
+  ]
+}

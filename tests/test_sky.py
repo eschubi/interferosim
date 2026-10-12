@@ -71,7 +71,8 @@ def test_demo_matches_aas6sim():
     assert sky["Compact source K1"].fwhm_x_deg == pytest.approx(2.1 * AM)
 
 
-@pytest.mark.parametrize("name", ["aas6_demo", "w3oh_masers", "sun_21cm"])
+@pytest.mark.parametrize("name", ["aas6_demo", "w3oh_masers", "sun_21cm", "cas_a",
+                                  "cyg_a", "tau_a", "vir_a", "orion_a"])
 def test_example_skies_load(name):
     sky = SkyModel.from_json(ROOT / "configs" / "skies" / f"{name}.json")
     assert len(sky) > 0 and sky.total_flux_jy > 0
@@ -165,3 +166,12 @@ def test_cli_writes_png(tmp_path):
     out = tmp_path / "demo.png"
     assert main(["--demo", "--overview", "--npix", "128", "-o", str(out)]) == 0
     assert out.stat().st_size > 1000
+
+
+# Perley & Butler (2017) at 1.42 GHz; Cas A and Tau A corrected to epoch 2026
+@pytest.mark.parametrize("name, flux", [("cas_a", 1636.0), ("cyg_a", 1556.0),
+                                        ("tau_a", 806.0), ("vir_a", 210.0)])
+def test_a_team_total_flux(name, flux):
+    sky = SkyModel.from_json(ROOT / "configs" / "skies" / f"{name}.json")
+    assert sky.total_flux_jy == pytest.approx(flux, rel=1e-3)
+    assert sky.center.ra_deg is not None and sky.note

@@ -1,0 +1,51 @@
+{
+  "_note": "Virgo A (M87, 3C 274), radio galaxy, at 1420 MHz. Total flux density 210 Jy from Perley & Butler 2017, ApJS 230, 7 (arXiv:1609.05940). Model (approximate split): core plus jet as compact components, the inner lobes (~2' x 1.2') and the diffuse halo (~10' x 8', total extent ~14'). The split between inner lobes and halo is an estimate, only the total is a calibrator value.",
+  "name": "vir_a",
+  "center": {
+    "label": "Vir A (M87)",
+    "ra_deg": 187.705931,
+    "dec_deg": 12.391123
+  },
+  "components": [
+    {
+      "name": "Core",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 3.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Jet (knot A)",
+      "dx_deg": -0.0052205,
+      "dy_deg": 0.0019001,
+      "flux_jy": 2.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Inner lobes",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 135.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0333333,
+      "fwhm_y_deg": 0.02,
+      "pa_deg": -20.0
+    },
+    {
+      "name": "Halo",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 70.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.1666667,
+      "fwhm_y_deg": 0.1333333,
+      "pa_deg": 0.0
+    }
+  ]
+}

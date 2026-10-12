@@ -1,0 +1,41 @@
+{
+  "_note": "Orion A (M42, NGC 1976), HII region, at 1420 MHz. Approximate model: total ~400 Jy (uncertainty ~20 %; at 1.4 GHz the core is partly optically thick, so the flux depends on frequency and resolution). Compact core around the Trapezium (~4') plus the extended nebula including M43 (~15'). Use for qualitative simulations only.",
+  "name": "orion_a",
+  "center": {
+    "label": "Orion A (M42)",
+    "ra_deg": 83.822083,
+    "dec_deg": -5.391111
+  },
+  "components": [
+    {
+      "name": "M42 core",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 240.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0666667,
+      "fwhm_y_deg": 0.0583333,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "M42 extended",
+      "dx_deg": -0.02,
+      "dy_deg": 0.03,
+      "flux_jy": 140.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.25,
+      "fwhm_y_deg": 0.2,
+      "pa_deg": 30.0
+    },
+    {
+      "name": "M43",
+      "dx_deg": 0.0,
+      "dy_deg": 0.12,
+      "flux_jy": 20.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.0416667,
+      "fwhm_y_deg": 0.0416667,
+      "pa_deg": 0.0
+    }
+  ]
+}

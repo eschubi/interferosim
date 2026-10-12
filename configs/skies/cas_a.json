@@ -1,0 +1,21 @@
+{
+  "_note": "Cassiopeia A (3C 461), supernova remnant, at 1420 MHz. Flux density from the polynomial of Perley & Butler 2017, ApJS 230, 7 (arXiv:1609.05940): 1749 Jy at epoch 2016, reduced by the secular decline of 0.67 %/yr (arXiv:1704.00002) to 1636 Jy for epoch 2026. Model: limb-brightened disc of 5.0' diameter approximating the bright radio shell (radius ~2.5'). Fine structure (knots, the fainter plateau out to ~8') is not modelled.",
+  "name": "cas_a",
+  "center": {
+    "label": "Cas A",
+    "ra_deg": 350.85,
+    "dec_deg": 58.815
+  },
+  "components": [
+    {
+      "name": "Cas A shell",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 1636.0,
+      "kind": "disc",
+      "diameter_deg": 0.0833333,
+      "limb": 3.0,
+      "limb_power": 6.0
+    }
+  ]
+}

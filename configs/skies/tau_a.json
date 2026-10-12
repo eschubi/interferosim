@@ -1,0 +1,21 @@
+{
+  "_note": "Taurus A (Crab Nebula, M1, 3C 144), pulsar wind nebula, at 1420 MHz. Flux density 826 Jy at epoch 2016 from Perley & Butler 2017, ApJS 230, 7 (arXiv:1609.05940), reduced by ~0.25 %/yr to 806 Jy for 2026. Model: elliptical Gaussian 7' x 5', major axis at PA ~125 deg (north through east) = pa_deg -35 in the Interferosim convention. The pulsar (~0.015 Jy at 1.4 GHz) is negligible.",
+  "name": "tau_a",
+  "center": {
+    "label": "Tau A (Crab)",
+    "ra_deg": 83.633083,
+    "dec_deg": 22.0145
+  },
+  "components": [
+    {
+      "name": "Crab nebula",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 806.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.1166667,
+      "fwhm_y_deg": 0.0833333,
+      "pa_deg": -35.0
+    }
+  ]
+}
