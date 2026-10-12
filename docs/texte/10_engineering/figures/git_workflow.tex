@@ -1,0 +1,80 @@
+% docs/texte/10_engineering/figures/git_workflow.tex -- workflow diagram of a working session (TikZ)
+% Version: 0.1.0 (2026-10-12)
+% Flow of chapter "Version Control", section "Daily work": update, work,
+% test, review, commit, push; optional release with version, tag and
+% push --tags. Left column: local working copy; right: GitHub.
+\begin{tikzpicture}[
+    node distance=5mm and 9mm,
+    >=Stealth, font=\footnotesize\sffamily,
+    wfstep/.style={draw, thick, rounded corners=2pt, fill=blue!6,
+                 minimum width=46mm, minimum height=7mm, align=center},
+    cmd/.style={font=\scriptsize\ttfamily, text=black!70},
+    dec/.style={draw, thick, diamond, aspect=2.4, fill=orange!12,
+                inner sep=1pt, align=center},
+    term/.style={draw, thick, rounded corners=3.5mm, fill=gray!15,
+                 minimum width=30mm, minimum height=7mm},
+    remote/.style={draw, thick, fill=green!8, minimum width=30mm,
+                   minimum height=16mm, align=center},
+    flow/.style={->, thick},
+  ]
+  % ---- main flow (local) ---------------------------------------------
+  \node[term] (start) {start of session};
+  \node[wfstep, below=of start] (act)  {activate environment\\[-1pt]
+        {\scriptsize\ttfamily .venv\textbackslash Scripts\textbackslash Activate.ps1}};
+  \node[wfstep, below=of act]   (pull) {update working copy\\[-1pt]{\scriptsize\ttfamily git pull}};
+  \node[wfstep, below=of pull]  (work) {work: edit code, notebooks, docs};
+  \node[wfstep, below=of work]  (test) {run the tests\\[-1pt]{\scriptsize\ttfamily pytest -q}};
+  \node[dec,  below=of test]  (ok)   {all tests\\pass?};
+  \node[wfstep, below=of ok]    (rev)  {review changes\\[-1pt]{\scriptsize\ttfamily git status\quad git diff}};
+  \node[wfstep, below=of rev]   (add)  {select files\\[-1pt]{\scriptsize\ttfamily git add <files>}};
+  \node[wfstep, below=of add]   (com)  {commit\\[-1pt]{\scriptsize\ttfamily git commit -m "..."}};
+  \node[dec,  below=of com]   (rel)  {release?};
+  \node[wfstep, below=of rel]   (push) {upload\\[-1pt]{\scriptsize\ttfamily git push}};
+  \node[term, below=22mm of push]  (end)  {end of session};
+
+  % ---- remote: GitHub, right of "update working copy" --------------------
+  \node[remote, right=32mm of pull] (gh)
+        {\textbf{GitHub}\\[1pt]{\scriptsize\ttfamily eschubi/interferosim}\\[-1pt]
+         {\scriptsize\ttfamily origin/main}};
+
+  % ---- release branch, below GitHub in the right column -------------------
+  \node[wfstep, fill=yellow!12, minimum width=44mm] (ver) at (rel -| gh)
+        {raise version, CHANGELOG\\[-1pt]
+         {\scriptsize\ttfamily pyproject.toml, \_\_init\_\_.py}};
+  \node[wfstep, below=of ver, fill=yellow!12, minimum width=44mm] (rcom)
+        {release commit and tag\\[-1pt]{\scriptsize\ttfamily git commit\quad git tag v0.3.0}};
+  \node[wfstep, below=of rcom, fill=yellow!12, minimum width=44mm] (rpush)
+        {upload with tags\\[-1pt]{\scriptsize\ttfamily git push\quad git push --tags}};
+
+  % ---- arrows ----------------------------------------------------------
+  \draw[flow] (start) -- (act);
+  \draw[flow] (act)   -- (pull);
+  \draw[flow] (pull)  -- (work);
+  \draw[flow] (work)  -- (test);
+  \draw[flow] (test)  -- (ok);
+  \draw[flow] (ok)    -- node[right]{yes} (rev);
+  \draw[flow] (ok.west) -- node[above]{no} ++(-12mm,0) |- node[pos=0.25,left]{fix} (work.west);
+  \draw[flow] (rev)   -- (add);
+  \draw[flow] (add)   -- (com);
+  \draw[flow] (com)   -- (rel);
+  \draw[flow] (rel)   -- node[right]{no} (push);
+  \draw[flow] (rel)   -- node[above]{yes} (ver);
+  \draw[flow] (ver)   -- (rcom);
+  \draw[flow] (rcom)  -- (rpush);
+  \draw[flow] (push)  -- (end);
+  \draw[flow] (rpush.south) |- (end.east);
+
+  % ---- data exchange with GitHub (dashed) ----------------------------------
+  \coordinate (corr) at ($(pull.east)!0.45!(gh.west)$);   % corridor between the columns
+  \draw[->, thick, dashed, green!45!black] ($(gh.west)+(0,3mm)$) -- node[above, font=\scriptsize]{pull}
+        ($(pull.east)+(0,3mm)$);
+  \draw[->, thick, dashed, green!45!black] (push.east) -- (push.east -| corr)
+        node[pos=0.5, below, font=\scriptsize]{push}
+        |- ($(gh.west)+(0,-3mm)$);
+  \draw[->, thick, dashed, green!45!black] (rpush.east) -- ++(8mm,0)
+        node[right, font=\scriptsize, align=left]{push\\tags} |- (gh.east);
+
+  % columns
+  \node[font=\scriptsize\itshape, text=black!60, above=1mm of start] {local working copy};
+  \node[font=\scriptsize\itshape, text=black!60, above=1mm of gh] {remote};
+\end{tikzpicture}

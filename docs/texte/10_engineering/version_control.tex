@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/version_control.tex -- chapter "Version Control" (Interferosim)
-% Version: 0.1.1 (2026-10-12) -- complete command-line example in 16.3
+% Version: 0.1.2 (2026-10-12) -- workflow diagram in 16.3
+%   0.1.1: complete command-line example in 16.3
 % ================================================================
 
 \index{version control}\index{git}\index{GitHub}
@@ -43,6 +44,18 @@ project root.
 \end{itemize}
 
 \section{Daily work with GitHub Desktop}
+
+Figure~\ref{fig:git-workflow} shows the course of a working session; the
+steps are the same in GitHub Desktop and on the command line.
+
+\begin{figure}[htbp]
+  \centering
+  \input{texte/10_engineering/figures/git_workflow.tex}
+  \caption{Workflow of a working session: update, work, test, review,
+           commit and upload; for a release additionally version,
+           CHANGELOG and tag. Dashed: data exchange with GitHub.}
+  \label{fig:git-workflow}
+\end{figure}
 
 \begin{enumerate}
   \item \textbf{Once:} \emph{File $\rightarrow$ Add local repository}
