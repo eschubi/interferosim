@@ -17,7 +17,8 @@ strictly higher than the previous one.
   spectra per component, `TransitSimulator`, module `visdata`).
 - Configuration: `configs/antennas/yagi.toml` (template),
   `configs/sites/aas6_sim_stations.toml` (stations A/B of the AAS6
-  simulation); longitude and altitude of `wilhelmsburg.toml`.
+  simulation); `wilhelmsburg.toml` with the confirmed position of station A
+  (48.088056°, 15.756111°, 470 m).
 - `binder/postBuild`; `repository-code` in `CITATION.cff`.
 - `build_api_docs.bat` / `build_api_docs.ps1`: install Doxygen (winget) if
   needed, generate and open the API documentation.

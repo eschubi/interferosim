@@ -1,7 +1,10 @@
-# configs/sites/wilhelmsburg.toml -- example site of the notebooks and aas6sim
-# Version 0.2.0 (2026-10-12): longitude and altitude added from aas6sim 1.3.1
-#                             (model.Instrument: lat 48.11, lon 15.61, 280 m)
+# configs/sites/wilhelmsburg.toml -- site Wilhelmsburg (station A of the interferometer)
+# Version 0.3.0 (2026-10-12): coordinates of station A of the AAS6 simulation
+#   (sb_iq_sim_a.json), confirmed by E. Schubert as the valid position.
+#   Earlier values: notebooks A/B latitude 48.11; aas6sim 1.3.1
+#   model.Instrument 48.11 / 15.61 / 280 m -- no longer used.
+# Version 0.2.0: longitude and altitude added from aas6sim 1.3.1
 name = "Wilhelmsburg"
-latitude_deg = 48.11
-longitude_deg = 15.61
-altitude_m = 280.0
+latitude_deg = 48.088056
+longitude_deg = 15.756111
+altitude_m = 470.0
