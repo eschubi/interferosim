@@ -19,6 +19,8 @@ strictly higher than the previous one.
   `configs/sites/aas6_sim_stations.toml` (stations A/B of the AAS6
   simulation); longitude and altitude of `wilhelmsburg.toml`.
 - `binder/postBuild`; `repository-code` in `CITATION.cff`.
+- `build_api_docs.bat` / `build_api_docs.ps1`: install Doxygen (winget) if
+  needed, generate and open the API documentation.
 
 ## [0.2.1] — 2026-10-12
 

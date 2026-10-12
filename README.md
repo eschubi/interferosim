@@ -71,6 +71,9 @@ The source code documentation is generated with Doxygen
 doxygen Doxyfile                    # -> docs/api/html/index.html
 ```
 
+On Windows `build_api_docs.bat` does everything, including the
+installation of Doxygen with winget.
+
 ## Licence
 
 Creative Commons Attribution 4.0 International (CC BY 4.0), see `LICENSE`.

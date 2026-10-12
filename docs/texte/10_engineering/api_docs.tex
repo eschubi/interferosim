@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/api_docs.tex -- chapter "API Documentation" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.1.1 (2026-10-12) -- script build_api_docs
+%   0.1.0: first version
 % ================================================================
 
 \index{Doxygen}\index{API documentation}
@@ -26,7 +27,14 @@ generated with Doxygen from the docstrings of the package
 
 \section{Generating the documentation}
 
-In the project folder:
+\paragraph*{With the script (Windows).} \texttt{build\_api\_docs.bat}
+(double-click) or \texttt{build\_api\_docs.ps1} finds Doxygen, installs
+it with \texttt{winget} if it is missing (package
+\texttt{DimitriVanHeesch.Doxygen}), generates the documentation and opens
+the start page. Options: \texttt{-Pdf} (also the PDF reference manual),
+\texttt{-NoOpen}, \texttt{-NoInstall}.
+
+\paragraph*{By hand.} In the project folder:
 \begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
 doxygen Doxyfile                       # HTML and LaTeX into docs/api/
 start docs\api\html\index.html         # open in the browser (Windows)
