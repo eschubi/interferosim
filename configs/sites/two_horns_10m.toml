@@ -1,0 +1,18 @@
+# configs/sites/two_horns_10m.toml -- two horns on one B210, 10 m east-west (notebook B)
+# Version 0.1.0 (2026-10-12)
+# Source: notebook B (Appendix B, Sun transit) and aas6sim simulate.solar_transit
+# (baseline_m = 10.0, east-west, horns of 15 dBi on the two RX channels of one B210).
+# The stations are given as offsets from the site in metres.
+name = "Two horns, 10 m east-west"
+reference = "H1"
+site = "wilhelmsburg"
+antenna = "horn_15dbi"
+receiver = "b210"
+
+[stations.H1]
+east_m = 0.0
+north_m = 0.0
+
+[stations.H2]
+east_m = 10.0
+north_m = 0.0

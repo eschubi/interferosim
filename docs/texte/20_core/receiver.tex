@@ -1,7 +1,61 @@
 % docs/texte/20_core/receiver.tex -- chapter "Receiver" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-12) -- class Receiver, B210 profile, sensitivity
+%   0.1.0: placeholder
 % ================================================================
+\label{ch:receiver}
+\index{receiver}\index{SEFD}
 
-Receiver model with system temperature and bandwidth; device profile
-of the Ettus USRP B210 (two RX channels, common LO and clock) in
-\texttt{configs/receivers/b210.toml}. \emph{Follows in phase~2.}
+The class \texttt{interferosim.instrument.Receiver} holds the system
+temperature and the sampling parameters of the SDR; together with an
+antenna it gives the system equivalent flux density and the radiometer
+noise. The device profile of the Ettus USRP B210 is
+\texttt{configs/receivers/b210.toml} (settings of notebook~B); unknown
+keys of the file are kept in \texttt{extra}.
+
+\section{Device profile Ettus USRP B210}
+
+\begin{center}
+\begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{6.4cm}@{}}
+\toprule
+Key & Value & Remark \\
+\midrule
+\texttt{rx\_channels} & 2 & RX-A and RX-B, common LO and clock \\
+\texttt{sample\_rate\_sps} & $2\cdot10^6$ & complex samples per channel \\
+\texttt{bandwidth\_hz} & $2\cdot10^6$ & analysed band \\
+\texttt{bits} & 16 & \\
+\texttt{t\_sys\_k} & 120 & system temperature of the notebooks \\
+\texttt{agc} & false & fixed manual gain \\
+\texttt{clock\_source} & internal & GPSDO only for frequency stability \\
+\bottomrule
+\end{tabular}
+\end{center}
+The AD9361 resets the phase between the two channels on every retune:
+tune once, then calibrate the fixed offset with a common noise source.
+
+\section{Sensitivity}
+
+\begin{align}
+  \mathrm{SEFD} &= \frac{2kT_\mathrm{sys}}{A_\mathrm{eff}}
+     && \texttt{sefd\_jy(antenna, f)}\\
+  \sigma_S &= \frac{\mathrm{SEFD}}{\sqrt{B\tau}}
+     && \texttt{single\_dish\_sigma\_jy(antenna, t, f)}\\
+  \sigma_V &= \frac{\sqrt{\mathrm{SEFD}_1\,\mathrm{SEFD}_2}}{\sqrt{2B\tau}}
+     && \texttt{baseline\_sigma\_jy(a1, a2, t, f)}
+\end{align}
+$\sigma_V$ is the noise of the real and of the imaginary part of one
+visibility (convention of \texttt{aas6sim}). For the B210 profile
+($B = 2\,\mathrm{MHz}$) and $\tau = 10\,\mathrm{s}$:
+\begin{center}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Array & baseline & $\sigma_V$ (10\,s) & $|V|/\sigma_V$: Sun, Cyg A \\
+\midrule
+two dishes 3\,m (AAS6 simulation) & 11.09\,km & 12.4\,Jy & 1.2, 1.7 \\
+two horns 15\,dBi (notebook B) & 10\,m & 467\,Jy & 752, 3.3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+On the long baseline the sources are largely resolved (chapter
+\enquote{Sky Models}); on the short one the Sun dominates by far. The
+notebook \texttt{02\_instrument.ipynb} computes the table for all
+sky models.

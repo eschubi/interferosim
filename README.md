@@ -8,9 +8,11 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.2.2 — sky models implemented (`interferosim.sky`, maps in
-`interferosim.plotting`, notebook `notebooks/01_sky_models.ipynb` with a
-selector for all example skies). The
+**Status:** 0.3.0 — sky models (`interferosim.sky`, notebook
+`01_sky_models.ipynb` with a selector for all example skies) and
+instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
+Ettus USRP B210 receiver, sites, stations and arrays; notebook
+`02_instrument.ipynb`) implemented. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 
@@ -55,6 +57,20 @@ visibility amplitude over the baseline;
 `interferosim.plotting.plot_sky_gallery()` draws all of them side by side.
 
 ![Example skies](docs/images/sky_gallery.png)
+
+## Instrument
+
+```python
+from interferosim.instrument import Antenna, Receiver, Array
+dish = Antenna.from_toml("configs/antennas/dish_3m.toml")
+b210 = Receiver.from_toml("configs/receivers/b210.toml")
+arr  = Array.from_toml("configs/sites/aas6_sim_stations.toml")   # site, dishes, B210
+b210.sefd_jy(dish), arr.baselines_enu(), b210.baseline_sigma_jy(dish, dish, 10.0)
+```
+
+Antennas: `horn_15dbi`, `dish_3m`, `yagi` (typical example values);
+arrays: `aas6_sim_stations` (two 3 m dishes, 11.1 km east-west) and
+`two_horns_10m` (notebook B).
 
 ## Processing chain
 

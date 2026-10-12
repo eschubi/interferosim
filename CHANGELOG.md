@@ -6,6 +6,31 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-10-12
+
+### Added
+- Package `interferosim.instrument`:
+  - `Antenna` (abstract) with `Horn`, `Yagi`, `ParabolicDish`: gain,
+    effective area, HPBW, primary beam, `jy_to_k`, `from_toml`; dish with
+    `u_max`, `u_cut_eff`, `otf` (from aas6sim `model.Instrument`).
+  - `Receiver` (B210 profile): `sefd_jy`, `single_dish_sigma_jy`,
+    `baseline_sigma_jy`.
+  - `Site`, `Station`, `Array`: WGS84 <-> ECEF (from AAS6
+    `interfero/geometry.py`), local east/north/up frame, baselines;
+    `Array.from_toml` reads site, antennas and receiver named in the file.
+- `interferosim.plotting`: `plot_beams`, `plot_array`.
+- Notebook `02_instrument.ipynb` (antennas, dish transfer function,
+  sensitivity of both arrays for the sky models, arrays, selector).
+- `configs/sites/two_horns_10m.toml` (notebook B); `aas6_sim_stations.toml`
+  names site, antenna and receiver.
+- Documentation: chapters "Antennas" (implementation), "Receiver",
+  "Stations and Array" (new), "Interactive Notebooks"; data formats and
+  UML diagram updated.
+
+### Changed
+- `configs/antennas/yagi.toml`: typical example values (13 elements,
+  0.85 m boom, 15 dBi) instead of `nan` (decision 2026-10-12).
+
 ## [0.2.2] — 2026-10-12
 
 ### Added

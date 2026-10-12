@@ -1,5 +1,7 @@
 % docs/texte/10_engineering/data_formats.tex -- chapter "Data Formats" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-12) -- arrays: site/antenna/receiver references,
+%   stations as offsets east/north/up; horn design_freq_hz
+%   0.1.0: first version
 % ================================================================
 \label{ch:data-formats}
 \index{data formats}
@@ -35,7 +37,7 @@ See chapter~\ref{ch:sky-models}. JSON with \texttt{center}
 \toprule
 \texttt{type} & Keys \\
 \midrule
-\texttt{horn} & \texttt{gain\_dbi} \\
+\texttt{horn} & \texttt{gain\_dbi}, optional \texttt{design\_freq\_hz} (fixed aperture) \\
 \texttt{dish} & \texttt{diameter\_m}, \texttt{aperture\_efficiency}, \texttt{beam\_factor} \\
 \texttt{yagi} & \texttt{n\_elements}, \texttt{boom\_length\_m}, \texttt{gain\_dbi},
                 \texttt{design\_freq\_hz}, \texttt{polarisation} \\
@@ -56,6 +58,14 @@ table \texttt{[stations.<id>]} per station with \texttt{latitude\_deg},
 \texttt{longitude\_deg}, \texttt{height\_m} (WGS84). The two stations of
 the AAS6 simulation are in \texttt{aas6\_sim\_stations.toml}
 (from \texttt{sb\_iq\_sim\_a/b.json}).
+Instead of the geodetic position a station may be given as offset from
+the site in metres (\texttt{east\_m}, \texttt{north\_m}, \texttt{up\_m}),
+e.\,g.\ \texttt{two\_horns\_10m.toml}. A group of stations may name
+further configuration files by their name without \texttt{.toml}:
+\texttt{site} (in \texttt{configs/sites/}), \texttt{antenna} (in
+\texttt{configs/antennas/}, also per station) and \texttt{receiver} (in
+\texttt{configs/receivers/}); \texttt{Array.from\_toml()} reads them
+(chapter~\ref{ch:array}).
 
 \section{Visibilities (FITS)}
 

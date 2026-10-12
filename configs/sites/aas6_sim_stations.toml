@@ -1,9 +1,14 @@
 # configs/sites/aas6_sim_stations.toml -- the two stations of the AAS6 interferometer simulation
+# Version 0.2.0 (2026-10-12): site, antenna (sim_dish_d_m = 3.0 in AAS6) and
+#   receiver added, readable with interferosim.instrument.Array.from_toml
 # Version 0.1.0 (2026-10-12)
 # Source: AAS6 json/nodes/sb_iq_sim_a.json and sb_iq_sim_b.json ("sim_stations").
 # Station A is the reference; B lies about 11 km east of A (same latitude).
 name = "AAS6 simulation, two stations"
 reference = "A"
+site = "wilhelmsburg"        # configs/sites/wilhelmsburg.toml (= station A)
+antenna = "dish_3m"          # configs/antennas/dish_3m.toml
+receiver = "b210"            # configs/receivers/b210.toml
 
 [stations.A]
 latitude_deg = 48.088056
