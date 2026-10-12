@@ -1,5 +1,5 @@
 % docs/texte/10_engineering/version_control.tex -- chapter "Version Control" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.1.1 (2026-10-12) -- complete command-line example in 16.3
 % ================================================================
 
 \index{version control}\index{git}\index{GitHub}
@@ -65,6 +65,52 @@ git add <files>               # select files for the commit
 git commit -m "Summary"       # commit (opens an editor without -m)
 git push                      # upload to GitHub
 git log --oneline             # history
+\end{lstlisting}
+
+\paragraph*{Complete workflow on the command line.} A full working
+session in PowerShell, from updating the working copy to the upload, here
+for a change in the sky package:
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+# 1. go to the project and activate the project environment
+cd C:\Users\erich\Dropbox\work-astro\Astro\Astronomie\sem11\open-source\interferosim
+.venv\Scripts\Activate.ps1
+
+# 2. get the current state from GitHub
+git pull
+
+# 3. work: edit files (editor, Jupyter, ...)
+
+# 4. run the tests -- only continue if all pass
+pytest -q
+
+# 5. review the changes
+git status                         # changed / new files
+git diff                           # line-by-line changes
+
+# 6. select the files that belong to this change
+git add src/interferosim/sky/components.py tests/test_sky.py
+
+# 7. commit: summary line, empty line, description
+git commit -m "sky: add ring component" -m "RingSource with analytic visibility; tests added."
+
+# 8. upload
+git push
+
+# 9. check
+git log --oneline -3
+git status                         # "Your branch is up to date with 'origin/main'"
+\end{lstlisting}
+
+\paragraph*{Release.} For a new version the same session ends with a
+version change and a tag:
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+# version in pyproject.toml and src/interferosim/__init__.py raised to 0.3.0,
+# entry in CHANGELOG.md written, tests passed
+git add pyproject.toml src/interferosim/__init__.py CHANGELOG.md
+git commit -m "Interferosim 0.3.0: <short summary>"
+git tag v0.3.0
+git push
+git push --tags
 \end{lstlisting}
 
 \section{Commits and releases}
