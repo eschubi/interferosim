@@ -1,0 +1,47 @@
+% docs/texte/05_theory/imaging.tex -- theory chapter "Imaging" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{dirty image}\index{dirty beam}\index{weighting}
+\section{Dirty image and dirty beam}
+
+The measured visibilities are $\mathcal S(u,v)\,\mathcal V(u,v)$. Their
+inverse Fourier transform, with imaging weights $W(u,v)$, is the
+\emph{dirty image}
+\begin{equation}
+  I_D(l,m) = \iint W\,\mathcal S\,\mathcal V\;
+             e^{+2\pi i\,(ul+vm)}\,\mathrm{d}u\,\mathrm{d}v
+           = (A\,I) * B_D ,
+\end{equation}
+the true (beam-weighted) sky convolved with the \emph{dirty beam}
+\begin{equation}
+  B_D(l,m) = \iint W\,\mathcal S\;e^{+2\pi i\,(ul+vm)}\,\mathrm{d}u\,\mathrm{d}v .
+\end{equation}
+$B_D$ is the point spread function (PSF) of the array. Normalising
+$B_D(0,0)=1$ gives $I_D$ in Jy\,beam$^{-1}$: a point source shows its
+flux density as peak value.
+
+\section{Gridding}
+
+To use the FFT, the visibilities are placed on a regular grid of
+$N\times N$ cells. For an image of $N$ pixels of size $\Delta l$ the
+cell size in the $(u,v)$ plane is $\Delta u = 1/(N\,\Delta l)$.
+Interferosim currently uses nearest-cell gridding (each sample is added
+to the nearest cell); convolutional gridding is a possible extension.
+
+\section{Weighting}
+
+The weights $W$ trade sensitivity against beam shape:
+\begin{itemize}
+  \item \textbf{Natural weighting}: every sample has the same weight
+        (or $1/\sigma^2$). Best signal-to-noise ratio, but densely
+        sampled regions dominate and the beam has higher sidelobes.
+  \item \textbf{Uniform weighting}: every occupied cell has the same
+        weight, $W_k = 1/N_k$ for $N_k$ samples in cell $k$. Better
+        beam, more noise.
+  \item \textbf{Robust (Briggs) weighting} \cite{briggs1995}
+        interpolates continuously between both.
+\end{itemize}
+The Wiener weighting of chapter~\ref{ch:deconvolution} is another
+interpolation of the same kind.

@@ -1,0 +1,64 @@
+% docs/texte/05_theory/uv_coverage.tex -- theory chapter "Earth Rotation Synthesis and uv-Coverage" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{uv-coverage}\index{Earth rotation synthesis}
+\section{Baseline coordinates}
+
+Baselines are expressed in an equatorial system: $X$ towards
+$(H=0,\delta=0)$, $Y$ towards $(H=-6^{\mathrm h},\delta=0)$ (east) and
+$Z$ towards the celestial pole. A baseline given in local coordinates
+(east $E$, north $N$, up $U$) at latitude $\varphi$ becomes
+\begin{equation}
+  L_X = -N\sin\varphi + U\cos\varphi,\qquad
+  L_Y = E,\qquad
+  L_Z = N\cos\varphi + U\sin\varphi .
+\end{equation}
+
+\section{Spatial frequencies}
+
+For a source at hour angle $H$ and declination $\delta$:
+\begin{equation}
+  \begin{pmatrix} u\\ v\\ w \end{pmatrix}
+  = \frac{1}{\lambda}
+  \begin{pmatrix}
+    \sin H & \cos H & 0\\
+    -\sin\delta\cos H & \sin\delta\sin H & \cos\delta\\
+    \cos\delta\cos H & -\cos\delta\sin H & \sin\delta
+  \end{pmatrix}
+  \begin{pmatrix} L_X\\ L_Y\\ L_Z \end{pmatrix} .
+  \label{eq:uvw}
+\end{equation}
+For an east--west baseline ($L_X=L_Z=0$, $L_Y=b$) this gives
+\begin{equation}
+  u = \frac{b}{\lambda}\cos H,\qquad
+  v = \frac{b}{\lambda}\sin\delta\,\sin H .
+\end{equation}
+
+\section{Earth rotation synthesis}
+
+As $H$ changes, each baseline traces an ellipse in the $(u,v)$ plane,
+\begin{equation}
+  u^2 + \left(\frac{v - (L_Z/\lambda)\cos\delta}{\sin\delta}\right)^2
+  = \frac{L_X^2+L_Y^2}{\lambda^2},
+\end{equation}
+together with its Hermitian mirror image. The axis ratio is
+$\sin\delta$; a source near the equator gives a strongly flattened track.
+The usable hour-angle range is limited by the elevation of the source,
+\begin{equation}
+  \sin\varepsilon = \sin\varphi\sin\delta + \cos\varphi\cos\delta\cos H ,
+\end{equation}
+and a minimum elevation (Interferosim:
+\texttt{Observation.min\_elev\_deg}).
+
+\section{Coverage and image quality}
+
+The set of measured $(u,v)$ points defines the sampling function
+$\mathcal S(u,v)$. The longest projected baseline sets the resolution,
+$\theta \approx \lambda/b_{\max}$; the shortest one sets the largest
+angular scale that can be recovered, $\approx\lambda/b_{\min}$.
+Emission on larger scales is filtered out. With a single baseline the
+coverage is one ellipse; for the 11.5\,km example baseline less than
+0.1\,\% of the cells of a typical image grid are occupied
+(notebook~A).

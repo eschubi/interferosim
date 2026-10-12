@@ -1,0 +1,46 @@
+% docs/texte/05_theory/signal_chain.tex -- theory chapter "Receiver and Signal Chain" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{SDR}\index{IQ sampling}
+\section{Complex baseband sampling}
+
+A software-defined radio mixes the band around the centre frequency
+down to zero frequency and samples it as complex (IQ) values. Complex
+sampling at a rate $f_s$ covers a bandwidth $\Delta\nu = f_s$. With
+$n$ bits per I and Q value the raw data rate per channel is
+\begin{equation}
+  R = \frac{2\,n\,f_s}{8}\ \mathrm{bytes\,s^{-1}},
+\end{equation}
+e.\,g.\ 8\,MB\,s$^{-1}$ for $f_s = 2\,\mathrm{MHz}$ and $n=16$. A
+correlator reduces this to a few products per integration interval.
+
+\section{Two channels on one device}
+
+The Ettus USRP B210 has two receive channels with a common local
+oscillator and a common sample clock. For short baselines this removes
+clock synchronisation, time transfer and fringe search: both channels
+are coherent by construction. One systematic effect remains: the phase
+offset between the channels is set anew on every retune. It is constant
+afterwards and is calibrated by feeding one noise source into both
+inputs through a power splitter.
+
+\section{Receiver settings}
+
+For interferometric measurements the receiver must behave linearly and
+reproducibly: fixed manual gain (no AGC), no automatic DC-offset or IQ
+balance correction during a measurement, equal cable lengths (cable
+differences enter the phase directly). The settings used in the
+simulations are stored in \texttt{configs/receivers/b210.toml}.
+
+\section{Checks of a measurement}
+
+\begin{enumerate}
+  \item The amplitude rises when the source enters the beam.
+  \item The phase advances linearly with the predicted fringe rate,
+        Eq.~\eqref{eq:fringerate}.
+  \item With the antennas covered the correlation must vanish; any
+        remaining correlation is cross-talk (LO, housing, ground), not
+        sky signal.
+\end{enumerate}

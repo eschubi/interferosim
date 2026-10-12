@@ -1,0 +1,15 @@
+# binder/environment.yml -- environment for Binder / JupyterHub
+name: interferosim
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - numpy>=1.24
+  - scipy>=1.10
+  - astropy>=5.0
+  - matplotlib>=3.7
+  - ipywidgets>=8
+  - jupyterlab
+  - pip
+  - pip:
+      - -e ..

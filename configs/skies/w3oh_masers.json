@@ -1,0 +1,41 @@
+{
+  "_note": "OH maser group M1-M3 of the aas6sim demo field (offsets of a few arcsec), field centre W3(OH).",
+  "name": "w3oh_masers",
+  "center": {
+    "label": "W3(OH)",
+    "ra_deg": 36.7661,
+    "dec_deg": 61.8742
+  },
+  "components": [
+    {
+      "name": "Maser M1",
+      "dx_deg": 0.3,
+      "dy_deg": 0.45,
+      "flux_jy": 70.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Maser M2",
+      "dx_deg": 0.30144444444444446,
+      "dy_deg": 0.44958333333333333,
+      "flux_jy": 45.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Maser M3",
+      "dx_deg": 0.3038888888888889,
+      "dy_deg": 0.4525,
+      "flux_jy": 20.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "_note": "Demo field of aas6sim (model.demo_sky()), field centre W3(OH). Positions and fluxes as in AAS6 json/interfero/sim_sky.json; component names translated to English.",
+  "name": "aas6_demo",
+  "center": {
+    "label": "W3(OH)",
+    "ra_deg": 36.7661,
+    "dec_deg": 61.8742
+  },
+  "components": [
+    {
+      "name": "HI base",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 1500.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 12.0,
+      "fwhm_y_deg": 12.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Galactic bar",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 4000.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 8.0,
+      "fwhm_y_deg": 1.6,
+      "pa_deg": 25.0
+    },
+    {
+      "name": "HII region A",
+      "dx_deg": -2.0,
+      "dy_deg": 1.2,
+      "flux_jy": 900.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.7,
+      "fwhm_y_deg": 0.7,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "HII region B",
+      "dx_deg": 2.6,
+      "dy_deg": -1.6,
+      "flux_jy": 550.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.4,
+      "fwhm_y_deg": 0.4,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "SNR shell C",
+      "dx_deg": 1.2,
+      "dy_deg": 2.4,
+      "flux_jy": 350.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 1.1,
+      "fwhm_y_deg": 0.85,
+      "pa_deg": -40.0
+    },
+    {
+      "name": "Compact source K1",
+      "dx_deg": -1.4,
+      "dy_deg": -0.6,
+      "flux_jy": 260.0,
+      "kind": "gauss",
+      "fwhm_x_deg": 0.035,
+      "fwhm_y_deg": 0.035,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Maser M1",
+      "dx_deg": 0.3,
+      "dy_deg": 0.45,
+      "flux_jy": 70.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Maser M2",
+      "dx_deg": 0.30144444444444446,
+      "dy_deg": 0.44958333333333333,
+      "flux_jy": 45.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    },
+    {
+      "name": "Maser M3",
+      "dx_deg": 0.3038888888888889,
+      "dy_deg": 0.4525,
+      "flux_jy": 20.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0
+    }
+  ]
+}

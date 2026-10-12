@@ -1,0 +1,17 @@
+% docs/style/listings-json.tex -- local copy of tex-skripten/formatierungen/listings-json.tex
+% Copied 2026-10-12 so that the repository compiles stand-alone (GitHub).
+% Local version: 1.0.0 -- unchanged copy
+
+% listings-json.tex – JSON-Definition für listings
+\definecolor{stringcolor}{rgb}{0.8,0,0}
+\definecolor{keywordcolor}{rgb}{0,0,0.8}
+\lstdefinelanguage{json}{
+	basicstyle=\footnotesize\ttfamily,
+	stringstyle=\color{stringcolor},
+	morestring=[b]",
+	morecomment=[l]{//},
+	morekeywords={true,false,null},
+	keywordstyle=\color{keywordcolor},
+	showstringspaces=false
+}
+\lstdefinelanguage{bash}{basicstyle=\footnotesize\ttfamily, breaklines=true}

@@ -1,0 +1,87 @@
+% docs/texte/05_theory/deconvolution.tex -- theory chapter "Deconvolution" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\label{ch:deconvolution}
+\index{deconvolution}\index{CLEAN}\index{Wiener filter}
+Deconvolution estimates the true sky from the dirty image. Two
+methods are implemented; which one is suitable depends on whether the
+transfer function $\mathcal S$ has zeros.
+
+\section{Wiener filter}
+
+In the Fourier domain the measurement is
+\begin{equation}
+  D(u,v) = \mathcal S(u,v)\,\tilde I(u,v) + N(u,v)
+\end{equation}
+with the true image $\tilde I$, the transfer function $\mathcal S$ and
+noise $N$. The linear filter $\mathcal W$ that minimises the mean square
+error $E|\hat I - I|^2$ of $\hat I = \mathcal W D$ is the Wiener filter
+\cite{wiener1949}
+\begin{equation}
+  \mathcal W = \frac{\mathcal S^*}{|\mathcal S|^2 + \Phi_n/\Phi_s}
+  \label{eq:wiener}
+\end{equation}
+with the power spectra $\Phi_s$ of the signal and $\Phi_n$ of the
+noise. For $\Phi_n\to0$ it becomes the inverse filter $1/\mathcal S$;
+where the noise dominates it suppresses instead of amplifying.
+
+\paragraph*{Filled aperture.} For a single dish of diameter $D$ the
+transfer function is the autocorrelation of the circular aperture,
+\begin{equation}
+  \mathcal S(q) = \frac{2}{\pi}\left[\arccos\frac{q}{q_c}
+     - \frac{q}{q_c}\sqrt{1-\frac{q^2}{q_c^2}}\right],
+  \qquad q_c = \frac{D}{\lambda},
+\end{equation}
+non-zero everywhere below $q_c$. The Wiener filter compensates its
+decrease and recovers resolution up to the diffraction limit
+(\texttt{deconvolution.WienerFilter}).
+
+\paragraph*{Sparse sampling.} Where $\mathcal S = 0$, Eq.~\eqref{eq:wiener}
+gives $\mathcal W D = 0$ exactly. No linear filter can fill unmeasured
+cells. For an interferometer, where $\mathcal S$ is either zero or the
+number of samples $N_k$ of a cell, the filter reduces to
+$\mathcal W_k = N_k/(N_k^2+K)$ with $K=\Phi_n/\Phi_s$: natural
+weighting for $K\gg N_k^2$, uniform weighting for $K\ll N_k^2$. It is
+therefore modelled as \texttt{imaging.WienerWeighting}.
+
+\section{Högbom CLEAN}
+
+CLEAN \cite{hogbom1974} assumes that the sky consists of a limited
+number of point sources:
+\begin{enumerate}
+  \item Find the peak of the residual image (initially $I_D$).
+  \item Subtract the dirty beam, shifted to the peak position and
+        scaled by the loop gain $g$ (typically 0.05--0.2) times the
+        peak value; store this as a CLEAN component.
+  \item Repeat until the peak falls below a threshold or a maximum
+        number of iterations is reached.
+  \item Convolve the components with the \emph{clean beam} $B_C$ (a
+        Gaussian fitted to the main lobe of $B_D$) and add the residual
+        image.
+\end{enumerate}
+Because the component model has a Fourier transform defined
+everywhere, CLEAN implicitly fills unmeasured $(u,v)$ cells. This
+non-linear extrapolation is justified only if the sparsity assumption
+holds; it is ideal for compact sources such as masers and poor for
+extended emission, which is broken up into many components.
+
+\section{Comparison}
+
+\begin{center}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.4cm}
+                >{\raggedright\arraybackslash}p{5.0cm}
+                >{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+ & Wiener filter & CLEAN \\
+\midrule
+Type & linear & non-linear (greedy) \\
+Prior information & power spectrum of the sky & few positive point sources \\
+Unmeasured cells & stay empty & filled from the model \\
+Suitable for & filled aperture (dish) & sparse sampling (interferometer) \\
+Fails for & gaps in the sampling & extended emission \\
+\bottomrule
+\end{tabular}
+\end{center}
+Notebook~A demonstrates both cases quantitatively.

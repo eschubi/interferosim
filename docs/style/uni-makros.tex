@@ -1,0 +1,279 @@
+% docs/style/uni-makros.tex -- local copy of tex-skripten/formatierungen/uni-makros.tex
+% Copied 2026-10-12 so that the repository compiles stand-alone (GitHub).
+% Local version: 1.0.0 -- unchanged copy
+
+
+
+% bis zur Stufe 6 werden Überschriften nummeriert
+\setcounter{tocdepth}{6}
+\setcounter{secnumdepth}{6} % Kapitelnummerierung bis ...
+
+% Zeilenabstand innerhalb Tabellen vergroessern
+\renewcommand{\arraystretch}{1,5}
+
+% Schusterjungen und Hurenkinder vermeiden (10000 = unendlich)
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+
+%====================================================
+% Kopf- und Fußzeilen einrichten
+%====================================================
+%\clearpairofpagestyles			% default ausschalten
+
+
+%---------------------------------------------------
+
+
+% Schrift Helvetica im gesamten Dokument:
+\def\rmdefault{phv}
+\def\sfdefault{phv}
+\def\ttdefault{pcr}
+
+% damit Listings syntaxgefärbt ausgegeben werden
+\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{Orange}{cmyk}{0.5,0.7,0.9,0}
+\definecolor{lightblue}{rgb}{0.8,0.85,1}
+\definecolor{rahmen}{rgb}{0.9,0.9,0.7}
+\definecolor{syntax}{cmyk}{0.0,0.0,0.8,0.0}
+
+\lstset{frame=ltrb,framesep=5pt,basicstyle=\small,breaklines=true,
+	keywordstyle=\ttfamily\color{OliveGreen},numbers=left,
+	identifierstyle=\ttfamily\color{CadetBlue}\bfseries,commentstyle=\color{Brown},
+	stringstyle=\ttfamily\color{Orange}}
+
+%====================================================
+% für nummerierte Beispiele
+% Klammern mit \begin{bsp}  \end{bsp}
+%====================================================
+\newtheorem{defi}{Definition}[chapter]
+\newtheorem{bsp}[defi]{Beispiel}
+
+%====================================================
+% Farbpalette für TikZ-Diagramme (Skriptum Teil I-III)
+% Wird in allen tex/teil*.tex-Dateien für Diagramme verwendet
+%====================================================
+\definecolor{myblue}{HTML}{185FA5}
+\definecolor{myteal}{HTML}{0F6E56}
+\definecolor{mycoral}{HTML}{993C1D}
+\definecolor{myamber}{HTML}{854F0B}
+\definecolor{mypink}{HTML}{D4537E}
+
+%====================================================
+% Makro für Geschwindigkeits-/Ensemblemittel (Teil III.b, III.c)
+% \avg{v_i} entspricht \overline{v_i}
+%====================================================
+\newcommand{\avg}[1]{\overline{#1}}
+
+%====================================================
+% Makros zur Vereinfachung
+%====================================================
+\newcommand{\Index}[1]{#1\index{#1}}
+
+\def\TODO#1{\color{blue}{\textbf{TODO: #1}}\color{black}}
+
+\def\id{
+	\begin{flushright}
+		\vspace{-10mm}
+		\begin{tiny}ID: \currfilename\end{tiny}
+	\end{flushright}
+}
+
+
+\newcommand\prozent[1]{\hfill\textbf{#1}\%}
+%\newcommand\Laplace[1]{\begin{Large}$\mathcal{L}$\end{Large}{#1}}
+
+%Grad-Zeichen
+%\newcommand\grad{$^\circ$}
+
+%entspricht-Zeichen.
+\newcommand{\entspricht}{\ensuremath{\mathrel{\widehat{=}}}}
+
+\newcommand\circlearound[1]{%
+	\tikz[baseline]\node[draw,shape=circle,anchor=base] {#1} ;}
+%====================================================
+% Bilder einfügen (zitat mit biber)
+%====================================================
+\def\abb#1#2#3#4#5{% 				Grösse,Dateiname,Beschriftung,Label,Bildzitatquelle
+	\begin{figure}[ht!]
+		\center
+		\includegraphics[#1]{#2}
+		\begin{flushright}
+			\vspace{-7mm}
+			\begin{tiny}ID: #2\end{tiny}
+		\end{flushright}
+		\vspace{-7mm}
+		\caption{#3}(Quelle:\autocite{#5})
+		\label{#4}
+	\end{figure}
+}
+
+
+
+
+\def\tikzbild#1#2#3#4{% 				scaling-factor,Dateiname,Beschriftung,Label
+	\begin{figure}[h!]%
+		\centering
+		\scalebox{#1}{
+			\input{#2}%
+		} %end of scalebox
+		\begin{flushright}%
+			\vspace{-7mm}%
+			\begin{tiny}ID: #2\end{tiny}%
+		\end{flushright}%
+		\vspace{-7mm}%
+		\caption{#3}%
+		\label{#4}(Quelle:\cite{pic:scub-tikz})%
+	\end{figure}
+}
+
+
+
+%====================================================
+% Tabelle einfügen
+%====================================================
+\def\tabelle#1#2#3#4#5{% 			Spaltenaufteilung,Beschriftung,Label,fontsize,Tabelle
+	\begin{table}[!ht]
+		\begin{center}#4
+			\begin{tabular}{#1}
+				#5
+			\end{tabular}
+		\end{center}
+		\caption{#2}
+		\label{#3}
+	\end{table}
+}
+
+%------------------ Farbbox -------------------------
+% Verwendung:
+%\begin{rahmenbox}[colback=green!5,colframe=blue!50]{Titel}
+%Box-Text
+%\end{rahmenbox}
+
+
+\newenvironment{rahmenbox}[2][]{%
+	\tcolorbox[savedelimiter=rahmenbox, savelowerto=\jobname_bspsave2.tex, lowerbox=ignored,fonttitle=\bfseries,title=#2, #1]}%
+{\endtcolorbox}
+
+
+%====================================================
+% Datenblatt (pdf) einfügen
+%====================================================
+\def\datenblatt#1#2{% 			Dateiname ohne .pdf, Seiten von-bis
+	\index{Datenblatt #1}
+	\includepdf[pages=#2,pagecommand={},scale=0.7]{#1.pdf}
+}
+
+%====================================================
+% gelbe equation.box \begin{tcolorbox}  \end{tcolorbox}
+%====================================================
+%\tcbset{colback=yellow!10!white, colframe=red!50!black,
+	%	highlight math style= {enhanced, %<-- needed for the ’remember’ options
+		%		colframe=red,colback=red!10!white,boxsep=0pt}
+	
+	%====================================================
+	% Astrozeichen
+	%====================================================
+	%\newcommand\circlearound[1]{%
+		%	\tikz[baseline]\node[draw,shape=circle,anchor=base] {#1} ;}
+	%====================================================
+	\newcommand*{\Sun}{{\odot}}
+	\newcommand*{\Mercury}{{\text{\mathabxbfamily\char"41}}}
+	\newcommand*{\Venus}{{\text{\mathabxbfamily\char"42}}}
+	\newcommand*{\Earth}{{\text{\mathabxbfamily\char"43}}}
+	\newcommand*{\Mars}{{\text{\mathabxbfamily\char"44}}}
+	\newcommand*{\Jupiter}{{\text{\mathabxbfamily\char"45}}}
+	\newcommand*{\Saturn}{{\text{\mathabxbfamily\char"46}}}
+	\newcommand*{\Uranus}{{\text{\mathabxbfamily\char"47}}}
+	\newcommand*{\Neptune}{{\text{\mathabxbfamily\char"48}}}
+	\newcommand*{\Pluto}{{\text{\mathabxbfamily\char"49}}}
+	
+	%Den Punkt am Ende jeder Beschreibung deaktivieren
+	\renewcommand*{\glspostdescription}{}
+	
+	%\newcommand{\mygls}[1]{\glsadd{#1} \gls{#1}...\glsentrydesc{#1}}
+	%\newcommand{\mygls}[1]{\gls{#1}:~\glsentrydesc{#1}}
+	%\newcommand{\mygls}[1]{\glsadd{#1}\glsentryname{#1}:~\glsentrydesc{#1}}
+	\newcommand{\abk}[1]{%
+		\ifglsused{#1}{}{%
+			\glsadd{#1}%
+		}%
+		\gls{#1}:~\glsentrydesc{#1}%
+	}
+	\newcommand{\mygls}[1]{%
+		\ifglsused{#1}{}{%
+			\glsadd{#1}%
+		}%
+		\gls{#1}:~\glsentrydesc{#1}%
+	}
+	
+	
+	% sinnvoll, aber sort in den def muesste angepasst werden.....
+	\newcommand{\glssection}[2]{%
+		\ifglsused{#1}{}{%
+			\newglossaryentry{#1}{
+				type=formel,
+				name={{\Large \textbf{#2}}},
+				symbol={},
+				description={},
+				sort=#1-0000
+			}%
+			\glsadd{#1}%
+		}%
+	}
+	
+	
+	\newcommand{\tabcite}[1]{%
+		\cite{#1} & \citeauthor{#1} & \citetitle{#1}%
+	}
+	%====================================================
+	% Einheiten für siunitx
+	%====================================================
+	\DeclareSIUnit\parsec{pc}
+	\DeclareSIUnit\lightyear{ly}
+	
+	
+	
+	
+	% --- Definition für Code-Blöcke (Bash/Shell) ---
+	\lstdefinestyle{bashstyle}{
+		language=bash,
+		backgroundcolor=\color{black!5},
+		commentstyle=\color{green!40!black},
+		keywordstyle=\color{blue},
+		numberstyle=\tiny\color{black!50},
+		stringstyle=\color{purple},
+		basicstyle=\footnotesize\ttfamily,
+		breaklines=true,
+		captionpos=b,
+		keepspaces=true,
+		numbers=none,
+		numbersep=5pt,
+		showspaces=false,
+		showstringspaces=false,
+		showtabs=false,
+		tabsize=2,
+		frame=single,
+		rulecolor=\color{black!20},
+		keywords={python, python3, pip, source, deactivate, m, venv, install, freeze, r}
+	}
+	
+	% --- Definition für PowerShell ---
+	% KORRIGIERT: 'language=PowerShell' zu 'language=bash' geändert.
+	% 'PowerShell' ist keine Standard-Sprache im 'listings'-Paket.
+	% 'bash' dient als robuster Ersatz für die Syntax-Hervorhebung.
+	\lstdefinestyle{psstyle}{
+		language=bash,
+		backgroundcolor=\color{black!5},
+		commentstyle=\color{green!40!black},
+		keywordstyle=\color{blue},
+		basicstyle=\footnotesize\ttfamily,
+		breaklines=true,
+		captionpos=b,
+		numbers=none,
+		frame=single,
+		rulecolor=\color{black!20},
+		keywords={python, pip, Set-ExecutionPolicy, RemoteSigned, Scope, CurrentUser, install, freeze, r, .\.venv\Scripts\Activate.ps1}
+	}

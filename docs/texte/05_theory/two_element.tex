@@ -1,0 +1,109 @@
+% docs/texte/05_theory/two_element.tex -- theory chapter "The Two-Element Interferometer" (Interferosim)
+% Version: 0.1.1 (2026-10-12) -- figure source note, reference to appendix
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{interferometer!two-element}\index{geometric delay}
+\section{Geometric delay and fringes}
+
+Figure~\ref{fig:two-element} shows two antennas separated by the
+baseline $\vec b$. A plane wave from the direction $\hat s$ reaches
+antenna~1 later than antenna~2 by the \emph{geometric delay}
+\begin{equation}
+  \tau_g = \frac{\vec b\cdot\hat s}{c} = \frac{b\cos\theta}{c} .
+  \label{eq:taug}
+\end{equation}
+For a monochromatic signal the voltages are
+$V_1 = V\cos[\omega(t-\tau_g)]$ and $V_2 = V\cos(\omega t)$. A
+multiplying correlator forms $V_1V_2$ and averages over a time long
+compared with $1/\omega$:
+\begin{equation}
+  R = \langle V_1 V_2\rangle = \frac{V^2}{2}\cos(\omega\tau_g) .
+  \label{eq:fringe}
+\end{equation}
+As the source direction changes, $R$ oscillates: these are the
+\emph{fringes}. Their angular spacing near $\theta = 90^\circ$ is
+$\lambda/b$; this is the angular resolution scale of the baseline.
+Appendix~\ref{app:fringe} explains the term \enquote{fringe} and the
+related terms in detail.
+
+\begin{figure}[htbp]
+  \centering
+  \input{texte/05_theory/figures/two_element_interferometer.tex}
+  \caption{Two-element interferometer with multiplying correlator. Both
+           antennas receive the same signal, delayed by
+           $\tau_g = \vec b\cdot\hat s/c$; the averaged product depends
+           on the source direction through $\tau_g$. Redrawn after a
+           schematic that appears in many publications without a
+           traceable original, e.\,g.\ \cite{krinkele2012}.}
+  \label{fig:two-element}
+\end{figure}
+\addtocategory{pic}{krinkele2012}  % listed under figure sources
+
+\section{Complex correlator}
+
+The cosine correlator of Eq.~\eqref{eq:fringe} responds only to the
+even part of the brightness distribution. A second correlator with a
+$90^\circ$ phase shift in one signal path gives the sine component. Both
+together form the \emph{complex visibility} (chapter~\ref{ch:visibility}).
+With an SDR receiver both signals are available as complex IQ samples,
+so the complex product $x_1 x_2^*$ yields both components directly.
+
+\section{Fringe rate}
+
+The Earth's rotation changes $\tau_g$ continuously. For an east--west
+baseline of length $b$ the delay and the fringe frequency are
+\begin{equation}
+  \tau_g = \frac{b}{c}\cos\delta\,\sin H , \qquad
+  f_F = \frac{b}{\lambda}\,\cos\delta\,\cos H\;\omega_E .
+  \label{eq:fringerate}
+\end{equation}
+The fringe rate is largest at transit ($H=0$). For the Sun the solar
+rate $\omega_\odot$ must be used instead of the sidereal rate
+$\omega_E$; the difference of 0.27\,\% shifts each fringe of a
+5-minute period by almost one second.
+
+\section{Bandwidth and delay}
+
+With a finite bandwidth $\Delta\nu$ the fringes of different
+frequencies add with different phases. For a rectangular passband the
+fringe amplitude is reduced by
+\begin{equation}
+  \left|\operatorname{sinc}(\Delta\nu\,\tau)\right|, \qquad
+  \operatorname{sinc}x = \frac{\sin\pi x}{\pi x},
+\end{equation}
+where $\tau$ is the residual delay after compensation. Without delay
+compensation $\tau = \tau_g$; this limits uncompensated operation to
+short baselines (for $\Delta\nu = 2\,\mathrm{MHz}$: loss below 1\,\% up
+to $b \approx 10\,\mathrm{m}$). Long baselines need delay tracking.
+
+\section{Sensitivity of an interferometer}
+
+For two antennas observing a point source the correlation coefficient
+is
+\begin{equation}
+  \rho = \frac{\sqrt{T_{A,1}\,T_{A,2}}}
+              {\sqrt{(T_{\mathrm{sys},1}+T_{A,1})(T_{\mathrm{sys},2}+T_{A,2})}}
+  \;\xrightarrow{\text{identical}}\;
+  \frac{T_A}{T_{\mathrm{sys}}+T_A}.
+\end{equation}
+For a resolved source $\rho$ is multiplied by the normalised
+visibility $|\mathcal V|/S$. With Nyquist-sampled signals of bandwidth
+$\Delta\nu$ a correlator averages $N = 2\Delta\nu\tau$ independent
+products; the noise of each correlator output is $1/\sqrt{N}$ in units
+of $\rho$, so
+\begin{equation}
+  \mathrm{SNR} = \rho\,\sqrt{2\,\Delta\nu\,\tau} .
+  \label{eq:snr-corr}
+\end{equation}
+
+\section{Adding and multiplying interferometer}
+
+An \emph{adding} interferometer sums the two signals and measures the
+total power with a detector. The output is the total-power level plus
+the fringe term; the peak-to-peak fringe amplitude relative to the total
+power is $2\rho\,|\mathcal V|/S$. A total-power detector is therefore
+usable only if the receiver gain is stable to a fraction of this value.
+A \emph{multiplying} interferometer outputs only the correlated part and
+is insensitive to gain drifts of the uncorrelated noise. Interferosim
+models both in \texttt{observation.Correlator}.

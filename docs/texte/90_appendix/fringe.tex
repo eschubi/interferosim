@@ -1,0 +1,123 @@
+% docs/texte/90_appendix/fringe.tex -- appendix chapter "The Term Fringe" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Detailed explanation of the term "fringe" and the related terms used in
+% the code and documentation (fringe spacing, rate, contrast, stopping,
+% fitting, washing). Notation as in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{fringe}
+\section{Origin of the term}
+
+\emph{Fringe} (German \emph{Interferenzstreifen}) comes from optics. When
+two coherent light beams overlap, the screen shows alternating bright
+and dark bands -- the interference fringes of Young's double-slit
+experiment. Michelson and Pease used the disappearance of such fringes
+to measure the first stellar diameter, that of Betelgeuse
+\cite{michelson1921}. Radio astronomy took over the term together with
+the method: Ryle and Vonberg built the first radio interferometer to
+observe the Sun \cite{ryle1946}. In a radio interferometer there is no
+screen; the fringes appear in the correlator output
+(Fig.~\ref{fig:two-element}).
+
+\section{Three views of the same fringe}
+
+The response of a two-element interferometer to a point source,
+Eq.~\eqref{eq:fringe}, can be read in three equivalent ways.
+
+\paragraph*{As a pattern on the sky.} With $\omega\tau_g =
+2\pi\,(b/\lambda)\cos\theta$ the normalised response is
+\begin{equation}
+  \frac{R(\theta)}{R_{\max}} = \cos\!\left(2\pi\,\frac{b}{\lambda}\cos\theta\right).
+\end{equation}
+The phase changes by $2\pi$ when $\cos\theta$ changes by $\lambda/b$, so
+the angular fringe spacing is
+\begin{equation}
+  \Delta\theta = \frac{\lambda}{b\,\sin\theta}
+  \;\xrightarrow{\ \theta=90^\circ\ }\; \frac{\lambda}{b} .
+\end{equation}
+The interferometer behaves like a grating of alternating positive and
+negative sensitivity laid over the sky (Fig.~\ref{fig:fringe-pattern}).
+Towards the direction of the baseline ($\theta\to0^\circ, 180^\circ$)
+the fringes become wider, because the projected baseline
+$b\sin\theta$ becomes shorter.
+
+\paragraph*{As a signal in time.} The Earth's rotation moves the source
+through this pattern. The output oscillates with the fringe frequency
+$f_F$ of Eq.~\eqref{eq:fringerate}. This is how the fringes are seen in
+a measurement: as a slow oscillation of the correlator output (the
+\emph{fringe rate}), not as a picture.
+
+\paragraph*{As a Fourier component.} A baseline $(u,v)$ responds only to
+the component $e^{-2\pi i(ul+vm)}$ of the sky brightness
+(Eq.~\eqref{eq:vis}). The fringe pattern \emph{is} this Fourier
+component. Amplitude and phase of the fringe are amplitude and phase
+of the complex visibility $\mathcal V(u,v)$; aperture synthesis
+collects many such fringes and adds them up to an image.
+
+\begin{figure}[htbp]
+  \centering
+  \input{texte/90_appendix/figures/fringe_pattern.tex}
+  \caption{Fringe pattern of a baseline $b = 10\,\lambda$ as a function
+           of the source direction. Grey: monochromatic; blue: with a
+           fractional bandwidth of 10\,\%, the fringes are confined to
+           an envelope around $\theta = 90^\circ$ (bandwidth smearing,
+           \enquote{delay beam}).}
+  \label{fig:fringe-pattern}
+\end{figure}
+
+\section{Fringe visibility and source size}
+
+Michelson defined the visibility of the fringes as the contrast
+\begin{equation}
+  \frac{I_{\max}-I_{\min}}{I_{\max}+I_{\min}} ,
+\end{equation}
+with the maximum and minimum intensity of the fringe pattern. For an
+adding interferometer this is the normalised visibility
+$|\mathcal V|/S$; the name \enquote{visibility} for $\mathcal V$ has its
+origin here. A point source gives full contrast. An extended source
+is a superposition of point sources whose fringes are shifted against
+each other, so the contrast decreases. For a uniform disc it vanishes
+at $b_{\mathrm{null}} = 1.2197\,\lambda/\theta_d$ -- this is the
+principle of Michelson's diameter measurement and of the solar
+diameter measurement in notebook~B.
+
+\section{Related terms}
+
+\begin{description}
+  \item[Fringe spacing] Angular period $\lambda/b$ of the pattern; the
+        resolution scale of a baseline.
+  \item[Fringe rate] Temporal frequency $f_F$ of the fringes caused by
+        the Earth's rotation, Eq.~\eqref{eq:fringerate}.
+  \item[Fringe amplitude, fringe phase] Amplitude and phase of the
+        correlator output; together the complex visibility.
+  \item[Fringe stopping] Removing the predicted fringe rate by a phase
+        rotation of one signal, so that the correlator output varies
+        only slowly and can be averaged over long intervals.
+  \item[Delay tracking] Compensating the geometric delay $\tau_g$, so
+        that the fringes stay in the centre of the bandwidth envelope.
+  \item[Fringe fitting / fringe search] Determining the residual delay
+        and rate when they are not known in advance (independent clocks
+        in VLBI); the correlation is searched over a grid of delays and
+        rates.
+  \item[Fringe washing (bandwidth smearing)] Loss of fringe amplitude
+        by the factor $|\operatorname{sinc}(\Delta\nu\,\tau)|$ when
+        different frequencies in the band produce different fringe
+        phases (Fig.~\ref{fig:fringe-pattern}); in time the same effect
+        occurs if the averaging interval is not short compared with
+        $1/f_F$ (time smearing).
+\end{description}
+
+\section{Numbers for the Interferosim examples}
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Baseline & $b/\lambda$ & fringe spacing $\lambda/b$ & fringe period at transit ($\delta=0$) \\
+\midrule
+10\,m (horn test, Sun) & 47 & $1.21^\circ$ & 290\,s \\
+11.5\,km (long baseline) & 54\,500 & $3.8''$ & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+At $\lambda = 21.1\,\mathrm{cm}$. The fringe period of the 10\,m
+baseline uses the solar rotation rate (notebook~B).

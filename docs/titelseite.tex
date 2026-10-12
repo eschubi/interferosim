@@ -1,0 +1,62 @@
+% docs/titelseite.tex -- title page (2026-10-12: English, project name Interferosim)
+% ====================================================================
+% Titelseite
+% ====================================================================
+
+
+
+
+\pagestyle{empty}         % bis auf Weiteres leeren Stil verwenden
+%% Define a HUGE
+{\tiny }\makeatletter
+\newcommand\HUGE{\@setfontsize\Huge{50}{60}}
+\makeatother
+    \begin{center}
+        \begin{minipage}{0.9\linewidth}
+            \flushright
+
+            %University logo
+            % 2026-10-12: Logo liegt zentral in tex-skripten/formatierungen/images
+            % (docs/images/ existiert in diesem Projekt nicht)
+            %\includegraphics[width=0.5\linewidth]
+            %{../../../../tex-skripten/formatierungen/images/antares2.png}\par
+            \vspace{1.5cm}
+            \centering
+            % Title
+            %{\scshape{\HUGE SYSDOKU\par}}
+            {\scshape{\Huge SYSTEM DOCUMENTATION\par}}   % 2026-10-12: English; \Huge instead of \HUGE, otherwise the word is hyphenated
+            \vspace{1cm}
+            %Thesis title
+            {\scshape{\Large \textbf{INTERFEROMETER SIMULATION (Interferosim)}
+                    \vspace{5cm}\par}}
+
+
+
+
+
+            {\Large  Dipl. Ing.  Erich Schubert\par}
+            \vspace{2cm}
+
+
+            \flushleft
+
+            \vspace{3cm}
+
+            \begin{tabular}{lr}
+                Wien/St.Pölten,  2026
+                \vspace{1cm}&  \jobname.pdf \\
+
+            \end{tabular}
+
+
+
+
+        \end{minipage}
+    \end{center}
+    \clearpage
+
+    \newpage
+    \setcounter{page}{1}  % Startet die Seitennummerierung bei 1
+
+
+

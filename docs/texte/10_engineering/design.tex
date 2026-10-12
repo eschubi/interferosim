@@ -1,0 +1,140 @@
+% docs/texte/10_engineering/design.tex -- chapter "Basic Design" (Interferosim)
+% Version: 0.1.2 (2026-10-12) -- first draft of the software structure (UML);
+%   0.1.2: note on the implemented package sky;
+%   0.1.1: unnumbered paragraphs, pipeline diagram on a landscape page
+% ================================================================
+
+\index{basic design}\index{UML}
+This chapter describes the first basic design of the package
+\texttt{interferosim}. It is a \emph{draft}: no simulation code has been
+migrated yet. The classes are derived from the existing sources --
+\texttt{aas6sim}~1.1.0 (\texttt{model.Component}, \texttt{model.Instrument},
+\texttt{visibility.VisData}) and the teaching notebooks A (Wiener filter
+and CLEAN) and B (the Sun as a first target) -- and will be refined in
+phase~1. All diagrams use UML~2.5 notation; attributes and operations are
+given with Python types, \underline{underlined} operations are class
+methods, \textit{italic} operations are abstract.
+
+\section{Package structure}
+
+Figure~\ref{fig:uml-packages} shows the packages and their dependencies.
+The design follows a layered structure:
+
+\begin{itemize}
+  \item \textbf{Core} (\texttt{sky}, \texttt{instrument},
+        \texttt{observation}, \texttt{imaging}, \texttt{deconvolution}):
+        the complete processing chain. The core does not depend on any
+        user-interface package, so a later desktop front end can use it
+        unchanged.
+  \item \textbf{User interface} (\texttt{plotting}, \texttt{widgets}):
+        uses the core, never the other way round. The notebooks only call
+        these packages and the core.
+  \item \textbf{Support} (\texttt{io}, \texttt{constants}): FITS
+        input/output taken over from \texttt{aas6sim}, physical constants
+        and line catalogue.
+  \item \textbf{Configuration} (\texttt{configs/*.toml}): antenna types,
+        receivers and sites are data, not code. A new antenna type that
+        fits an existing class needs only a new configuration file.
+\end{itemize}
+
+The dependencies inside the core follow the signal path: sky and
+instrument $\rightarrow$ observation $\rightarrow$ imaging
+$\rightarrow$ deconvolution. There are no cyclic dependencies.
+
+\begin{figure}[htbp]
+  \centering
+  \input{texte/10_engineering/uml/packages.tex}
+  \caption{UML package diagram of \texttt{interferosim} (draft 0.1)}
+  \label{fig:uml-packages}
+\end{figure}
+
+\section{Sky and instrument}
+
+Figure~\ref{fig:uml-model} shows the model classes.
+
+\paragraph*{Sky.} \texttt{aas6sim} describes every source with one class
+\texttt{Component} and a \texttt{kind} field (\texttt{"point"},
+\texttt{"gauss"}). The design replaces this by an abstract base class
+\texttt{SkyComponent} with one subclass per source type. Every subclass
+provides its own analytic \texttt{visibility(u, v)}; this is needed for
+the solar disc from notebook~B, whose visibility is a Hankel transform
+of the brightness profile (uniform or limb-brightened). A
+\texttt{SkyModel} is composed of one or more components; \texttt{demo()}
+returns the demo field of \texttt{aas6sim}. \emph{Implemented in version 0.2.0}
+(chapter~\ref{ch:sky-models}); the positions are called
+\texttt{dx\_deg}/\texttt{dy\_deg} as in the AAS6 file format, and the
+field centre is a separate class \texttt{FieldCenter}.
+
+\paragraph*{Instrument.} \texttt{aas6sim.Instrument} combines antenna,
+receiver, site and baseline in a single class. The design separates
+them, because several antenna types must be selectable:
+\begin{itemize}
+  \item \texttt{Antenna} (abstract) with the subclasses \texttt{Horn}
+        and \texttt{ParabolicDish}; further types are added as
+        subclasses.
+  \item \texttt{Receiver} with the device profile of the Ettus USRP B210
+        (\texttt{configs/receivers/b210.toml}).
+  \item \texttt{Site}, \texttt{Station} (antenna at a position) and
+        \texttt{Array} (site, stations, receiver), which provides the
+        baselines.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\textwidth}{!}{\input{texte/10_engineering/uml/classes_model.tex}}
+  \caption{UML class diagram: packages \texttt{sky} (as implemented in
+           version 0.2.0) and \texttt{instrument} (draft 0.1)}
+  \label{fig:uml-model}
+\end{figure}
+
+\section{Observation, imaging and deconvolution}
+
+Figure~\ref{fig:uml-pipeline} shows the processing chain.
+
+\paragraph*{Observation.} \texttt{Observation} holds the observing
+parameters (array, frequency, declination, hour-angle range,
+integration time, elevation limit). \texttt{UVCoverage} is derived from
+it. \texttt{VisibilitySimulator} combines sky model and observation and
+creates a \texttt{VisData} object -- the data class of
+\texttt{aas6sim.visibility}, so simulated and later measured data share
+one format. \texttt{Correlator} covers the adding and the multiplying
+interferometer, fringe rate and delay (notebook~B).
+
+\paragraph*{Imaging.} \texttt{Imager} grids the visibilities with a
+\texttt{Gridder} and applies an exchangeable \texttt{Weighting}
+(strategy pattern): natural, uniform or Wiener weighting.
+
+\paragraph*{Deconvolution.} The interface \texttt{Deconvolver} is
+realised by \texttt{HogbomClean} and \texttt{WienerFilter}; both return
+a \texttt{DeconvResult} (model, residual, restored image).
+\texttt{CleanBeam} is fitted to the main lobe of the dirty beam.
+
+The Wiener filter appears twice on purpose. Notebook~A shows that for a
+sparsely sampled interferometer it only re-weights the measured uv
+cells -- it is therefore modelled as \texttt{WienerWeighting}. For a
+filled aperture (the 3\,m dish) it is a real deconvolution and is
+modelled as \texttt{WienerFilter}.
+
+% landscape page: the pipeline diagram is too wide for portrait
+\begin{sidewaysfigure}
+  \centering
+  \resizebox{!}{14cm}{\input{texte/10_engineering/uml/classes_pipeline.tex}}
+  \caption{UML class diagram: packages \texttt{observation},
+           \texttt{imaging}, \texttt{deconvolution} and the data class
+           \texttt{io.VisData} (draft 0.1)}
+  \label{fig:uml-pipeline}
+\end{sidewaysfigure}
+
+\section{Open points}
+
+The following points are not yet decided and will be settled in
+phase~1:
+\begin{itemize}
+  \item Spectral dimension: HI and OH line sources need several
+        frequency channels; the draft models a single frequency.
+  \item Time-domain simulation of a transit (notebook~B): own class or
+        part of \texttt{VisibilitySimulator}.
+  \item Further antenna types besides horn and parabolic dish.
+  \item Whether \texttt{VisData} stays in \texttt{io} (as in
+        \texttt{aas6sim}) or moves to \texttt{observation}.
+\end{itemize}

@@ -1,0 +1,31 @@
+% docs/texte/90_appendix/figures/fringe_pattern.tex -- fringe pattern of a two-element interferometer (pgfplots)
+% Version: 0.1.1 (2026-10-12) -- legend above the plot
+% Normalised response R(theta) = cos(2 pi (b/lambda) cos theta) for b = 10 lambda,
+% monochromatic and with a fractional bandwidth of 10 % (envelope
+% |sinc(dnu tau_g)|, dnu tau_g = (dnu/nu)(b/lambda) cos theta).
+\begin{tikzpicture}
+  \begin{axis}[
+      width=0.95\textwidth, height=6cm,
+      xmin=0, xmax=180, ymin=-1.15, ymax=1.15,
+      xtick={0,30,60,90,120,150,180},
+      xlabel={angle $\theta$ between baseline and source direction [deg]},
+      ylabel={normalised response $R/R_{\max}$},
+      legend style={font=\footnotesize, at={(0.5,1.12)}, anchor=south, draw=none},
+      legend columns=3,
+      tick label style={font=\footnotesize}, label style={font=\footnotesize},
+      samples=1200, domain=0:180]
+    % monochromatic
+    \addplot[thin, gray] {cos(deg(2*pi*10*cos(x)))};
+    \addlegendentry{monochromatic}
+    % 10 % bandwidth: fringe times sinc envelope
+    \addplot[thick, blue!70!black]
+      {cos(deg(2*pi*10*cos(x))) * sin(deg(pi*0.1*10*cos(x)+1e-9))/(pi*0.1*10*cos(x)+1e-9)};
+    \addlegendentry{$\Delta\nu/\nu = 0.1$}
+    \addplot[thin, dashed, red!70!black]
+      {abs(sin(deg(pi*0.1*10*cos(x)+1e-9))/(pi*0.1*10*cos(x)+1e-9))};
+    \addlegendentry{envelope $|\operatorname{sinc}(\Delta\nu\,\tau_g)|$}
+    % mark fringe spacing near theta = 90 deg
+    \draw[<->, thick] (axis cs:90,1.07) -- (axis cs:95.73,1.07)
+      node[midway, above, font=\scriptsize] {$\approx\lambda/b$};
+  \end{axis}
+\end{tikzpicture}

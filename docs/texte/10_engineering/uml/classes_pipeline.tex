@@ -1,0 +1,77 @@
+% docs/texte/10_engineering/uml/classes_pipeline.tex -- UML class diagram: observation, imaging, deconvolution (basic design)
+% Version: 0.1.0 (2026-10-12) -- first draft
+% Origin: aas6sim 1.1.0 (visibility.VisData, model.uv_track_ew, model.elevation_deg)
+% and notebooks A/B (gridding, weightings, hogbom_fft, Wiener filter, fringe rate).
+\begin{tikzpicture}
+  % ----- referenced classes from other packages (name only) ----------
+  \node[umlpkgbox,minimum width=2cm,dashed] (rsky) at (-6.2,1.0) {sky::SkyModel};
+  \node[umlpkgbox,minimum width=2cm,dashed] (rarr) at (-6.2,-1.2) {instrument::Array};
+
+  % =================== package observation ==========================
+  \umldata{obs}{-2.6,-1.2}{Observation}
+    {+ array : Array\\+ freq\_hz : float\\+ dec\_deg : float\\+ ha\_range\_h : tuple\\+ t\_int\_s : float\\+ min\_elev\_deg : float}
+    {+ hour\_angles() : ndarray\\+ elevation\_deg(ha) : ndarray}
+  \umldata{uvc}{1.5,-1.2}{UVCoverage}
+    {+ u, v, w : ndarray\\+ ha\_deg : ndarray}
+    {+ \underline{from\_observation(o) : UVCoverage}}
+  \umlclass{sim}{-2.6,2.2}{VisibilitySimulator}
+    {+ add\_noise : bool\\+ seed : int}
+    {+ run(sky, obs) : VisData}
+  \umlclass{corr}{5.9,-1.2}{Correlator}
+    {+ mode : \{add, multiply\}}
+    {+ fringe\_rate\_hz(obs, ha) : ndarray\\+ delay\_ns(obs, ha) : ndarray\\+ correlate(x1, x2) : ndarray}
+  \umlframe{obspkg}{(obs)(uvc)(sim)(corr)}{observation}
+
+  \umldata{vis}{10.6,-1.2}{VisData}
+    {+ time\_mjd, ha\_deg : ndarray\\+ u, v, w : ndarray\\+ vis : ndarray (complex, Jy)\\+ weight : ndarray\\+ header : fits.Header}{}
+  \umlframe[dashed]{iopkg}{(vis)}{io}
+
+  \draw[aggregate] (obs.west) -- node[mult,above,pos=0.8]{1} (rarr.east);
+  \draw[depend] (sim.west) -- node[stereo,above]{$\ll$use$\gg$} (rsky.east);
+  \draw[depend] (sim.south) -- node[stereo,right]{$\ll$use$\gg$} (obs.north);
+  \draw[depend] (sim.east) -| node[stereo,above,pos=0.25]{$\ll$create$\gg$} (vis.north);
+  \draw[depend] (uvc.west) -- node[stereo,above]{$\ll$use$\gg$} (obs.east);
+
+  % =================== package imaging ==============================
+  \umlinterface{wgt}{-3.2,-6.4}{Weighting}{}{+ weights(W : ndarray) : ndarray}
+  \umlclass{nat}{-6.3,-8.8}{NaturalWeighting}{}{}
+  \umlclass{uni}{-3.2,-8.8}{UniformWeighting}{}{}
+  \umlclass{wien}{-0.1,-8.8}{WienerWeighting}{+ k : float}{}
+  \umlclass{grid}{-7.4,-6.4}{Gridder}
+    {+ npix : int\\+ cell\_arcsec : float}
+    {+ grid(v : VisData) : (V, W)}
+  \umlclass{imager}{1.6,-6.4}{Imager}
+    {+ gridder : Gridder\\+ weighting : Weighting}
+    {+ dirty\_image(v : VisData) : Image\\+ dirty\_beam(v : VisData) : Image}
+  \umldata{img}{6.0,-6.4}{Image}
+    {+ data : ndarray\\+ pix\_arcsec : float\\+ unit : str}{}
+
+  \draw[realize] (nat.north) |- ++(0,0.5) -| (wgt.south);
+  \draw[realize] (uni.north) -- (wgt.south);
+  \draw[realize] (wien.north) |- ++(0,0.5) -| (wgt.south);
+  \draw[compose] (imager.north west) to[out=150,in=30] node[mult,above,pos=0.85]{1} (grid.north east);
+  \draw[aggregate] (imager.west) -- node[mult,above,pos=0.75]{1} (wgt.east);
+  \draw[depend] (imager.east) -- node[stereo,above]{$\ll$create$\gg$} (img.west);
+  \umlframe{imgpkg}{(wgt)(nat)(uni)(wien)(grid)(imager)(img)}{imaging}
+
+  \draw[depend] (imager.north) -- ++(0,1.15) -| node[stereo,above,pos=0.25]{$\ll$read$\gg$} (vis.south);
+
+  % =================== package deconvolution ========================
+  \umlinterface{dec}{1.6,-12.2}{Deconvolver}{}{+ run(dirty : Image, beam : Image) : DeconvResult}
+  \umlclass{hog}{-1.6,-15.0}{HogbomClean}
+    {+ gain : float\\+ n\_iter : int\\+ threshold : float}{}
+  \umlclass{wf}{3.4,-15.0}{WienerFilter}{+ nsr : float}{}
+  \umlclass{cb}{-6.0,-15.0}{CleanBeam}
+    {+ fwhm\_arcsec : float}
+    {+ \underline{fit(beam : Image) : CleanBeam}\\+ convolve(img : Image) : Image}
+  \umldata{res}{6.6,-12.2}{DeconvResult}
+    {+ model : Image\\+ residual : Image\\+ restored : Image}{}
+
+  \draw[realize] (hog.north) |- ++(0,0.55) -| (dec.south);
+  \draw[realize] (wf.north) |- ++(0,0.55) -| (dec.south);
+  \draw[depend] (hog.west) -- node[stereo,above]{$\ll$use$\gg$} (cb.east);
+  \draw[depend] (dec.east) -- node[stereo,above]{$\ll$create$\gg$} (res.west);
+  \umlframe{decpkg}{(dec)(hog)(wf)(cb)(res)}{deconvolution}
+
+  \draw[depend] (dec.north) -- node[stereo,right]{$\ll$use$\gg$} (dec.north |- imgpkg.south);
+\end{tikzpicture}

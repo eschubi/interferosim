@@ -1,0 +1,13 @@
+# configs/receivers/b210.toml -- Ettus USRP B210, settings from notebook B (Appendix B)
+name = "Ettus USRP B210"
+rx_channels = 2                  # RX-A and RX-B, common LO and clock
+sample_rate_sps = 2.0e6          # complex samples per channel
+bandwidth_hz = 2.0e6
+bits = 16
+t_sys_k = 120.0                  # system temperature used in the notebooks
+agc = false                      # fixed manual gain
+dc_offset_correction = false
+iq_balance_correction = false
+clock_source = "internal"        # GPSDO only for frequency stability
+# Note: the AD9361 resets the inter-channel phase on every retune;
+# tune once, then calibrate the fixed offset with a common noise source.

@@ -1,0 +1,6 @@
+# configs/antennas/horn_15dbi.toml -- horn antenna, values from notebook B (Appendix B)
+name = "Horn 15 dBi"
+type = "horn"
+gain_dbi = 15.0
+# effective area and HPBW are derived from the gain:
+#   A_eff = G * lambda^2 / (4 pi),  HPBW = sqrt(4 pi / G / 1.133)

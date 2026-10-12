@@ -1,0 +1,60 @@
+% docs/texte/05_theory/figures/two_element_interferometer.tex -- two-element interferometer (TikZ)
+% Version: 0.1.1 (2026-10-12) -- signal labels below the lines (no overlap with 12 pt text)
+% Redrawn in TikZ after docs/images/antennengeometrie2.png (two-element
+% interferometer with multiplying correlator). Geometry: baseline b along
+% the x axis, source direction s at angle theta to the baseline; the
+% wavefront through antenna 2 meets the line from antenna 1 along s at P,
+% so |0P| = b cos(theta) = c tau_g.
+\begin{tikzpicture}[>=Stealth, font=\footnotesize]
+  % ---- parameters ---------------------------------------------------
+  \def\b{6.0}        % baseline length (drawing units)
+  \def\th{55}        % angle theta between baseline and source direction
+  \pgfmathsetmacro{\px}{\b*cos(\th)*cos(\th)}
+  \pgfmathsetmacro{\py}{\b*cos(\th)*sin(\th)}
+  \coordinate (A1) at (0,0);
+  \coordinate (A2) at (\b,0);
+  \coordinate (P)  at (\px,\py);
+
+  % ---- source direction and wavefront ------------------------------
+  \draw[thin] (A1) -- (P);
+  \draw[thin,dotted] (P) -- ($(A1)!1.75!(P)$);
+  \draw[->,thick] ($(A1)!1.75!(P)$) -- ($(A1)!1.95!(P)$)
+        node[above right=-1pt] {$\hat{s}$};
+  \draw[thin,dotted] (A2) -- ++(\th:3.6);
+  \draw[thin] (A2) -- (P);                                   % wavefront
+  \draw[thin] (A1) -- node[below=3pt] {$\vec{b}$} (A2);       % baseline
+  % path difference along s
+  \path (A1) -- (P) node[midway,sloped,above=2pt]
+        {$c\,\tau_g = \vec{b}\cdot\hat{s}$};
+  % angle theta
+  \draw (1.5,0) arc[start angle=0,end angle=\th,radius=1.5];
+  \node at ({\th/2}:1.8) {$\theta$};
+  % right angle at P
+  \draw[thin] ($(P)!0.22cm!(A1)$) -- ++(\th-90:0.22cm) -- ($(P)!0.22cm!(A2)$);
+
+  % ---- antennas: reflector arc on a mount (triangle) ---------------
+  \foreach \A/\n in {A1/1, A2/2}{
+    \draw[very thick] ($(\A)+(-1.1,0.55)$) .. controls ($(\A)+(-0.45,-0.05)$)
+          and ($(\A)+(0.45,-0.05)$) .. ($(\A)+(1.1,0.55)$);
+    \draw[thick] (\A) -- ++(-0.38,-1.25) -- ++(0.76,0) -- cycle;
+    \node at ($(\A)+(0,-0.85)$) {\n};
+  }
+
+  % ---- signal path: multiplier and averaging -----------------------
+  \coordinate (M) at ({\b/2},-2.4);
+  \draw[thick] (A1) ++(0,-1.25) |- ($(M)+(-0.32,0)$);
+  \draw[thick] (A2) ++(0,-1.25) |- ($(M)+(0.32,0)$);
+  \draw[thick] (M) circle[radius=0.32];
+  \draw[thick] (M) ++(-0.2,-0.2) -- ++(0.4,0.4) (M) ++(-0.2,0.2) -- ++(0.4,-0.4);
+  \node[anchor=north east] at ($(M)+(-0.4,-0.08)$) {$V_1 = V\cos[\omega(t-\tau_g)]$};
+  \node[anchor=north west] at ($(M)+(0.4,-0.08)$)  {$V_2 = V\cos(\omega t)$};
+  \node[draw,thick,minimum width=1.1cm,minimum height=0.55cm] (avg)
+        at ($(M)+(0,-2.1)$) {$\langle\;\rangle$};
+  \draw[thick] ($(M)+(0,-0.32)$) -- node[right,pos=0.6] {$V_1V_2$} (avg.north);
+
+  % ---- correlator output: fringe pattern ----------------------------
+  \draw[->,thick] (avg.east) -- ++(0.5,0);
+  \draw[thin,domain=0:6,samples=400,smooth]
+     plot ({\b/2+1.25+\x},{-4.5+0.42*exp(-((\x-3)^2)/1.8)*cos(deg(9.5*\x))});
+  \node at ({\b/2+4.25},-5.2) {$R = \tfrac{V^2}{2}\cos(\omega\tau_g)$};
+\end{tikzpicture}

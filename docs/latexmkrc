@@ -1,0 +1,19 @@
+# docs/latexmkrc -- build chain for interferosim.tex
+# Version: 0.1.0 (2026-10-12)
+# Usage (in docs/):  latexmk interferosim.tex
+# Runs pdflatex, biber, makeglossaries and makeindex as often as needed.
+$pdf_mode = 1;
+$pdflatex = 'pdflatex -interaction=nonstopmode -synctex=1 %O %S';
+$bibtex_use = 2;          # biber via biblatex
+@default_files = ('interferosim.tex');
+
+# glossaries: custom glossary type "abk" (in-ext Abkuerzungen, out-ext abks)
+add_cus_dep('Abkuerzungen', 'abks', 0, 'run_makeglossaries');
+sub run_makeglossaries {
+    my ($base_name, $path) = fileparse($_[0]);
+    pushd $path;
+    my $ret = system "makeglossaries", $base_name;
+    popd;
+    return $ret;
+}
+push @generated_exts, 'abk', 'abks', 'Abkuerzungen', 'glo', 'gls', 'glg', 'acn', 'acr', 'alg', 'ist', 'run.xml', 'synctex.gz';

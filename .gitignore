@@ -1,0 +1,48 @@
+# .gitignore -- Interferosim
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+# Jupyter
+.ipynb_checkpoints/
+# LaTeX build files (docs/)
+docs/*.aux
+docs/*.log
+docs/*.toc
+docs/*.lof
+docs/*.lot
+docs/*.out
+docs/*.idx
+docs/*.ilg
+docs/*.ind
+docs/*.ist
+docs/*.bbl
+docs/*.bcf
+docs/*.blg
+docs/*.run.xml
+docs/*.synctex.gz
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.glo
+docs/*.gls
+docs/*.glg
+docs/*.acn
+docs/*.acr
+docs/*.alg
+docs/*.abk
+docs/*.abks
+docs/*.Abkuerzungen
+# Large local archives that are not part of the repository
+*.zip
+*.tar.gz
+# Built PDFs (generated from the LaTeX sources)
+docs/*.pdf
+# Images in docs/images: only project-made figures are published; third-party
+# images stay local until their licences are clarified
+docs/images/*
+!docs/images/.gitkeep
+!docs/images/sky_demo_overview.png

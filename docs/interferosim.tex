@@ -1,0 +1,345 @@
+% docs/interferosim.tex -- main document of the Interferosim documentation
+% (renamed from RadioSim.tex; Interferosim is the name approved by the
+% University of Vienna, project language English)
+%==============================================
+% Abkürzungs- und Symbolverzeichnis OK
+% 2x Tools->Glossay und 2x Tools ->Index ....OK
+% dann Umbau auf book...funktioniert (ohne Gesamtgen.)
+% = 0.0.4 gleich mit .3 ...OK
+% uni-Paketinklude  jetzt stimmen auch die Überschriften,
+% ausser die Abkürzungen (immer noch Acronyms) auch die
+% hyperrefs OK
+% 0.0.5:
+% neugen....OK ohne Abkürzungen ohne Smbole
+% nach tools => alles OK
+% 0.0.6: Acronyms-Rätsel gelöst (nach makeglossaries inputieren!)
+% 0.0.7: Umstellung, damit die Verzeichnisse am Beginn -> OK
+% 0.0.8: Formelzeichen....OK Sort falsch, start für astromain
+%			falsche Verzeichnisangabe beim Input scheint korrigiert zu sein==> neu V
+% 0.0.9: Funkt! (Seitenzahlen sind weg??)
+% 0.1.0: vorige eingebettete Abk. entfernt. nur mehr astro-like
+% 		 funkt, mit richtigem TOC-Eintrag
+% 0.1.1: Definitioneninput aus Sammelfile funktioniert (mind. 2
+%   	 komplette Übersetzungsläufe) => OK
+% 0.2.0.: documentclass ausgetauscht => OK
+%			macrofile eingebunden		=> OK
+% 0.2.1: kompletter Vorspann ausgetauscht
+%			überraschenderweise auch => OK
+% 0.2.2: neukomp => OK
+%			Einbindung Titelseite bis vor Inhaltsverz => OK
+% 			bis List of Tables....
+%			contents-file hinzugefügt
+%0.2.4:  Einbettung der Abkürzungsverzeichnisse innerhalb des Doks
+%			.slo und .glo bleiben leer
+% ==============================================
+% 0.0.9:    Probleme mit Abkürzungen und Formelzeichen, korrekt im
+%            Text aber nicht ins Verzeichnis
+% ==============================================
+% 0.0.10:   Quercheck mit glossartest2.tex (type bei den Symbolen
+%           war geschwungen geklammert)
+% 0.1.0:    Verzeichnisse funktionieren, haben aber falsche
+%           Spalten
+% 0.1.1:    Verzeichnisse funktionieren endlich wie geünscht
+% 0.1.2:    Pfade auf ../Astro/ (Grossschreibung) korrigiert, damit
+%           die Doku auch unter Linux uebersetzt
+% 0.1.3:    (2026-10-12) Pfade auf ../../../../tex-skripten/ korrigiert:
+%           docs/ liegt in Astronomie/sem11/open-source/interferosim/,
+%           der alte Pfad ../../../../../Astro/Astronomie/ zeigte auf das
+%           nicht existierende Astro/Astro/Astronomie/ -> Abbruch.
+%           Fuehrendes "*" vor \addcontentsline (Stichwortverzeichnis)
+%           entfernt (wurde als Zeichen gedruckt).
+% 0.2.0:    (2026-10-12) Repository structure:
+%           - file renamed RadioSim.tex -> interferosim.tex
+%           - all formatting files are read from the local copy docs/style/
+%             (the repository no longer depends on ../../../../tex-skripten)
+%           - project-specific English list of abbreviations
+%             (glossary/abbreviations.tex) replaces texte/abkuerzungen.tex
+%           - captions, list titles, bibliography and index in English
+%           - bibliography: literature/interferosim.bib
+% 0.2.1:    (2026-10-12) style/uml-styles.tex for the UML diagrams of the
+%           chapter "Basic Design"
+% 0.2.2:    (2026-10-12) appendix texte/90_appendix (detailed explanations
+%           and supplements)
+% ==============================================
+\documentclass[
+paper=a4,
+fontsize=12pt,
+pagesize, 			% vereint laut koma-script-doku die
+% Vorzüge von 'pdftex' und 'dvips'
+twoside=false,		% linke, rechte Seite
+parskip, 			% Absätze durch Leerzeilen und
+% nicht durch Einrückungen trennen
+%draft, 			% während des Schreibens an lassen
+% und am Ende auskommentieren (es
+% werden nur boxen gedruckt)
+%draft=false,
+chapterprefix=false,% Kapitel nicht anschreiben als
+% 'Kapitel x'
+%listof=totoc,
+%bibliography=totoc
+]{scrbook}
+\usepackage{setspace}
+%\input{../../../../tex-skripten/formatierungen/uni-packages.tex}
+\input{style/uni-packages.tex}
+%\input{../../../../tex-skripten/formatierungen/uni-makros.tex}
+\input{style/uni-makros.tex}
+%\input{../../../../tex-skripten/formatierungen/dfd-macros.tex}
+\input{style/dfd-macros.tex}
+%\input{../../../../tex-skripten/formatierungen/listings-json.tex}
+\input{style/listings-json.tex}
+\input{style/uml-styles.tex}      % 0.2.1: UML notation for TikZ (basic design)
+
+
+%\makenomenclature       % Abkürzungen erstellen
+
+
+\GlsAddXdyLocation {negativepage}{:sep "-" "arabic-numbers"}
+
+% Neue Glossartyp für Symbolverzeichnisse definieren
+%%\newglossary[fo]{formel}{formels}{Formelzeichen}{Formelzeichenverzeichnis}
+% Abkuerzungsverzeichnis: Die Argumentreihenfolge von \newglossary lautet
+% [log-ext]{name}{in-ext}{out-ext}{title} -- die alte, auskommentierte
+% Fassung dieser Zeile hatte in-ext/out-ext VERTAUSCHT ({abks}{Abkuerzungen}
+% statt {Abkuerzungen}{abks}). Die noch vorhandenen Alt-Dateien
+% aas-sysdoku.abk/.abks (Stand 01.11.2025, 3 Eintraege) belegen die
+% korrekte Reihenfolge: makeindex las damals "aas-sysdoku.Abkuerzungen" ein
+% und schrieb "aas-sysdoku.abks" -- also in-ext=Abkuerzungen, out-ext=abks.
+%\newglossary[abk]{abk}{Abkuerzungen}{abks}{Abkürzungsverzeichnis}
+\newglossary[abk]{abk}{Abkuerzungen}{abks}{List of Abbreviations}  % 0.2.0: English title, type key unchanged
+
+%\glsaddkey{einheit}{\relax}{\glsentryunit}{\Einheit}{\einheit}{\entryunit}{\Entryunit}
+
+% Setze Glossarüberschriften linksbündig
+\renewcommand{\glossarypreamble}{\raggedright}  % Glossar linksbündig
+
+\makeglossaries
+
+% Eintraege fuer das Abkuerzungsverzeichnis (Glossartyp "abk") -- MUSS nach
+% \makeglossaries stehen (der Glossartyp muss vorher per \newglossary
+% bekannt sein, die Eintraege selbst duerfen aber vor ODER nach
+% \makeglossaries folgen; hier direkt danach fuer Uebersichtlichkeit).
+%\input{texte/abkuerzungen.tex}   % AAS6-wide list, no longer used (file kept)
+\input{glossary/abbreviations.tex}  % 0.2.0: project-specific list
+
+% Definiere den benutzerdefinierten Schlüssel 'unit'
+%\glsaddkey*{unit}{\relax}{\glsentryunit} % key: unit
+
+% Defs für Abkürzungen
+
+% holt weitere Formelzeichen (themenorientiert) einbinden
+
+
+%\input{../../../../tex-skripten/formatierungen/uni-verzeichnisstyle.tex}
+\input{style/uni-verzeichnisstyle.tex}  %Überschrift Formelzeichenverz.
+
+\glsaddall  % Fügt alle Glossareinträge hinzu
+%=====================================================
+% Verzeichnisse
+%=====================================================
+% generiert das Inhaltsverzeichnis
+% "options=-s index" verwies auf eine nicht existierende Stildatei
+% index.ist -- makeindex brach dadurch VOR dem Einlesen der .idx mit
+% "Index style file index not found." ab, das Stichwortverzeichnis blieb
+% deshalb bislang immer leer (0 Eintraege), unabhaengig von \index-Aufrufen
+% im Text. Ohne eigene Stildatei nutzt makeindex sein Standardformat, das
+% fuer ein einfaches Stichwortverzeichnis ausreicht.
+\makeindex[columns=2]  % vor begin{document}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Einheitslänge für picture-Umgebungen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\unitlength}{1.0cm}
+%\setlength{\unitlength}{1mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Zaehler fuer lineale. Sie werden gebraucht, wenn das
+% Linealmacro included wird
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcounter{skalax}
+\newcounter{skalay}
+
+
+
+
+%\usepackage{tocstyle}	% Inhaltsverzeichnis ohne Textüberlappung
+%\usetocstyle{classic}
+
+%\addto{\captionsngerman}{%
+%    \renewcommand*{\contentsname}{Inhalt}
+%    \renewcommand*{\listfigurename}{Abbildungen}
+%    \renewcommand*{\listtablename}{Tabellen}
+%    \renewcommand*{\figurename}{Bild}
+%    \renewcommand*{\tablename}{Tab.}
+%}
+% 0.2.0: English captions (babel english is loaded in style/uni-packages.tex)
+\addto{\captionsenglish}{%
+    \renewcommand*{\contentsname}{Contents}
+    \renewcommand*{\listfigurename}{List of Figures}
+    \renewcommand*{\listtablename}{List of Tables}
+    \renewcommand*{\figurename}{Fig.}
+    \renewcommand*{\tablename}{Tab.}
+}
+%\overfullrule=2cm		% Balken bei Warnung ausgeben
+
+
+
+%===================================================
+% Literaturverzeichnis mit biber
+%===================================================
+%\addbibresource{../formatierungen/literatur/astro.bib}
+%\addbibresource{../../../../tex-skripten/formatierungen/literatur/bildquellen-astro.bib}
+%\addbibresource{../../../../tex-skripten/formatierungen/literatur/bildquellen.bib}
+\addbibresource{literature/interferosim.bib}   % 0.2.0: project bibliography
+\DeclareBibliographyCategory{pic}             % 0.2.0: category for figure sources (was undeclared)
+
+\AtBeginDocument{\RenewCommandCopy\qty\SI}  % wegen physics-Paket
+
+
+%=====================================================
+% Ende der Definitionen
+%=====================================================
+
+
+
+\begin{document}
+% ==================  Astro-Dok ======================
+
+
+%=====================================================
+% Deckblatt (Titelseite) NICHT ÄNDERN! (Texte sind in
+%texte/titel.tex zu finden
+    %=====================================================
+%    \input{./texte/titel} % Deckblattdaten einfügen
+    \input{titelseite.tex}
+\newpage
+
+%\input{../../../../tex-skripten/formatierungen/kopf-fusszeilen.tex}
+\input{style/kopf-fusszeilen.tex}
+
+
+%=====================================================
+% Inhaltsverzeichnis
+%=====================================================
+    \tableofcontents
+    % \tableofcontents spielt die .toc der VORIGEN Kompilierung ab -- die
+    % enthaelt (aus Zeile ~185 dieser Datei) ein \setcounter{tocdepth}{0},
+    % das absichtlich das Inhaltsverzeichnis auf Kapitelebene haelt. Als
+    % Nebenwirkung bleibt \c@tocdepth danach global auf 0 stehen: \l@figure/
+    % \l@table (\@dottedtocline{1}{...}) unterdruecken JEDEN Eintrag, wenn
+    % tocdepth < 1 -- Abbildungs-/Tabellenverzeichnis blieben dadurch leer,
+    % obwohl aas-sysdoku.lof/.lot Eintraege enthielten. Fix: hier zurueck-
+    % setzen, bevor die Verzeichnisse gelesen werden.
+    \setcounter{tocdepth}{2}
+
+%=====================================================
+% Abbildungsverzeichnis
+%=====================================================
+
+    \listoffigures
+
+%====================================================
+% Tabellenverzeichnis
+%====================================================
+
+    \listoftables
+
+
+%====================================================
+% Abkürzungen
+%====================================================
+% \printglossaries (PLURAL, ohne Argumente) druckt ALLE definierten
+% Glossare mit ihrem jeweils EIGENEN Titel/Stil -- die hier bislang
+% verwendeten Optionen [type=abk, style=long, title=...] gehoeren zum
+% Singular-Befehl \printglossary (EIN bestimmtes Glossar mit eigenen
+% Optionen). Mit \printglossaries[...] wurden diese Optionen von der
+% glossaries-Paket-API schlicht ignoriert -- vermutlich die Ursache des
+% im Aenderungsverlauf oben dokumentierten "Acronyms-Raetsels".
+%\printglossary[type=abk, style=long, title=Abkürzungsverzeichnis]
+\printglossary[type=abk, style=long, title=List of Abbreviations]
+
+%====================================================
+% Formelzeichen
+%====================================================
+
+
+%%\printglossaries [type=formel, style=formelverzeichnis, title=Formelzeichenverzeichnis]
+%%\addtocontents{toc}{\protect\setcounter{tocdepth}{5}} %
+
+
+
+%====================================================
+%====================================================
+% die einzelnen Kapitel
+%=====================================================
+%====================================================
+
+% babel(naustrian) macht " zu einem aktiven Kurzbefehl ("a -> ä, "s -> ß ...).
+% In den Kapiteln steht " fast ueberall als LITERALES Anfuehrungszeichen
+% (JSON-Schnipsel, "AAS6.json", "action" ...) -> hier global abschalten.
+% Deutsche Anfuehrungszeichen im Fliesstext werden ueber \glqq ... \grqq
+% gesetzt (Makros, von dieser Abschaltung nicht betroffen).
+%\shorthandoff{"}
+% 0.2.0: with babel english " is not a shorthand -> \shorthandoff{"} would
+% raise an error; switch it off only if the active language defines it.
+\ifcsname active@char\string"\endcsname\shorthandoff{"}\fi
+
+\input{texte/contents.tex}
+
+
+
+
+
+%================================================
+% die Anhangteile des Dokumentes
+%================================================
+\appendix
+
+%\input{texte/anhang/anhang.contents.tex}
+\input{texte/90_appendix/contents.tex}   % 0.2.2: appendix with detailed explanations
+
+%        \newpage
+%       \input{fz-activate.tex}  % muss vermutlich nur einmal freigegeben werden
+
+\scriptsize
+%\begin{tabbing}
+%    \hspace{1.5cm} \= \kill
+%    \glsentrysymbol{fzast:lambda-abs} \> \gls{fzast:lambda-abs} \\
+%    \glsentrysymbol{fzast:P} \> \gls{fzast:P} \\
+%    \glsentrysymbol{fzast:geschw} \> \gls{fzast:geschw}, hier Fluid/Gas-Geschwindigkeit\\
+%     \glsentrysymbol{fzast:rho-comov} \> \gls{fzast:rho-comov} \\
+%\end{tabbing}
+\normalsize
+
+
+
+%===================================================
+% Literaturverzeichnis
+%===================================================
+% alle Literaturquellen einbinden
+\newpage
+%\renewcommand{\bibname}{Literaturverzeichnis}
+%\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\renewcommand{\bibname}{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
+
+%\printbibliography[heading=subbibliography, title={Allgemeine Literatur}, notcategory=pic]
+\printbibliography[heading=subbibliography, title={References}, notcategory=pic]
+
+% Pic Referenzen
+%\printbibliography[heading=subbibliography, title={Bildquellen}, category=pic]
+\printbibliography[heading=subbibliography, title={Figure Sources}, category=pic]
+
+% -- Stichwortverzeichnis -------------------------------------
+%\renewcommand{\indexname}{Stichwortverzeichnis}
+\renewcommand{\indexname}{Index}
+% Stichwortverzeichnis soll im Inhaltsverzeichnis auftauchen
+%\addcontentsline{toc}{chapter}{Stichwortverzeichnis}
+\addcontentsline{toc}{chapter}{Index}
+% Stichwortverzeichnis endgueltig anzeigen
+\printindex
+
+\end{document}

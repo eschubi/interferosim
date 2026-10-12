@@ -1,0 +1,94 @@
+% docs/texte/05_theory/notation.tex -- theory chapter "Notation" (Interferosim)
+% Version: 0.1.1 (2026-10-12)
+% 0.1.1: chapter renamed "Notation and Conventions" -> "Notation";
+%        paragraph "Conventions" -> "General assumptions" (no confusion with
+%        the coding conventions in part "Software Engineering")
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\index{notation}
+This part collects the physical and mathematical basis of
+Interferosim. All chapters use the notation of
+Table~\ref{tab:notation}; the same symbols are used in the code
+documentation and in the notebooks. Standard references are
+\cite{thompson2017,condon2016,wilson2013,taylor1999}.
+
+\paragraph*{General assumptions.}
+\begin{itemize}
+  \item SI units throughout; flux densities in jansky,
+        $1\,\mathrm{Jy} = 10^{-26}\,\mathrm{W\,m^{-2}\,Hz^{-1}}$;
+        solar flux unit $1\,\mathrm{SFU} = 10^{4}\,\mathrm{Jy}$.
+  \item Spatial frequencies $u,v,w$ are measured in \emph{wavelengths},
+        baselines $\vec b$ in metres.
+  \item Sky coordinates $(l,m)$ are direction cosines relative to the
+        phase centre; for small fields they equal angular offsets in
+        radians.
+  \item The Fourier sign convention is $V = \int I\,e^{-2\pi i(ul+vm)}$
+        (sky $\to$ visibility) and $I = \int V\,e^{+2\pi i(ul+vm)}$
+        (visibility $\to$ sky).
+  \item Brightness temperatures use the Rayleigh--Jeans approximation
+        ($h\nu \ll kT$). At 1.4\,GHz, $h\nu/k \approx 0.07\,\mathrm{K}$;
+        the relative error $\approx h\nu/2kT$ is below $10^{-3}$ for
+        $T > 35\,\mathrm{K}$, which holds for all sources considered.
+\end{itemize}
+
+\begin{longtable}{@{}>{$}l<{$}l>{\raggedright\arraybackslash}p{8.2cm}@{}}
+\caption{Symbols used in this documentation}\label{tab:notation}\\
+\toprule
+\textrm{Symbol} & Unit & Meaning \\
+\midrule
+\endfirsthead
+\toprule
+\textrm{Symbol} & Unit & Meaning \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{3}{@{}l}{\textit{Constants}}\\
+c & m\,s$^{-1}$ & speed of light, $299\,792\,458$ \\
+k & J\,K$^{-1}$ & Boltzmann constant, $1.380649\times10^{-23}$ \\
+\omega_E & rad\,s$^{-1}$ & Earth rotation rate, sidereal
+  $7.292115\times10^{-5}$; for the Sun $\omega_\odot = 2\pi/86\,400\,\mathrm{s}$ \\
+\multicolumn{3}{@{}l}{\textit{Radiation and source}}\\
+\nu,\ \lambda & Hz, m & observing frequency and wavelength, $\lambda = c/\nu$ \\
+\Delta\nu & Hz & bandwidth \\
+I(l,m) & Jy\,sr$^{-1}$ & sky brightness (specific intensity) \\
+T_b & K & brightness temperature \\
+S & Jy & flux density \\
+\Omega & sr & solid angle (of a source) \\
+\theta_d & rad & diameter of a uniform disc \\
+\theta_{1/2} & rad & FWHM of a Gaussian source \\
+\multicolumn{3}{@{}l}{\textit{Antenna and receiver}}\\
+D & m & dish diameter \\
+\eta_A & -- & aperture efficiency \\
+A_{\mathrm{eff}} & m$^2$ & effective area \\
+G & -- & gain (often quoted in dBi) \\
+\theta_{\mathrm{HPBW}} & rad & half-power beam width \\
+k_b & -- & beam factor, $\theta_{\mathrm{HPBW}} = k_b\,\lambda/D$ \\
+A(l,m) & -- & normalised primary beam \\
+T_A,\ T_{\mathrm{sys}} & K & antenna and system temperature \\
+\mathrm{SEFD} & Jy & system equivalent flux density \\
+\tau & s & integration time \\
+\rho & -- & correlation coefficient \\
+\multicolumn{3}{@{}l}{\textit{Geometry}}\\
+\vec b,\ b & m & baseline vector and length \\
+L_X, L_Y, L_Z & m & baseline components in equatorial coordinates \\
+\hat s & -- & unit vector towards the source \\
+\tau_g & s & geometric delay, $\tau_g = \vec b\cdot\hat s/c$ \\
+\theta & rad & angle between baseline and source direction \\
+H,\ \delta & rad & hour angle and declination of the source \\
+\varphi & rad & geographic latitude of the site \\
+\varepsilon & rad & elevation \\
+\multicolumn{3}{@{}l}{\textit{Fourier domain and imaging}}\\
+u,v,w & $\lambda$ & spatial frequencies (baseline in wavelengths) \\
+q & $\lambda$ & radial spatial frequency, $q = \sqrt{u^2+v^2}$ \\
+l,m & -- & direction cosines \\
+\mathcal{V}(u,v) & Jy & complex visibility \\
+\mathcal{S}(u,v) & -- & sampling (transfer) function \\
+W(u,v) & -- & imaging weights \\
+I_D,\ B_D & Jy\,beam$^{-1}$, -- & dirty image, dirty beam \\
+B_C & -- & clean beam \\
+\mathcal{W} & -- & Wiener filter \\
+\Phi_s,\ \Phi_n & -- & power spectra of signal and noise \\
+f_F & Hz & fringe frequency (fringe rate) \\
+\end{longtable}

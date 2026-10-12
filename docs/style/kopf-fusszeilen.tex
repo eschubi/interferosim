@@ -1,0 +1,32 @@
+% docs/style/kopf-fusszeilen.tex -- local copy of tex-skripten/formatierungen/kopf-fusszeilen.tex
+% Copied 2026-10-12 so that the repository compiles stand-alone (GitHub).
+% Local version: 1.0.0 -- running head shows the project name, see marker "interferosim"
+
+% 1. Alle vorherigen Stile löschen
+\clearpairofpagestyles
+
+% 2. Linien konfigurieren (modernere Syntax für scrlayer-scrpage)
+\KOMAoptions{
+	headsepline=0.4pt,
+	footsepline=0.4pt,
+	plainheadsepline=true, % Linie auch auf Kapitalseiten oben
+	plainfootsepline=true  % Linie auch auf Kapitalseiten unten
+}
+
+% 3. Inhalte definieren
+% Das optionale Argument [..] definiert den Stil für 'plain' (Kapitelseiten)
+% Das normale Argument {..} definiert den Stil für 'scrheadings' (Folgeseiten)
+
+\ihead[\headmark]{\headmark}       % Innen: Kapitelname
+%\ohead[\pagemark]{TAP-1}
+\ohead[\pagemark]{Interferosim}   % interferosim: project name       % Außen: Seitenzahl oben (falls gewünscht)
+
+\ifoot[Erich]{E.Schubert}               % Fuß links: Dein Name
+\ofoot[\pagemark]{\pagemark}       % Fuß rechts: Seitenzahl
+
+% 4. Den Stil global aktivieren
+\pagestyle{scrheadings}
+
+% 5. Erzwingen, dass 'plain' (Kapitelseiten) mit Linien und Text gefüllt wird
+% Dies überschreibt das Standard-Verhalten von KOMA
+\renewcommand*{\chapterpagestyle}{scrheadings}

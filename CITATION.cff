@@ -1,0 +1,17 @@
+# CITATION.cff -- citation metadata for Interferosim
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Interferosim: an open-source simulator for radio interferometry"
+version: "0.1.0"
+date-released: "2026-10-12"
+license: CC-BY-4.0
+authors:
+  - family-names: Schubert
+    given-names: Erich
+    affiliation: "University of Vienna"
+keywords:
+  - radio astronomy
+  - interferometry
+  - aperture synthesis
+  - simulation
+  - teaching

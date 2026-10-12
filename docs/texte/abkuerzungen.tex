@@ -1,0 +1,91 @@
+% texte/abkuerzungen.tex
+% Status: AKTIV
+% Beschreibung: Eintraege fuer das Abkuerzungsverzeichnis (Glossartyp "abk",
+%               siehe aas-sysdoku.tex::\newglossary[abk]{abk}{...}). Wird VOR
+%               \begin{document} eingebunden (direkt nach \makeglossaries).
+%               Dank \glsaddall (bereits vorhanden) erscheinen alle hier
+%               definierten Eintraege automatisch im gedruckten Verzeichnis --
+%               es sind KEINE \gls{...}-Aufrufe im Fliesstext noetig.
+%               Reine Datendatei, kein eigener Kopf-Kommentar-Ballast bei den
+%               einzelnen Eintraegen.
+% Version: 1.0.0
+
+% --- Radio/SDR/Elektronik ---------------------------------------------
+\newglossaryentry{abk:adc}{name={ADC},description={Analog-Digital-Wandler (Analog-to-Digital Converter)},type=abk}
+\newglossaryentry{abk:agc}{name={AGC},description={Automatische Verstaerkungsregelung (Automatic Gain Control)},type=abk}
+\newglossaryentry{abk:cmos}{name={CMOS},description={Complementary Metal-Oxide-Semiconductor -- Bildsensortechnologie (z.\,B. ASI1600MM Pro/ASI180MM)},type=abk}
+\newglossaryentry{abk:dac}{name={DAC},description={Digital-Analog-Wandler (Digital-to-Analog Converter)},type=abk}
+\newglossaryentry{abk:dbfs}{name={dBFS},description={Dezibel bezogen auf Vollausschlag (decibels relative to Full Scale)},type=abk}
+\newglossaryentry{abk:dvbt}{name={DVB-T},description={Digital Video Broadcasting -- Terrestrial (Tuner-Chipsatz des RTL-SDR)},type=abk}
+\newglossaryentry{abk:fft}{name={FFT},description={Schnelle Fourier-Transformation (Fast Fourier Transform)},type=abk}
+\newglossaryentry{abk:fpga}{name={FPGA},description={Field Programmable Gate Array},type=abk}
+\newglossaryentry{abk:gpsdo}{name={GPSDO},description={GPS-disziplinierter Oszillator (GPS Disciplined Oscillator)},type=abk}
+\newglossaryentry{abk:if}{name={IF},description={Zwischenfrequenz (Intermediate Frequency)},type=abk}
+\newglossaryentry{abk:iq}{name={IQ},description={In-Phase/Quadratur -- komplexe Basisbanddarstellung eines Funksignals},type=abk}
+\newglossaryentry{abk:lna}{name={LNA},description={Rauscharmer Verstaerker (Low Noise Amplifier)},type=abk}
+\newglossaryentry{abk:lo}{name={LO},description={Lokaloszillator (Local Oscillator)},type=abk}
+\newglossaryentry{abk:mimo}{name={MIMO},description={Multiple Input, Multiple Output -- Mehrkanalbetrieb (z.\,B. ADALM Pluto+, USRP B210)},type=abk}
+\newglossaryentry{abk:pll}{name={PLL},description={Phasenregelschleife (Phase-Locked Loop)},type=abk}
+\newglossaryentry{abk:psd}{name={PSD},description={Leistungsdichtespektrum (Power Spectral Density)},type=abk}
+\newglossaryentry{abk:rbw}{name={RBW},description={Aufloesungsbandbreite (Resolution Bandwidth)},type=abk}
+\newglossaryentry{abk:rf}{name={RF/HF},description={Hochfrequenz (Radio Frequency)},type=abk}
+\newglossaryentry{abk:rssi}{name={RSSI},description={Empfangsfeldstaerke (Received Signal Strength Indicator)},type=abk}
+\newglossaryentry{abk:rxtx}{name={RX/TX},description={Empfang/Sendung (Receive/Transmit)},type=abk}
+\newglossaryentry{abk:sdr}{name={SDR},description={Software-definiertes Radio (Software Defined Radio)},type=abk}
+\newglossaryentry{abk:snr}{name={SNR},description={Signal-Rausch-Verhaeltnis (Signal-to-Noise Ratio)},type=abk}
+\newglossaryentry{abk:tcxo}{name={TCXO},description={Temperaturkompensierter Quarzoszillator},type=abk}
+\newglossaryentry{abk:uhd}{name={UHD},description={USRP Hardware Driver -- Treiberschicht fuer Ettus-USRP-Geraete},type=abk}
+\newglossaryentry{abk:usrp}{name={USRP},description={Universal Software Radio Peripheral (Ettus/TinyB210)},type=abk}
+
+% --- Astronomie/Radioastronomie -----------------------------------------
+\newglossaryentry{abk:fwhm}{name={FWHM},description={Halbwertsbreite (Full Width at Half Maximum)},type=abk}
+\newglossaryentry{abk:hi}{name={HI},description={Neutraler atomarer Wasserstoff (21-cm-Linie)},type=abk}
+\newglossaryentry{abk:ism}{name={ISM},description={Interstellares Medium},type=abk}
+\newglossaryentry{abk:jd}{name={JD/MJD},description={Julianisches Datum / Modifiziertes Julianisches Datum},type=abk}
+\newglossaryentry{abk:oh}{name={OH},description={Hydroxyl-Radikal (18-cm-Maserlinien, z.\,B. 1665,402/1667,359\,MHz)},type=abk}
+\newglossaryentry{abk:radec}{name={RA/Dec},description={Rektaszension/Deklination -- aequatoriale Himmelskoordinaten},type=abk}
+\newglossaryentry{abk:rv}{name={RV},description={Radialgeschwindigkeit},type=abk}
+\newglossaryentry{abk:sefd}{name={SEFD},description={System Equivalent Flux Density -- radiometrische Empfindlichkeitskennzahl},type=abk}
+\newglossaryentry{abk:utc}{name={UTC},description={Koordinierte Weltzeit (Universal Time Coordinated)},type=abk}
+\newglossaryentry{abk:vlbi}{name={VLBI},description={Very Long Baseline Interferometry},type=abk}
+\newglossaryentry{abk:ew}{name={EW},description={Aequivalentbreite einer Spektrallinie (Equivalent Width)},type=abk}
+\newglossaryentry{abk:nmea}{name={NMEA},description={National Marine Electronics Association -- Standard fuer GPS-Datensaetze wie GGA},type=abk}
+\newglossaryentry{abk:gga}{name={GGA},description={Global Positioning System Fix Data -- NMEA-Satztyp mit Position/Fix-Guete/Satellitenzahl},type=abk}
+\newglossaryentry{abk:aavso}{name={AAVSO},description={American Association of Variable Star Observers},type=abk}
+\newglossaryentry{abk:bav}{name={BAV},description={Bundesdeutsche Arbeitsgemeinschaft fuer Veraenderliche Sterne},type=abk}
+\newglossaryentry{abk:bess}{name={BeSS},description={Base de donn\'ees Spectroscopiques de Bordeaux -- Spektren-Austauschformat},type=abk}
+
+% --- Dateiformate/Protokolle ---------------------------------------------
+\newglossaryentry{abk:csv}{name={CSV},description={Kommagetrennte Werte (Comma-Separated Values)},type=abk}
+\newglossaryentry{abk:ecsv}{name={ECSV},description={Enhanced CSV -- astropy-Tabellenformat mit Metadaten-Kopf},type=abk}
+\newglossaryentry{abk:fits}{name={FITS},description={Flexible Image Transport System},type=abk}
+\newglossaryentry{abk:hdu}{name={HDU},description={Header Data Unit -- Datenblock einer FITS-Datei},type=abk}
+\newglossaryentry{abk:json}{name={JSON},description={JavaScript Object Notation},type=abk}
+\newglossaryentry{abk:png}{name={PNG},description={Portable Network Graphics},type=abk}
+\newglossaryentry{abk:sql}{name={SQL},description={Structured Query Language},type=abk}
+\newglossaryentry{abk:tcp}{name={TCP},description={Transmission Control Protocol},type=abk}
+\newglossaryentry{abk:udp}{name={UDP},description={User Datagram Protocol},type=abk}
+\newglossaryentry{abk:vdif}{name={VDIF},description={VLBI Data Interchange Format},type=abk}
+\newglossaryentry{abk:wcs}{name={WCS},description={World Coordinate System -- Himmelskoordinaten im FITS-Header},type=abk}
+
+% --- Software/Systeme -----------------------------------------------------
+\newglossaryentry{abk:api}{name={API},description={Programmierschnittstelle (Application Programming Interface)},type=abk}
+\newglossaryentry{abk:cli}{name={CLI},description={Kommandozeilenschnittstelle (Command Line Interface)},type=abk}
+\newglossaryentry{abk:cpu}{name={CPU},description={Hauptprozessor (Central Processing Unit)},type=abk}
+\newglossaryentry{abk:db}{name={DB},description={Datenbank},type=abk}
+\newglossaryentry{abk:dhcp}{name={DHCP},description={Dynamic Host Configuration Protocol},type=abk}
+\newglossaryentry{abk:dsl}{name={DSL},description={Domaenenspezifische Sprache (Domain Specific Language) -- hier die \texttt{.obs}-Scheduler-Sprache},type=abk}
+\newglossaryentry{abk:gui}{name={GUI},description={Grafische Benutzeroberflaeche (Graphical User Interface)},type=abk}
+\newglossaryentry{abk:mdi}{name={MDI},description={Multiple Document Interface -- Hauptfenster mit mehreren Unterfenstern},type=abk}
+\newglossaryentry{abk:ntp}{name={NTP},description={Network Time Protocol},type=abk}
+\newglossaryentry{abk:orm}{name={ORM},description={Objektrelationale Abbildung (Object-Relational Mapping)},type=abk}
+\newglossaryentry{abk:os}{name={OS},description={Betriebssystem (Operating System)},type=abk}
+\newglossaryentry{abk:pid}{name={PID},description={Prozess-Kennung (Process Identifier)},type=abk}
+\newglossaryentry{abk:ram}{name={RAM},description={Arbeitsspeicher (Random Access Memory)},type=abk}
+\newglossaryentry{abk:rest}{name={REST},description={Representational State Transfer -- z.\,B. Vaonis-Vespera-Geraeteschnittstelle},type=abk}
+\newglossaryentry{abk:rtc}{name={RTC},description={Echtzeituhr (Real-Time Clock)},type=abk}
+\newglossaryentry{abk:ssh}{name={SSH},description={Secure Shell},type=abk}
+\newglossaryentry{abk:ssd}{name={SSD/HDD},description={Solid State Drive / Hard Disk Drive},type=abk}
+\newglossaryentry{abk:usb}{name={USB},description={Universal Serial Bus},type=abk}
+\newglossaryentry{abk:wlan}{name={WLAN},description={Wireless Local Area Network},type=abk}
+\newglossaryentry{abk:lwl}{name={LWL},description={Lichtwellenleiter (Glasfaserkabel)},type=abk}

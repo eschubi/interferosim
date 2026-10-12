@@ -1,0 +1,21 @@
+{
+  "_note": "Quiet Sun at 21 cm (notebook B): T_b = 1e5 K, radio diameter 34 arcmin, limb brightening +50 % (profile 1 + 0.5 rho^8). RA/Dec depend on the date and are therefore not set.",
+  "name": "sun_21cm",
+  "center": {
+    "label": "Sun",
+    "ra_deg": null,
+    "dec_deg": null
+  },
+  "components": [
+    {
+      "name": "Sun (quiet, 21 cm)",
+      "dx_deg": 0.0,
+      "dy_deg": 0.0,
+      "flux_jy": 476200.0,
+      "kind": "disc",
+      "diameter_deg": 0.5666666666666667,
+      "limb": 0.5,
+      "limb_power": 8.0
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+% docs/style/uml-styles.tex -- UML notation for TikZ (Interferosim)
+% Version: 0.1.1 (2026-10-12) -- \arraystretch reset inside class boxes
+% Replaces tikz-uml.sty (version 2011/01/26 in tex-skripten/formatierungen),
+% which no longer compiles with current PGF/TikZ ("Improper \prevdepth").
+% Only plain TikZ libraries are used, so the documentation stays portable.
+%
+% Elements (UML 2.5 notation):
+%   \umlclass{<id>}{<position>}{<name>}{<attributes>}{<operations>}
+%   \umlabstract{...}   same arguments, name in italics + <<abstract>>
+%   \umlinterface{...}  same arguments, <<interface>>
+%   \umldata{...}       same arguments, <<dataclass>> (Python dataclass)
+%   \umlpkg{<id>}{<position>}{<name>}         package (folder with tab)
+%   \umlframe{<id>}{<nodes to fit>}{<name>}   enclosing package frame
+% Relations (styles for \draw):
+%   inherit     generalisation   (solid, open triangle)
+%   realize     realisation      (dashed, open triangle)
+%   compose     composition      (solid, filled diamond at the whole)
+%   aggregate   aggregation      (solid, open diamond at the whole)
+%   assoc       directed association (solid, open arrow)
+%   depend      dependency       (dashed, open arrow), label e.g. <<use>>
+\usetikzlibrary{shapes.multipart,fit,arrows.meta,positioning,calc,backgrounds}
+
+\tikzset{
+  umlbox/.style={
+    rectangle split, rectangle split parts=3, draw, thick,
+    rectangle split part fill={blue!8,white,white},
+    rectangle split part align={center,left,left},
+    font=\scriptsize\sffamily, align=left, inner sep=2.5pt,
+    minimum width=2.6cm},
+  umlpkgbox/.style={
+    draw, thick, fill=white, font=\scriptsize\sffamily\bfseries,
+    minimum width=2.4cm, minimum height=0.9cm, align=center},
+  inherit/.style={thick,-{Triangle[open,length=2.6mm,width=2.4mm]}},
+  realize/.style={thick,dashed,-{Triangle[open,length=2.6mm,width=2.4mm]}},
+  compose/.style={thick,{Diamond[length=3mm,width=2mm]}-},
+  aggregate/.style={thick,{Diamond[open,length=3mm,width=2mm]}-},
+  assoc/.style={thick,-{Straight Barb[length=2mm]}},
+  depend/.style={thick,dashed,-{Straight Barb[length=2mm]}},
+  mult/.style={font=\tiny\sffamily,inner sep=1pt},
+  stereo/.style={font=\tiny\sffamily\itshape,inner sep=1pt,fill=white},
+}
+
+% compartment helper: lines separated by \\, left aligned
+% \arraystretch is reset locally: style/uni-makros.tex sets it to 1,5 globally,
+% which would make every class box much taller than intended.
+\newcommand{\umlcomp}[1]{{\renewcommand{\arraystretch}{1}\begin{tabular}{@{}l@{}}#1\end{tabular}}}
+
+\newcommand{\umlclass}[5]{%
+  \node[umlbox] (#1) at (#2) {%
+    \textbf{#3}%
+    \nodepart{second}\umlcomp{#4}%
+    \nodepart{third}\umlcomp{#5}};}
+\newcommand{\umlabstract}[5]{%
+  \node[umlbox] (#1) at (#2) {%
+    {\tiny$\ll$abstract$\gg$\par}\textbf{\textit{#3}}%
+    \nodepart{second}\umlcomp{#4}%
+    \nodepart{third}\umlcomp{#5}};}
+\newcommand{\umlinterface}[5]{%
+  \node[umlbox,rectangle split part fill={green!8,white,white}] (#1) at (#2) {%
+    {\tiny$\ll$interface$\gg$\par}\textbf{#3}%
+    \nodepart{second}\umlcomp{#4}%
+    \nodepart{third}\umlcomp{#5}};}
+\newcommand{\umldata}[5]{%
+  \node[umlbox,rectangle split part fill={orange!10,white,white}] (#1) at (#2) {%
+    {\tiny$\ll$dataclass$\gg$\par}\textbf{#3}%
+    \nodepart{second}\umlcomp{#4}%
+    \nodepart{third}\umlcomp{#5}};}
+
+% package as folder: box plus tab at the top left
+\newcommand{\umlpkg}[4][]{%
+  \node[umlpkgbox,#1] (#2) at (#3) {#4};
+  \draw[thick,fill=white] (#2.north west) rectangle ++(0.8,0.22);}
+
+% enclosing package frame around existing nodes, name in the tab;
+% optional argument e.g. [fill=gray!6] (inner frames are drawn after outer ones)
+\newcommand{\umlframe}[4][]{%
+  \begin{scope}[on background layer]
+    \node[draw,thick,inner sep=8pt,fit=#3,#1] (#2) {};
+    \node[draw,thick,fill=white,anchor=south west,font=\scriptsize\sffamily\bfseries,
+          inner sep=2pt] at (#2.north west) {#4};
+  \end{scope}}

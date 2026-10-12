@@ -1,0 +1,60 @@
+% docs/style/dfd-macros.tex -- local copy of tex-skripten/formatierungen/dfd-macros.tex
+% Copied 2026-10-12 so that the repository compiles stand-alone (GitHub).
+% Local version: 1.0.0 -- unchanged copy
+
+% dfd-macros.tex
+% ==========================
+% DFD Diagram Makros
+% ==========================
+\usepackage{ifthen}
+
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+% 1. Komplette Stil-Definitionen
+\tikzset{
+    prozess/.style = {
+        circle, draw=black, thick, fill=blue!20,
+        minimum size=1.8cm, align=center
+    },
+    io/.style={
+        rectangle, draw=black, thick, fill=green!20,
+        minimum height=1.2cm, minimum width=2cm, align=center
+    },
+    storage/.style={
+        inner ysep=3pt,
+        append after command={
+            \pgfextra{\draw (\tikzlastnode.north west) -- (\tikzlastnode.north east);
+                \draw (\tikzlastnode.south west) -- (\tikzlastnode.south east);}
+        }
+    },
+    dataserver/.style = {
+        cylinder, shape border rotate=90, draw, thick, fill=gray!20,
+        minimum height=1.5cm, aspect=0.4, text width=2.5cm, align=center
+    },
+    guinode/.style = {
+        rectangle, rounded corners, draw, thick, fill=orange!20,
+        minimum height=1.2cm, minimum width=2.5cm, align=center
+    },
+    external/.style = {
+        rectangle, draw, thick, fill=gray!30,
+        minimum height=1.2cm, text width=2.8cm, align=center
+    },
+    % KORREKTUR: Stil umbenannt
+    ausgabe/.style = {
+        trapezium, trapezium left angle=70, trapezium right angle=110,
+        draw, thick, fill=red!10, text width=2.5cm, align=center
+    }
+}
+
+% 2. Makros fuer jeden Stil
+\newcommand{\prozess}[3][]{\node[prozess, #1] (#2) {#3};}
+\newcommand{\io}[3][]{\node[io, #1] (#2) {#3};}
+\newcommand{\storage}[3][]{\node[storage, #1] (#2) {#3};}
+\newcommand{\dataserver}[3][]{\node[dataserver, #1] (#2) {#3};}
+\newcommand{\guinode}[3][]{\node[guinode, #1] (#2) {#3};}
+\newcommand{\external}[3][]{\node[external, #1] (#2) {#3};}
+\newcommand{\ausgabe}[3][]{\node[ausgabe, #1] (#2) {#3};}
+
+% ===== DOKUMENTEN-EINSTELLUNGEN =====
+%\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}

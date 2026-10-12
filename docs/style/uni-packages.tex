@@ -1,0 +1,163 @@
+% docs/style/uni-packages.tex -- local copy of tex-skripten/formatierungen/uni-packages.tex
+% Copied 2026-10-12 so that the repository compiles stand-alone (GitHub).
+% Local version: 1.0.0 -- language switched to English (project language), see markers "interferosim"
+
+%====================================================
+%  UNI-Dokumente – Zentrale Präambel
+%  (Editorbreite 59 Zeichen, PDF 50 %)
+%====================================================
+
+%----------------------------------------------------
+% 1. Dokumentbasis & Sprache
+%----------------------------------------------------
+%\usepackage[naustrian]{babel}    % deutsche Verzeichnisse
+\usepackage[english]{babel}      % interferosim: project language is English
+\usepackage{textcomp}            % Zusatzsymbole (z. B. €)
+\usepackage{xspace}
+
+%----------------------------------------------------
+% 2. Layout, Kopf- und Fußzeilen
+%----------------------------------------------------
+\usepackage[
+headsepline=on,
+footsepline=on,
+automark
+]{scrlayer-scrpage}
+
+\usepackage{standalone}
+\usepackage{lscape}
+\usepackage{rotating}
+\newcount\Sourcenummer\Sourcenummer=0
+\usepackage{afterpage}
+\usepackage{flafter}
+\usepackage[auto]{chappg}
+\usepackage{changepage}          % adjustwidth
+
+%----------------------------------------------------
+% 3. Schriften
+%----------------------------------------------------
+\usepackage{helvet}
+\usepackage{courier}
+
+%----------------------------------------------------
+% 4. Farben & Boxen
+%----------------------------------------------------
+\usepackage[table,x11names,dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+\usepackage{framed}
+
+%----------------------------------------------------
+% 5. Listen & Aufzählungen
+%----------------------------------------------------
+\usepackage{paralist}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{mdwlist}
+\usepackage{multicol}
+\usepackage{parallel}
+
+%----------------------------------------------------
+% 6. Code & Verbatim
+%----------------------------------------------------
+\usepackage{listings}[showspaces=false]
+\usepackage{verbatim}
+\usepackage{spverbatim}
+
+%----------------------------------------------------
+% 7. Grafiken & Gleitobjekte
+%----------------------------------------------------
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{pdflscape}
+\usepackage{pdfpages}
+\usepackage{thumbpdf}
+
+%----------------------------------------------------
+% 8. Mathematik & Physik
+%----------------------------------------------------
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{trfsigns}
+\usepackage{color,cancel}
+\usepackage{xparse}
+\usepackage{physics}
+\usepackage[version=4]{mhchem}
+\usepackage[autostyle]{csquotes} % Behebt die Babel-Warnung
+
+\usepackage{siunitx}
+%\sisetup{locale = DE}
+\sisetup{locale = UK}             % interferosim: decimal point
+
+%----------------------------------------------------
+% 9. Tabellen
+%----------------------------------------------------
+\usepackage{array}       % für >{\raggedright\arraybackslash}-Spaltentypen (z.B. Formelverzeichnis)
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{diagbox}
+% WICHTIG: longtable muss VOR arydshln geladen werden, damit dessen
+% interner longtable-Kompatibilitätspatch (\LT@array) aktiv wird –
+% sonst Fehler "Undefined control sequence \adl@..." im
+% Formelzeichenverzeichnis (das intern longtable verwendet).
+\usepackage{longtable}
+\usepackage{arydshln}
+\usepackage{csvsimple}
+\usepackage{tabularray}   % Ersatz/Erweiterung für longtable
+
+%----------------------------------------------------
+% 10. PDF, Hyperlinks & Navigation
+%----------------------------------------------------
+\usepackage[
+colorlinks=true,
+plainpages=false, 
+pdfpagelabels,
+hypertexnames=false % Wichtig: Behebt die "destination with same identifier" Warnung bei Gleichungen
+]{hyperref}
+\usepackage{bookmark}
+
+%----------------------------------------------------
+% 11. Indizes, Glossare & Bibliografie
+%----------------------------------------------------
+\usepackage{imakeidx}
+
+\usepackage[
+automake,
+nonumberlist,
+acronym,
+nopostdot,
+toc=false,
+nomain
+]{glossaries-extra}
+
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=ynt
+]{biblatex}
+
+%----------------------------------------------------
+% 12. Diagramme & Zeichnungen
+%----------------------------------------------------
+\usepackage{tikz}
+% WICHTIG: arrows.meta muss geladen sein für 'Stealth'/Latex-Pfeilspitzen;
+% alle vom Skriptum benötigten Libraries in einer Zeile vereinheitlicht:
+\usetikzlibrary{
+	positioning,
+	calc,
+	arrows.meta,
+	angles,
+	quotes,
+	shapes.geometric,
+	patterns,
+	backgrounds
+}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+%----------------------------------------------------
+% 13. Spezial-/Legacy-Pakete (PSTricks)
+%----------------------------------------------------
+\usepackage{pst-pdf}
+% \usepackage{pst-circ} % optional

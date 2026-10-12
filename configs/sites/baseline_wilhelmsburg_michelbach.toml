@@ -1,0 +1,6 @@
+# configs/sites/baseline_wilhelmsburg_michelbach.toml -- example long baseline, notebook A
+name = "Wilhelmsburg - Michelbach"
+site = "wilhelmsburg"
+length_m = 11500.0
+# The notebook models the uv-track of this baseline as an east-west baseline.
+orientation = "east-west"

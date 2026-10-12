@@ -1,0 +1,43 @@
+% docs/texte/10_engineering/uml/packages.tex -- UML package diagram (basic design)
+% Version: 0.1.0 (2026-10-12) -- first draft, based on the approved repository structure
+\begin{tikzpicture}[node distance=1cm]
+  % ---- user interface layer ------------------------------------------
+  \umlpkg{nb}{0,0}{notebooks}
+  \umlpkg{widgets}{-2.6,-2.3}{widgets}
+  \umlpkg{plotting}{2.6,-2.3}{plotting}
+
+  % ---- simulation core (independent of the user interface) -----------
+  \umlpkg{sky}{-4.6,-4.9}{sky}
+  \umlpkg{instrument}{-1.5,-4.9}{instrument}
+  \umlpkg{observation}{-3.05,-7.1}{observation}
+  \umlpkg{imaging}{0.25,-7.1}{imaging}
+  \umlpkg{deconvolution}{3.55,-7.1}{deconvolution}
+  \umlframe[fill=gray!8]{core}{(sky)(instrument)(observation)(imaging)(deconvolution)}{core (UI-independent)}
+
+  % ---- support -------------------------------------------------------
+  \umlpkg{io}{-3.05,-10.0}{io}
+  \umlpkg{constants}{0.25,-10.0}{constants}
+  \umlframe{pkg}{(widgets)(plotting)(core)(io)(constants)}{interferosim}
+
+  % ---- configuration files (artefact, outside the package) -----------
+  \node[umlpkgbox,fill=yellow!12,font=\scriptsize\sffamily,minimum width=2.2cm] (cfg)
+        at (6.6,-4.9) {{\tiny$\ll$artifact$\gg$}\\\textbf{configs/*.toml}};
+
+  % ---- dependencies --------------------------------------------------
+  \draw[depend] (nb) -- node[stereo,left=2pt]{$\ll$use$\gg$} (widgets);
+  \draw[depend] (nb) -- (plotting);
+  \draw[depend] (widgets) -- node[stereo,above]{$\ll$use$\gg$} (plotting);
+  \draw[depend] (widgets.south) -- (widgets.south |- core.north)
+        node[stereo,pos=0.45,left=2pt]{$\ll$use$\gg$};
+  \draw[depend] (plotting.south) -- (plotting.south |- core.north)
+        node[stereo,pos=0.45,right=2pt]{$\ll$use$\gg$};
+
+  \draw[depend] (observation) -- (sky);
+  \draw[depend] (observation) -- (instrument);
+  \draw[depend] (imaging) -- (observation);
+  \draw[depend] (deconvolution) -- (imaging);
+  \draw[depend] (instrument) -- node[stereo,above]{$\ll$read$\gg$} (cfg);
+  \draw[depend] (observation) -- node[stereo,left]{$\ll$create$\gg$ VisData} (io);
+  \draw[depend] (imaging) -- node[stereo,right=1pt]{$\ll$read$\gg$} (io);
+  \draw[depend] (core.south -| constants) -- node[stereo,right=2pt]{$\ll$use$\gg$} (constants);
+\end{tikzpicture}

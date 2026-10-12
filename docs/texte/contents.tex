@@ -1,0 +1,94 @@
+% docs/texte/contents.tex -- chapter structure file (Interferosim)
+% Version: 0.3.1 (2026-10-12)
+% 0.1.0: Kapitelstruktur auf Interferosim umgestellt.
+% 0.2.0: Repository structure: chapters grouped in numbered folders
+%        (00_frontmatter, 10_engineering, 20_core, 30_notebooks, 40_qa),
+%        all titles in English (project language). Part "Software
+%        Engineering" (added by E. Schubert) now has its chapters.
+% 0.2.1: chapter "Basic Design" (UML diagrams) added.
+% 0.3.0: part "Theory" (folder 05_theory) added between front matter
+%        and software engineering.
+% 0.3.1: "Notation and Conventions" renamed "Notation"; chapters
+%        "Conventions" and "Versioning" merged into "Development Guidelines".
+% ================================================================
+\part{Front Matter}
+
+	\chapter{History}
+	\input{texte/00_frontmatter/history}
+
+	\chapter{Project Description}
+	\input{texte/00_frontmatter/project}
+
+	\chapter{System Environment}
+	\input{texte/00_frontmatter/environment}
+
+\part{Theory}
+
+	\chapter{Notation}
+	\input{texte/05_theory/notation}
+
+	\chapter{Radio Astronomical Fundamentals}
+	\input{texte/05_theory/fundamentals}
+
+	\chapter{The Two-Element Interferometer}
+	\input{texte/05_theory/two_element}
+
+	\chapter{Visibility and Source Models}
+	\input{texte/05_theory/visibility}
+
+	\chapter{Earth Rotation Synthesis and uv-Coverage}
+	\input{texte/05_theory/uv_coverage}
+
+	\chapter{Imaging}
+	\input{texte/05_theory/imaging}
+
+	\chapter{Deconvolution}
+	\input{texte/05_theory/deconvolution}
+
+	\chapter{Receiver and Signal Chain}
+	\input{texte/05_theory/signal_chain}
+
+\part{Software Engineering}
+
+	\chapter{Requirements}
+	\input{texte/10_engineering/requirements}
+
+	\chapter{Basic Design}
+	\input{texte/10_engineering/design}
+
+	\chapter{Repository Structure}
+	\input{texte/10_engineering/repository}
+
+	\chapter{Development Guidelines}
+	\input{texte/10_engineering/guidelines}
+
+	\chapter{Licence}
+	\input{texte/10_engineering/licence}
+
+\part{Simulation Core}
+
+	\chapter{Sky Models}
+	\input{texte/20_core/sky}
+
+	\chapter{Antennas}
+	\input{texte/20_core/antennas}
+
+	\chapter{Receiver}
+	\input{texte/20_core/receiver}
+
+	\chapter{Observation}
+	\input{texte/20_core/observation}
+
+	\chapter{Imaging}
+	\input{texte/20_core/imaging}
+
+	\chapter{Deconvolution}
+	\input{texte/20_core/deconvolution}
+
+\part{Notebooks and Quality Assurance}
+
+	\chapter{Interactive Notebooks}
+	\input{texte/30_notebooks/notebooks}
+
+	\chapter{Tests and Validation}
+	\input{texte/40_qa/tests}

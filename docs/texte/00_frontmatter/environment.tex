@@ -1,0 +1,41 @@
+% docs/texte/00_frontmatter/environment.tex -- chapter "System Environment" (Interferosim)
+% Version: 0.2.0 (2026-10-12) -- project virtual environment
+%   0.1.0: placeholder
+% ================================================================
+
+Python~$\geq$~3.11 with numpy, scipy, matplotlib and astropy; JupyterLab,
+ipywidgets and ipykernel for the notebooks; pytest and nbval for the
+tests. The notebooks run locally, on JupyterHub or on Binder
+(\texttt{binder/environment.yml}).
+
+\section{Project virtual environment}
+\index{virtual environment}
+
+All work uses the virtual environment \texttt{.venv} in the project
+folder (excluded from version control by \texttt{.gitignore}). It is
+created by a script:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+System & Command (in the project folder) \\
+\midrule
+Windows & \texttt{setup\_venv.bat} (double-click) or\\
+        & \texttt{powershell -ExecutionPolicy Bypass -File setup\_venv.ps1} \\
+Linux, macOS & \texttt{./setup\_venv.sh} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The script searches for Python~$\geq$~3.11, creates \texttt{.venv}, installs
+Interferosim in editable mode with the extras \texttt{notebooks} and
+\texttt{test}, registers the Jupyter kernel \enquote{Python
+(interferosim)} and runs the tests. Options of the Windows script:
+\texttt{-Python <path>} (explicit interpreter), \texttt{-Recreate}
+(delete and rebuild \texttt{.venv}), \texttt{-NoTests},
+\texttt{-DropboxIgnore} (exclude \texttt{.venv} from Dropbox
+synchronisation).
+
+After activation (\texttt{.venv\textbackslash Scripts\textbackslash activate}
+on Windows, \texttt{source .venv/bin/activate} on Linux/macOS) the command
+line tool \texttt{interferosim-sky} and \texttt{jupyter lab} are available.

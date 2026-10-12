@@ -1,0 +1,65 @@
+% docs/texte/05_theory/visibility.tex -- theory chapter "Visibility and Source Models" (Interferosim)
+% Version: 0.1.0 (2026-10-12)
+% Notation as defined in texte/05_theory/notation.tex.
+% ================================================================
+
+\label{ch:visibility}
+\index{visibility}\index{van Cittert--Zernike theorem}
+\section{The visibility function}
+
+For a field small enough that the $w$ term can be neglected, the
+response of a baseline $(u,v)$ to the brightness distribution $I(l,m)$
+is the complex visibility
+\begin{equation}
+  \mathcal V(u,v) = \iint A(l,m)\,I(l,m)\,
+     e^{-2\pi i\,(ul+vm)}\,\mathrm{d}l\,\mathrm{d}m .
+  \label{eq:vis}
+\end{equation}
+This is the van Cittert--Zernike theorem: the visibility is the
+two-dimensional Fourier transform of the sky brightness weighted by
+the primary beam $A(l,m)$. Since $I$ is real,
+$\mathcal V(-u,-v) = \mathcal V^*(u,v)$; every baseline therefore
+measures two points of the $(u,v)$ plane.
+
+\section{Analytic visibilities}
+
+Interferosim computes the visibilities of its source components
+analytically (\texttt{SkyComponent.visibility}). With $q=\sqrt{u^2+v^2}$:
+
+\paragraph*{Point source} of flux density $S$ at $(l_0,m_0)$:
+\begin{equation}
+  \mathcal V = S\,e^{-2\pi i\,(ul_0+vm_0)} .
+\end{equation}
+
+\paragraph*{Gaussian source} with FWHM $\theta_{1/2}$ (circular):
+\begin{equation}
+  \mathcal V = S\,\exp\!\left(-\frac{\pi^2\,\theta_{1/2}^2\,q^2}{4\ln 2}\right)
+  e^{-2\pi i\,(ul_0+vm_0)} .
+\end{equation}
+For an elliptical source, $\theta_{1/2}^2 q^2$ is replaced by
+$\theta_{\mathrm{maj}}^2 u'^2 + \theta_{\mathrm{min}}^2 v'^2$ with
+$(u',v')$ rotated by the position angle.
+
+\paragraph*{Uniform disc} of diameter $\theta_d$:
+\begin{equation}
+  \mathcal V = S\,\frac{2J_1(\pi\theta_d q)}{\pi\theta_d q} .
+  \label{eq:vis-disc}
+\end{equation}
+The first zero lies at $\pi\theta_d q = 3.8317$, i.\,e.\ at
+\begin{equation}
+  b_{\mathrm{null}} = 1.2197\,\frac{\lambda}{\theta_d} .
+\end{equation}
+For the Sun at 21\,cm ($\theta_d = 34'$) this is $b_{\mathrm{null}}
+\approx 26\,\mathrm{m}$; measuring the position of the null is a
+measurement of the radio diameter (notebook~B).
+
+\paragraph*{Circularly symmetric source} with radial profile $I(r)$,
+e.\,g.\ a limb-brightened solar disc: the two-dimensional Fourier
+transform reduces to a Hankel transform,
+\begin{equation}
+  \mathcal V(q) = 2\pi\int_0^{R} I(r)\,J_0(2\pi q r)\,r\,\mathrm{d}r .
+\end{equation}
+Fitting the uniform-disc model \eqref{eq:vis-disc} to data of a
+limb-brightened disc biases the diameter: the formal fit error then
+underestimates the true error by a large factor, because the model, not
+the noise, dominates the error budget.
