@@ -6,6 +6,14 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-10-12
+
+### Added
+- Documentation, chapter "Stations and Array": section "Choice of the
+  baseline length" with the example Cyg A (|V| and noise over the baseline,
+  three regimes, options for the long baseline), figure `cyga_baseline.png`.
+- Notebook 02, section 3: the same analysis as code (figure and table).
+
 ## [0.3.0] — 2026-10-12
 
 ### Added

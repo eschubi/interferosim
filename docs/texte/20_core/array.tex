@@ -1,5 +1,6 @@
 % docs/texte/20_core/array.tex -- chapter "Stations and Array" (Interferosim)
-% Version: 0.1.0 (2026-10-12) -- Site, Station, Array (interferosim 0.3.0)
+% Version: 0.2.0 (2026-10-12) -- section "Choice of the baseline length" (example Cyg A)
+%   0.1.0: Site, Station, Array (interferosim 0.3.0)
 % ================================================================
 \label{ch:array}
 \index{array}\index{baseline}\index{ECEF}
@@ -69,4 +70,90 @@ antennas and the receiver named in the file (chapter~\ref{ch:data-formats});
   \caption{The configured arrays in the local frame of the site
            Wilhelmsburg (\texttt{plot\_array()}).}
   \label{fig:arrays}
+\end{figure}
+
+\section{Choice of the baseline length: example Cygnus~A}
+\label{sec:baseline-choice}
+\index{baseline!length}\index{Cygnus A}
+
+The baseline length decides which spatial frequency $u = b/\lambda$ is
+measured and therefore how much of a source the interferometer sees. On
+the 11.1\,km baseline of the AAS6 stations Cyg~A reaches only
+$|V|/\sigma_V \approx 1.7$ in 10\,s (chapter~\ref{ch:receiver}), although
+its total flux density is 1556\,Jy. The reason is the structure of the
+source (model \texttt{cyg\_a.json}): two lobes about $2'$ apart, each
+about $45''\times25''$, with compact hotspots at their outer ends. On
+11\,km ($u\approx 52\,600\,\lambda$, fringe spacing
+$\lambda/b \approx 4''$) the lobes are completely resolved; only the
+hotspots contribute.
+
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+Baseline & $|V|$ east--west & $|V|$ north--south & $|V|/\sigma_V$ (east--west, 10\,s) \\
+\midrule
+10\,m    & 1551\,Jy & 1555\,Jy & 126 \\
+50\,m    & 1442\,Jy & 1537\,Jy & 117 \\
+100\,m   & 1124\,Jy & 1482\,Jy &  91 \\
+200\,m   &  159\,Jy & 1272\,Jy &  13 \\
+300\,m   &  682\,Jy &  964\,Jy &  55 \\
+500\,m   &  585\,Jy &  263\,Jy &  47 \\
+1\,km    &   90\,Jy &  424\,Jy &   7 \\
+2\,km    &   32\,Jy &  152\,Jy & 2.6 \\
+11.1\,km &   21\,Jy &   39\,Jy & 1.7 \\
+\bottomrule
+\multicolumn{4}{@{}l}{\footnotesize two 3\,m dishes, B210, $B = 2\,\mathrm{MHz}$,
+  $\sigma_V = 12.4\,\mathrm{Jy}$ in 10\,s; 1420\,MHz, source at transit}
+\end{tabular}
+\end{center}
+
+Fig.~\ref{fig:cyga-baseline} shows three regimes:
+\begin{description}
+  \item[Below about 100\,m] Cyg~A is practically unresolved,
+        $|V|\approx S$, and $|V|/\sigma_V$ is about 90--125 instead of
+        1.7. The baseline measures the total flux density -- suitable for
+        calibration, but without structure information.
+  \item[About 150\,m to 1\,km] The two lobes act like a double source:
+        $|V|$ oscillates with the period $\Delta u = 1/\Delta\theta$ of
+        their separation $\Delta\theta \approx 2'$ and has minima, e.\,g.\
+        near 200\,m east--west. The envelope falls with the size of the
+        lobes. Earth rotation changes the projected baseline during a
+        transit, so the measurement passes through these minima -- this
+        pattern carries the separation and orientation of the lobes.
+  \item[Several kilometres] Only the compact hotspots remain; their pair
+        produces fast oscillations between 0 and about 40\,Jy (east--west,
+        9--13\,km). The value of 21\,Jy at exactly 11.1\,km is one point of
+        this oscillation. The resolution is highest, the signal weakest.
+\end{description}
+In the north--south direction the projected separation of the lobes is
+smaller (jet axis at position angle $\approx -70^\circ$), so the
+minima move to longer baselines.
+
+If the long baseline is to be kept, the signal-to-noise ratio grows with
+$\sqrt{B\tau}$ and with the effective area of both antennas:
+\begin{itemize}
+  \item integration: 1\,min gives $\approx 4.2$, 10\,min $\approx 13$
+        (grey lines in Fig.~\ref{fig:cyga-baseline});
+  \item bandwidth: more than 2\,MHz is possible with the B210 (limited by
+        the USB throughput); for a spectral line only the line width counts;
+  \item antenna size: $\sigma_V\propto 1/\sqrt{A_{\mathrm{eff},1}A_{\mathrm{eff},2}}$,
+        two 5\,m instead of two 3\,m dishes give a factor of about 2.8.
+\end{itemize}
+The split of the model into lobes and hotspots is an estimate
+(chapter \enquote{Sky Models}). The real hotspots are only a few
+arcseconds in size and more compact than the $3''$ Gaussians of the model;
+on long baselines $|V|$ is therefore probably somewhat higher, but of the
+same order. The time-dependent uv-tracks of a whole transit follow with
+the package \texttt{observation}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/cyga_baseline.png}
+  \caption{Cyg~A at 1420\,MHz: visibility amplitude over the baseline
+           length (east--west and north--south) and the noise $\sigma_V$ of
+           two 3\,m dishes with the B210 for 10\,s, 60\,s and 600\,s.
+           Shaded: range in which the lobe structure is measured; red: the
+           11.1\,km baseline of the AAS6 stations. Notebook
+           \texttt{02\_instrument.ipynb}, section 3.}
+  \label{fig:cyga-baseline}
 \end{figure}

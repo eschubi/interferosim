@@ -9,7 +9,7 @@ SUBPACKAGES = ["sky", "instrument", "observation", "imaging",
 
 def test_version():
     import interferosim
-    assert interferosim.__version__ == "0.3.0"
+    assert interferosim.__version__ == "0.3.1"
 
 
 @pytest.mark.parametrize("name", SUBPACKAGES)
