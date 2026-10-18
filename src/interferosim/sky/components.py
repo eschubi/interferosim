@@ -195,8 +195,10 @@ class GaussianSource(SkyComponent):
 class DiscSource(SkyComponent):
     """Circular disc (kind "disc"), uniform or limb-brightened.
 
-    Radial brightness profile (notebook B):
+    Radial brightness profile (notebook B)::
+
         I(rho) = 1 + limb * rho**limb_power,   rho = r / R  (0 <= rho <= 1)
+
     ``limb = 0`` gives the uniform disc with the analytic visibility
     2 J1(x)/x; otherwise the visibility is the numerical Hankel transform.
     """

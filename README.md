@@ -92,6 +92,7 @@ notebooks/          one notebook per topic
 tests/              pytest and nbval
 binder/             environment for Binder / JupyterHub
 docs/               LaTeX documentation (build: cd docs && latexmk)
+docs/sphinx/        Sphinx documentation (build: build_sphinx_docs.bat)
 ```
 
 ## Installation (development, without the scripts)
@@ -104,9 +105,19 @@ python -m venv .venv
 
 Requires Python >= 3.11.
 
-## API documentation
+## Documentation (Sphinx)
 
-The source code documentation is generated with Doxygen
+User guide (the interferometer in brief, installation, sky models,
+instrument, notebooks) and API reference from the docstrings:
+
+```
+.venv\Scripts\python -m pip install -e ".[docs]"
+build_sphinx_docs.bat               # -> docs/sphinx/_build/html/index.html
+```
+
+## API documentation (Doxygen)
+
+The source code documentation is also generated with Doxygen
 (<https://www.doxygen.nl>):
 
 ```

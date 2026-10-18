@@ -22,6 +22,7 @@ dependencies = [
 [project.optional-dependencies]
 notebooks = ["jupyterlab", "ipywidgets>=8", "ipykernel"]
 test = ["pytest>=7", "nbval"]
+docs = ["sphinx>=7", "furo", "myst-parser", "sphinx-copybutton"]
 
 [project.scripts]
 interferosim-sky = "interferosim.sky.cli:main"

@@ -7,6 +7,8 @@ build/
 dist/
 .venv/
 .pytest_cache/
+# Sphinx build output
+docs/sphinx/_build/
 # Jupyter
 .ipynb_checkpoints/
 # LaTeX build files (docs/)

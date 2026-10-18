@@ -64,7 +64,7 @@ def hpbw_from_gain_deg(gain_dbi: float) -> float:
 def otf_circular(u, u_cut: float) -> np.ndarray:
     """Transfer function of a filled circular aperture (aas6sim
     ``model.otf_circular``): autocorrelation of a uniformly illuminated
-    disc, 1 at u = 0 and 0 for |u| >= u_cut."""
+    disc, 1 at u = 0 and 0 for ``|u| >= u_cut``."""
     q = np.clip(np.abs(np.asarray(u, dtype=float)) / u_cut, 0.0, 1.0)
     return (2.0 / np.pi) * (np.arccos(q) - q * np.sqrt(np.maximum(1.0 - q**2, 0.0)))
 

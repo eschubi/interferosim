@@ -6,6 +6,15 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+### Added
+- Sphinx documentation in `docs/sphinx/` (Furo theme): the radio
+  interferometer in brief, installation, quick start, sky models,
+  instrument, notebooks, API reference from the docstrings, change log;
+  `build_sphinx_docs.bat`; optional dependency group `docs`.
+
+### Fixed
+- Docstrings of `DiscSource` and `otf_circular`: valid reStructuredText.
+
 ## [0.3.1] — 2026-10-12
 
 ### Added
