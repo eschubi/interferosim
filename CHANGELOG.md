@@ -6,6 +6,29 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-10-31
+
+### Added
+- `interferosim.observation`: `Observation` (hour angles, times of a
+  transit on a date, elevation per station, visibility mask, uvw, delay,
+  fringe rate), `UVCoverage`, `VisibilitySimulator` (analytic visibilities
+  with radiometer noise, tracking antennas), `TransitSimulator` (fixed
+  antennas, drift scan without fringe stopping, notebook B); module `sun`
+  (Sun position, low precision; `mjd_from_iso`).
+- Module `interferosim.visdata`: `VisData` (rows per integration and
+  baseline, columns as aas6sim plus baseline index and frequency axis;
+  `select_baseline`, `channel`, `average_channels`, `concatenate`,
+  `save_npz`/`load_npz`, `from_measurements` for the results of notebook 03).
+- `interferosim.plotting`: `plot_uv_coverage`, `plot_elevation`, `plot_visdata`.
+- Notebook `04_observation.ipynb` (sources over the day, delay and fringe
+  rate, uv-coverage for several declinations and a hypothetical
+  three-station array, visibilities over a track, Sun transit with two
+  horns, selector).
+- Documentation: chapter "Observation" (observation and uv-coverage,
+  simulated visibilities, transit), VisData in "Data Formats", UML and
+  design text updated, figures; Sphinx API pages; tests
+  `tests/test_observation.py`.
+
 ## [0.4.1] — 2026-10-31
 
 ### Changed

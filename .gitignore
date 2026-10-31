@@ -59,6 +59,9 @@ docs/images/*
 !docs/images/b210_blockdiagram.pdf
 !docs/images/b210_blockdiagram.png
 !docs/images/signal_check.png
+!docs/images/obs_uv_coverage.png
+!docs/images/obs_cyga_track.png
+!docs/images/obs_sun_transit.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

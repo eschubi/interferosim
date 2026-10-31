@@ -100,7 +100,7 @@ Processing chain of Interferosim
    * - Simulated SDR receiver signals (IQ), instrument errors
      - :mod:`interferosim.signal`
    * - Geometry, uv-coverage, visibilities, correlator
-     - :mod:`interferosim.observation` (geometry implemented, rest in preparation)
+     - :mod:`interferosim.observation` (geometry, uv-coverage, visibility and transit simulation; correlator in preparation), :mod:`interferosim.visdata`
    * - Gridding, weighting, dirty image and beam
      - :mod:`interferosim.imaging` (in preparation)
    * - Högbom-CLEAN, Wiener filter, restoration

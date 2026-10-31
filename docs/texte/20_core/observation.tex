@@ -1,5 +1,7 @@
 % docs/texte/20_core/observation.tex -- chapter "Observation" (Interferosim)
-% Version: 0.2.0 (2026-10-31) -- section "Geometry" (module observation.geometry)
+% Version: 0.3.0 (2026-10-31) -- Observation, uv-coverage, visibility and transit
+%   simulation, Sun position (interferosim 0.5.0)
+%   0.2.0 (2026-10-31): section "Geometry" (module observation.geometry)
 %   0.1.0 (2026-10-12): placeholder
 % ================================================================
 \label{ch:observation}
@@ -7,9 +9,11 @@
 Hour angle and elevation (sidereal and solar day), uv-coverage with
 Earth rotation synthesis, visibilities with noise, adding and
 multiplying interferometer, fringe rate and delay.
-The uv-coverage, the visibility simulation with noise and the transit
-follow with version~0.5; the geometry needed by the signal simulation
-(chapter~\ref{ch:signal}) is implemented since version~0.4.
+The geometry is implemented since version~0.4 (needed by the signal
+simulation, chapter~\ref{ch:signal}); observations, uv-coverage, the
+visibility simulation with noise and the transit since version~0.5
+(notebook \texttt{04\_observation.ipynb}). The adding and multiplying
+correlator of notebook~B follows with the correlator (notebook~05).
 
 \section{Geometry}
 \index{geometric delay}\index{uvw}
@@ -45,3 +49,83 @@ $\tau_g > 0$ means the wavefront reaches station $j$ later. The delay rate
 ($\dot H_G = \omega_E$); for an east--west baseline it is
 $\omega_E\,b\cos\delta\cos H/c$, maximal at transit. \texttt{elevation\_deg}
 gives the elevation of a direction at a site.
+
+\section{Observation and uv-coverage}
+\index{uv-coverage}\index{Earth rotation synthesis}
+
+\texttt{Observation} describes an array observing the direction
+$(\alpha,\delta)$: frequency, range of hour angles at the reference
+station, integration time, elevation limit and the date whose transit
+is used. It provides the hour angles of the integrations, their times
+(MJD; transit from GMST, sidereal day $= 0.99726957$ solar days), the
+elevation of the source at every station, the mask of usable
+integrations (all stations above the limit), $(u,v,w)$ of every baseline,
+the geometric delay and the natural fringe rate $f_c\,\dot\tau_g$.
+\texttt{UVCoverage} collects the uv-tracks. An east--west baseline of
+length $b$ traces the ellipse
+\begin{equation}
+  u^2 + \left(\frac{v}{\sin\delta}\right)^2 = \left(\frac{b}{\lambda}\right)^2 ,
+\end{equation}
+a circle for sources near the pole and a line for $\delta = 0$
+(Fig.~\ref{fig:uv-coverage}). The resolution is estimated as
+$1/(2q_\mathrm{max})$; for the 11.5\,km baseline at 1420\,MHz about
+$1.9''$. For Cygnus~A the delay runs between $\pm 29\,\mu$s during the day,
+the natural fringe rate reaches 3\,Hz at transit.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/obs_uv_coverage.png}
+  \caption{uv-coverage of the 11.5\,km east--west baseline over 24\,h
+           for four declinations; coloured: above the elevation limit of
+           $10^\circ$, grey: below. Notebook \texttt{04\_observation.ipynb}.}
+  \label{fig:uv-coverage}
+\end{figure}
+
+\section{Simulated visibilities}
+
+\texttt{VisibilitySimulator.run(sky, obs)} computes for every usable
+integration and baseline the fringe-stopped visibility of the sky model
+with tracking antennas, $\sum_c\sqrt{P_iP_j}\,V_c(u,v)$ (primary beam at
+the component offset), and adds radiometer noise of
+\begin{equation}
+  \sigma = \sqrt{\frac{(\mathrm{SEFD}_i+S_i)(\mathrm{SEFD}_j+S_j)}{2B\,t_\mathrm{int}}}
+\end{equation}
+to the real and the imaginary part. The result is a \texttt{VisData} set
+(chapter~\ref{ch:data-formats}). For Cygnus~A on the 11.5\,km baseline
+the amplitude oscillates between almost 0 and 100\,Jy over $\pm 6$\,h: the
+projected baseline sweeps across the fringe pattern of the two hotspots
+(Fig.~\ref{fig:cyga-track}). The visibilities agree with the correlated
+IQ streams of the signal simulation within the noise (test
+\texttt{test\_visibility\_simulator\_agrees\_with\_iq\_simulation}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/obs_cyga_track.png}
+  \caption{Cygnus~A on the 11.5\,km east--west baseline, $\pm 6$\,h, one-minute
+           integrations with noise (points) and the noise-free model (line).}
+  \label{fig:cyga-track}
+\end{figure}
+
+\section{Transit of fixed antennas}
+\index{transit}
+
+\texttt{TransitSimulator} reproduces the first experiment of the project
+(notebook~B, \texttt{aas6sim.simulate.solar\_transit}): fixed antennas
+point at the meridian at a declination; the source drifts through the
+primary beams. The angle between the fixed pointing (earth frame) and each
+component gives its beam weight at every dump; without fringe stopping the
+visibility is $\sum_c\sqrt{P_iP_j}\,V_c(u,v)\,e^{-2\pi i w}$, its phase runs
+with the natural fringe rate. For the Sun with two 15\,dBi horns 10\,m apart
+the fringes (period about 5\,min) appear under the envelope of the horn
+beam (Fig.~\ref{fig:sun-transit}). The position of the Sun comes from the
+low-precision formula of the Astronomical Almanac
+(\texttt{observation.sun.sun\_radec\_deg}, accuracy about $0.01^\circ$).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/obs_sun_transit.png}
+  \caption{Sun transit on 2026-11-01 with two fixed horns 10\,m east--west:
+           real part of the correlation (5\,s dumps) under the envelope of
+           the horn beam, and a zoom around transit.}
+  \label{fig:sun-transit}
+\end{figure}

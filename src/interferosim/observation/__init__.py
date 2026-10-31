@@ -4,10 +4,16 @@
 Version 0.1.0: empty skeleton, filled in the migration steps.
 Version 0.4.0 (2026-10-31): module geometry (GMST, source direction in ECEF,
 geometric delay and rate, uvw, elevation) for the signal simulation.
+Version 0.5.0 (2026-10-31): Observation, UVCoverage, VisibilitySimulator,
+TransitSimulator (module obs); position of the Sun (module sun).
 """
 
 from .geometry import (SIDEREAL_DEG_PER_S, delay_rate, direction, elevation_deg,
                        geometric_delay, gha_deg, gmst_deg, sky_basis, uvw)
+from .obs import Observation, TransitSimulator, UVCoverage, VisibilitySimulator
+from .sun import mjd_from_iso, sun_radec_deg
 
 __all__: list[str] = ["gmst_deg", "gha_deg", "sky_basis", "direction", "geometric_delay",
-                      "delay_rate", "uvw", "elevation_deg", "SIDEREAL_DEG_PER_S"]
+                      "delay_rate", "uvw", "elevation_deg", "SIDEREAL_DEG_PER_S",
+                      "Observation", "UVCoverage", "VisibilitySimulator", "TransitSimulator",
+                      "mjd_from_iso", "sun_radec_deg"]

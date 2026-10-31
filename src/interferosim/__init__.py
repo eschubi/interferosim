@@ -11,10 +11,11 @@ observation    geometry, uv-coverage, visibilities, correlator
 imaging        gridding, weighting, dirty image and beam
 deconvolution  Hoegbom-CLEAN, Wiener filter, restoration
 io             FITS input/output
+visdata        visibility data class VisData (module)
 plotting       reusable plot functions
 widgets        ipywidgets front end
 """
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 __all__ = ["__version__"]

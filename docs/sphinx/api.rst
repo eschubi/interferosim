@@ -58,6 +58,19 @@ interferosim.observation
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.observation.obs
+   :no-members:
+   :no-index:
+
+.. automodule:: interferosim.observation.sun
+   :no-members:
+   :no-index:
+
+interferosim.visdata
+--------------------
+
+.. automodule:: interferosim.visdata
+
 interferosim.signal
 -------------------
 

@@ -33,8 +33,8 @@ Simulation chain
      - generating SDR receiver signals (IQ samples of the B210 at each station) based on the sky model under variable baseline parameters: signal model, raw fringes, measured vs. model visibilities over the baseline length, clock errors (TCXO/GPSDO), quantisation, SigMF output, selector
      - available
    * - ``04_observation.ipynb``
-     - source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, transit (drift scan) of fixed antennas
-     - proposal
+     - source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), selector
+     - available
    * - ``05_correlator.ipynb``
      - FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search, cross spectra, visibilities
      - proposal

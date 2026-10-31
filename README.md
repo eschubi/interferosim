@@ -8,14 +8,16 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.4.1 — sky models (`interferosim.sky`, notebook
+**Status:** 0.5.0 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
 `02_instrument.ipynb`) and signal simulation (`interferosim.signal`:
 IQ samples of every station from the sky model, instrument errors,
-quantisation, SigMF output; notebook `03_signal_simulation.ipynb`)
-implemented. The
+quantisation, SigMF output; notebook `03_signal_simulation.ipynb`) and
+observation (`interferosim.observation`: uv-coverage, visibilities with
+noise, transit of fixed antennas; data class `interferosim.visdata.VisData`;
+notebook `04_observation.ipynb`) implemented. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 
@@ -97,7 +99,7 @@ interactive selector (ipywidgets):
 | `01_sky_models.ipynb` | sky models, file format, maps, own skies, visibilities, catalogue of known regions with selector | available |
 | `02_instrument.ipynb` | antenna types and primary beams, dish transfer function, B210 receiver and sensitivity, arrays and baselines, choice of the baseline length (Cyg A), selector | available |
 | `03_signal_simulation.ipynb` | generating SDR receiver signals (IQ samples of the B210 at each station) based on the sky model under variable baseline parameters: signal model, raw fringes, measured vs. model visibilities over the baseline length, clock errors (TCXO/GPSDO), quantisation, SigMF output, selector | available |
-| `04_observation.ipynb` | source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, transit (drift scan) of fixed antennas | proposal |
+| `04_observation.ipynb` | source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), selector | available |
 | `05_correlator.ipynb` | FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search, cross spectra, visibilities | proposal |
 | `06_imaging.ipynb` | gridding, natural/uniform/robust weighting, dirty beam and dirty image | proposal |
 | `07_deconvolution.ipynb` | Högbom CLEAN vs. Wiener filter, restoration (migrated from Appendix A) | proposal |

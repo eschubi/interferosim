@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/data_formats.tex -- chapter "Data Formats" (Interferosim)
-% Version: 0.3.0 (2026-10-31) -- receiver keys of the device profile, base
+% Version: 0.4.0 (2026-10-31) -- VisData in memory
+% 0.3.0 (2026-10-31) -- receiver keys of the device profile, base
 % 0.2.0 (2026-10-12) -- arrays: site/antenna/receiver references,
 %   stations as offsets east/north/up; horn design_freq_hz
 %   0.1.0: first version
@@ -105,6 +106,15 @@ recognisable after any number of processing steps), \texttt{TELESCOP},
 second table \texttt{EXTNAME = FREQUENCY} holds the channel
 frequencies in Hz. A file with one channel remains identical to the
 \texttt{aas6sim} format.
+
+\paragraph*{Data class in memory.} \texttt{interferosim.visdata.VisData}
+(since 0.5.0) holds the same columns as arrays -- \texttt{time\_mjd},
+\texttt{ha\_deg}, \texttt{u}, \texttt{v}, \texttt{w}, \texttt{vis} (rows
+$\times$ channels, complex), \texttt{weight} -- plus a baseline index per row
+with \texttt{baseline\_names} (\texttt{ANT1}/\texttt{ANT2} of the file), the
+channel frequencies \texttt{freq\_hz} and the header keywords as a
+dictionary. Until the FITS output of the package \texttt{io} exists,
+\texttt{save\_npz}/\texttt{load\_npz} store it losslessly.
 
 \section{Further FITS files}
 

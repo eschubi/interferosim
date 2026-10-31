@@ -113,7 +113,11 @@ it. \texttt{VisibilitySimulator} combines sky model and observation and
 creates a \texttt{VisData} object -- the data class of
 \texttt{aas6sim.visibility}, so simulated and later measured data share
 one format. \texttt{Correlator} covers the adding and the multiplying
-interferometer, fringe rate and delay (notebook~B).
+interferometer, fringe rate and delay (notebook~B). Implemented in
+version~0.5.0: \texttt{Observation}, \texttt{UVCoverage},
+\texttt{VisibilitySimulator}, \texttt{TransitSimulator} and
+\texttt{VisData}; fringe rate and delay are methods of
+\texttt{Observation}, the \texttt{Correlator} follows with notebook~05.
 
 \paragraph*{Imaging.} \texttt{Imager} grids the visibilities with a
 \texttt{Gridder} and applies an exchangeable \texttt{Weighting}
@@ -136,7 +140,9 @@ modelled as \texttt{WienerFilter}.
   \resizebox{!}{14cm}{\input{texte/10_engineering/uml/classes_pipeline.tex}}
   \caption{UML class diagram: packages \texttt{observation},
            \texttt{imaging}, \texttt{deconvolution} and the data class
-           \texttt{io.VisData} (draft 0.1)}
+           \texttt{visdata.VisData} (draft 0.1; \texttt{Observation},
+           \texttt{UVCoverage}, \texttt{VisibilitySimulator} and
+           \texttt{VisData} as implemented in version 0.5.0)}
   \label{fig:uml-pipeline}
 \end{sidewaysfigure}
 
