@@ -36,8 +36,8 @@ Simulation chain
      - source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), asymmetry of a track, selector
      - available
    * - ``05_correlator.ipynb``
-     - FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search, cross spectra, visibilities
-     - proposal
+     - FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search and refinement, cross spectra, visibilities; station clock and LO offsets; selector
+     - available
    * - ``06_imaging.ipynb``
      - gridding, natural/uniform/robust weighting, dirty beam and dirty image
      - proposal

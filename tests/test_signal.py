@@ -136,3 +136,62 @@ def test_sky_without_position_rejected():
     sun = SkyModel.from_json(CFG / "skies" / "sun_21cm.json")
     with pytest.raises(ValueError):
         IQSimulator(sun, _ew_array(10.0))
+
+
+# ---------------------------------------------------------------- correlator (0.6.0)
+from interferosim.signal import (Accumulator, FXCorrelator, apply_fringe_solution,  # noqa: E402
+                                 cross_spectrum, delay_rate_search, fringe_stop,
+                                 integer_align, stokes_from_products)
+
+
+def test_integer_align_and_fringe_stop():
+    a = np.arange(10.0); b = np.arange(10.0) + 3
+    a2, b2 = integer_align(a, b, 2)
+    assert a2.size == b2.size == 8 and b2[0] == 5
+    x = np.exp(2j * np.pi * 5.0 * np.arange(100) / 100.0)
+    assert np.allclose(fringe_stop(x, 5.0, 100.0), 1.0)
+
+
+def test_delay_rate_search_finds_offsets():
+    rng = np.random.default_rng(1)
+    n, fs = 2 ** 15, 1e4
+    s = rng.standard_normal(n + 64) + 1j * rng.standard_normal(n + 64)
+    d, r = 3.3, 0.7                                   # samples, Hz
+    a = s[32:32 + n]
+    b = fractional_delay(s, d)[32:32 + n] * np.exp(2j * np.pi * r * np.arange(n) / fs)
+    sol = delay_rate_search(a, b, fs, max_delay_samples=10, max_rate_hz=2, n_rate=81)
+    # quadratic peak interpolation (AAS6): sub-sample bias up to ~0.3 samples for white noise
+    assert sol.delay_samples == pytest.approx(-d, abs=0.35)
+    assert sol.rate_hz == pytest.approx(r, abs=0.05)
+    aligned = apply_fringe_solution(b, sol, fs)
+    vis, coh, nw = cross_spectrum(a, aligned, 64)
+    assert np.mean(coh) > 0.9
+
+
+def test_accumulator_units_and_stokes():
+    rng = np.random.default_rng(2)
+    x = (rng.standard_normal(64 * 400) + 1j * rng.standard_normal(64 * 400)) * math.sqrt(5.0 / 2)
+    acc = Accumulator.create(64)
+    acc.add(x, x)
+    assert np.mean(acc.visibility().real / acc.window_power) == pytest.approx(5.0, rel=0.03)
+    st = stokes_from_products(np.ones(3), np.ones(3), np.zeros(3), np.zeros(3))
+    assert np.allclose(st["I"], 2) and np.allclose(st["Q"], 0)
+
+
+def test_fx_correlator_with_errors():
+    sky = SkyModel.from_json(CFG / "skies" / "cyg_a.json")
+    sim = IQSimulator(sky, _ew_array(100.0), sample_rate_sps=5e4, seed=4,
+                      errors={"B": StationErrors(lo_offset_hz=0.6, clock_offset_s=60e-6)})
+    bl = sim.simulate(6.0)
+    fx = FXCorrelator(nfft=32, t_int_s=2.0)
+    sol = fx.search(bl, sim, "B", segment_s=3.0, max_delay_samples=8, max_rate_hz=2, n_rate=81)
+    assert sol.delay_samples == pytest.approx(-60e-6 * 5e4, abs=0.2)
+    assert sol.rate_hz == pytest.approx(0.6, abs=0.1)
+    assert abs(sol.delay_samples + 3.0) < 0.15          # refined
+    vd = fx.correlate(bl, sim, solutions={"B": sol})
+    assert vd.n_chan == 32 and vd.n_rows == 3
+    avg = vd.average_channels()
+    exp = sim.expected_visibility(0, 1, *sim.uvw(3.0)[0, :2])
+    assert abs(np.mean(avg.vis[:, 0]) - exp) < 5 * avg.sigma[0, 0] / math.sqrt(3) + 0.2 * abs(exp)
+    raw = fx.correlate(bl, sim).average_channels()
+    assert abs(np.mean(raw.vis[:, 0])) < 0.5 * abs(exp)

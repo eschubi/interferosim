@@ -86,6 +86,10 @@ interferosim.signal
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.signal.fx
+   :no-members:
+   :no-index:
+
 interferosim.plotting
 ---------------------
 

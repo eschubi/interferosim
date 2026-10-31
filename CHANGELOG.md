@@ -6,6 +6,29 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-10-31
+
+### Added
+- FX correlator `interferosim.signal.FXCorrelator`: model correction,
+  fringe search per station (`search`, with refinement), cross spectra per
+  integration with weights from the auto spectra, result as `VisData` with
+  a frequency axis.
+- Correlation kernels taken over from AAS6 `modules/interfero/correlate.py`
+  1.0.0: `integer_align`, `fringe_stop`, `Accumulator`, `cross_spectrum`,
+  `FringeSolution`, `delay_rate_search`, `apply_fringe_solution`,
+  `stokes_from_products`; new `refine_fringe_solution` (phase-slope and
+  phase-drift fits remove the sub-sample bias of the search).
+- Notebook `05_correlator.ipynb` (Sun with two dishes 15 m apart, each
+  with its own B210; station B with clock and LO offset: cross and lag
+  spectrum, search surface, refinement, cross spectra after the solution,
+  channels and noise, selector).
+- Documentation: chapter "Correlator" with three figures; Sphinx API page;
+  tests for the kernels and the correlator.
+
+### Changed
+- Road map: correlator in version 0.6, spectral lines in 0.7, imaging and
+  deconvolution in 0.8.
+
 ## [0.5.1] — 2026-10-31
 
 ### Added
