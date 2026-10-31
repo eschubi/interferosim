@@ -26,6 +26,7 @@ docs = ["sphinx>=7", "furo", "myst-parser", "sphinx-copybutton"]
 
 [project.scripts]
 interferosim-sky = "interferosim.sky.cli:main"
+interferosim-hello = "interferosim.hello:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
