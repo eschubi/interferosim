@@ -9,7 +9,8 @@ strictly higher than the previous one.
 ### Added
 - `docs/images/array_geometry.tex` (TikZ, standalone class) and its PDF:
   array of J antennas with geometric delay, primary beams, field of view,
-  baseline and receiver chains g_k -> x_k(t).
+  baseline and receiver chains g_k -> x_k(t); PNG rendering embedded in
+  notebook 00 (section 1) with an explanation.
 - Notebook `00_general.ipynb`: project overview with the goal of a VLB
   interferometer on the 11.5 km baseline Wilhelmsburg-Michelbach (principle,
   VLBI concept, key figures, clock/timing requirements with B210 data-sheet
