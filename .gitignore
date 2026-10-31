@@ -56,5 +56,7 @@ docs/images/*
 /*.png
 notebooks/my_example_sky.json
 notebooks/Untitled*.ipynb
+# Local backup copies (e.g. a notebook saved before an update)
+*.bak
 # Generated API documentation (doxygen Doxyfile)
 docs/api/

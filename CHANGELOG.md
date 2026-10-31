@@ -16,6 +16,10 @@ strictly higher than the previous one.
   notebooks A-E (A fringes, B Fourier transformation and correlation
   planned), further notebooks as proposals.
 
+### Removed
+- `notebooks/01_sky_models.local-backup.ipynb.bak` (local backup copy,
+  committed by mistake); `*.bak` added to `.gitignore`.
+
 ### Fixed
 - Docstrings of `DiscSource` and `otf_circular`: valid reStructuredText.
 
