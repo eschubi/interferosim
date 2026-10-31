@@ -102,7 +102,7 @@ Processing chain of Interferosim
    * - Geometry, uv-coverage, visibilities, correlator
      - :mod:`interferosim.observation` (geometry, uv-coverage, visibility and transit simulation; correlator in preparation), :mod:`interferosim.visdata`
    * - Gridding, weighting, dirty image and beam
-     - :mod:`interferosim.imaging` (in preparation)
+     - :mod:`interferosim.imaging`
    * - Högbom-CLEAN, Wiener filter, restoration
      - :mod:`interferosim.deconvolution` (in preparation)
    * - FITS input/output

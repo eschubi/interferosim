@@ -39,8 +39,8 @@ Simulation chain
      - FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search and refinement, cross spectra, visibilities; station clock and LO offsets; selector
      - available
    * - ``06_imaging.ipynb``
-     - gridding, natural/uniform/robust weighting, dirty beam and dirty image
-     - proposal
+     - gridding, natural/uniform/Wiener weighting, dirty beam and dirty image: OH masers with the project baseline and three stations, Cygnus A, selector
+     - available
    * - ``07_deconvolution.ipynb``
      - Högbom CLEAN vs. Wiener filter, restoration (migrated from Appendix A)
      - proposal

@@ -115,3 +115,68 @@ def test_visdata_roundtrip_and_selection(tmp_path):
     with pytest.raises(ValueError):
         VisData(time_mjd=[0, 1], ha_deg=[0], u=[0, 1], v=[0, 1], w=[0, 1], baseline=[0, 0],
                 vis=[1, 2], weight=[1, 1], freq_hz=[1e9])
+
+
+# ---------------------------------------------------------------- imaging (0.7.0)
+from interferosim.constants import OH_1665  # noqa: E402
+from interferosim.imaging import (Gridder, Imager, NaturalWeighting, UniformWeighting,  # noqa: E402
+                                  WienerWeighting)
+
+
+def _three_station_array():
+    from interferosim.instrument import Antenna, Receiver
+    site = Site.from_toml(CFG / "sites" / "wilhelmsburg.toml")
+    dish = Antenna.from_toml(CFG / "antennas" / "dish_3m.toml")
+    rec = Receiver.from_toml(CFG / "receivers" / "b210.toml")
+    return Array(site, [Station.from_enu("W", site, 0, 0, 0, dish),
+                        Station.from_enu("E", site, 11500, 0, 0, dish),
+                        Station.from_enu("N", site, 0, 6000, 0, dish)], receiver=rec)
+
+
+def test_point_source_image_and_beam():
+    sky = SkyModel([PointSource("p", 0.0, 0.0, 50.0)], center=FieldCenter("p", 120.0, 55.0))
+    obs = Observation.from_sky(sky, _three_station_array(), ha_range_h=(-6, 6), t_int_s=300)
+    vd = VisibilitySimulator(add_noise=False).run(sky, obs)
+    img, beam = Imager(Gridder(256, 0.4), NaturalWeighting()).both(vd)
+    pk, l, m = img.peak()
+    assert pk == pytest.approx(50.0 * float(_three_station_array().stations[0].antenna.beam(0.0)), rel=0.02)
+    assert abs(l) < 0.5 and abs(m) < 0.5
+    assert beam.data.max() == pytest.approx(1.0)
+    fx, fy = beam.beam_fwhm_arcsec()
+    assert 0.5 < fx < 5 and 0.5 < fy < 10
+
+
+def test_offset_source_position_and_phase_centre_shift():
+    sky = SkyModel([PointSource("p", 0.3, 0.45, 40.0)], center=FieldCenter("c", 36.77, 61.87))
+    obs = Observation.from_sky(sky, _three_station_array(), ha_range_h=(-6, 6), t_int_s=300, freq_hz=OH_1665)
+    vd = VisibilitySimulator(add_noise=False).run(sky, obs)
+    img = Imager(Gridder(256, 0.4)).dirty_image(vd, center_deg=(0.3 + 3 / 3600, 0.45 - 2 / 3600))
+    pk, l, m = img.peak()
+    assert l == pytest.approx(-3.0, abs=0.5) and m == pytest.approx(2.0, abs=0.5)
+
+
+def test_weightings_change_beam_and_noise():
+    sky = SkyModel([PointSource("p", 0.0, 0.0, 50.0)], center=FieldCenter("p", 120.0, 55.0))
+    obs = Observation.from_sky(sky, _three_station_array(), ha_range_h=(-6, 6), t_int_s=120)
+    vd = VisibilitySimulator(seed=2).run(sky, obs)
+    noise = VisibilitySimulator(seed=2).run(SkyModel([PointSource("z", 0, 0, 1e-9)], center=sky.center), obs)
+    res = {}
+    for w in (NaturalWeighting(), UniformWeighting(), WienerWeighting(1.0)):
+        beam = Imager(Gridder(256, 0.4), w).dirty_beam(vd)
+        img = Imager(Gridder(256, 0.4), w).dirty_image(noise)     # pure noise map
+        res[w.name] = (img.rms(), np.mean(beam.beam_fwhm_arcsec()))
+    assert res["uniform"][1] <= res["natural"][1] + 1e-6           # uniform: sharper (or equal) beam
+    assert res["natural"][0] <= res["uniform"][0] * 1.05             # natural: lower (or equal) noise
+
+
+def test_channels_gridded_at_their_frequency():
+    sky = SkyModel([PointSource("p", 2 / 3600, 0.0, 10.0)], center=FieldCenter("p", 120.0, 55.0))
+    obs = Observation.from_sky(sky, _three_station_array(), ha_range_h=(-3, 3), t_int_s=600)
+    vd = VisibilitySimulator(add_noise=False).run(sky, obs)
+    # duplicate into two channels 1 % apart with the correct frequency scaling of the phase
+    f = np.array([obs.freq_hz, obs.freq_hz * 1.01])
+    vis = np.stack([sky.visibility(vd.u * s, vd.v * s) for s in f / f[0]], axis=1)
+    vd2 = VisData(vd.time_mjd, vd.ha_deg, vd.u, vd.v, vd.w, vd.baseline, vis,
+                  np.repeat(vd.weight, 2, axis=1), f, vd.baseline_names)
+    pk, l, m = Imager(Gridder(256, 0.4)).dirty_image(vd2).peak()
+    assert l == pytest.approx(2.0, abs=0.45)

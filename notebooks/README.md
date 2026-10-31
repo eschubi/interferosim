@@ -13,7 +13,7 @@ Teaching notebooks, one per topic. Planned notebooks and proposals are listed wi
 | `03_signal_simulation.ipynb` | generating SDR receiver signals (IQ samples of the B210 at each station) based on the sky model under variable baseline parameters: signal model, raw fringes, measured vs. model visibilities over the baseline length, clock errors (TCXO/GPSDO), quantisation, SigMF output, selector | available |
 | `04_observation.ipynb` | source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), asymmetry of a track, selector | available |
 | `05_correlator.ipynb` | FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search and refinement, cross spectra, visibilities; station clock and LO offsets; selector | available |
-| `06_imaging.ipynb` | gridding, natural/uniform/robust weighting, dirty beam and dirty image | proposal |
+| `06_imaging.ipynb` | gridding, natural/uniform/Wiener weighting, dirty beam and dirty image: OH masers with the project baseline and three stations, Cygnus A, selector | available |
 | `07_deconvolution.ipynb` | Högbom CLEAN vs. Wiener filter, restoration (migrated from Appendix A) | proposal |
 | `08_sun_first_target.ipynb` | the Sun with two horns on one B210: transit, fringes, disc visibility (migrated from Appendix B) | proposal |
 | `09_spectral_lines.ipynb` | multichannel spectra: HI 21 cm and the OH maser lines, Doppler/LSR velocity, line visibilities per channel | proposal |

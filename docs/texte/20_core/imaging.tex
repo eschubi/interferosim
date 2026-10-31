@@ -1,6 +1,113 @@
 % docs/texte/20_core/imaging.tex -- chapter "Imaging" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-31) -- package interferosim.imaging (interferosim 0.7.0)
+%   0.1.0 (2026-10-12): placeholder
 % ================================================================
+\label{ch:imaging}
+\index{imaging}\index{dirty beam}\index{weighting}
 
 Gridding, natural/uniform/Wiener weighting, dirty image and dirty beam
-(PSF). \emph{Follows in phase~3.}
+(PSF). Implemented in version~0.7.0 in the package
+\texttt{interferosim.imaging} (classes as in the basic design,
+Fig.~\ref{fig:uml-pipeline}); notebook \texttt{06\_imaging.ipynb}. Origin:
+notebook~A of the teaching material (case~B, the sparsely sampled
+interferometer). Theory: chapter \enquote{Imaging} in part
+\enquote{Theory}.
+
+\section{Implementation}
+
+\begin{description}
+  \item[\texttt{Gridder(npix, cell\_arcsec)}] nearest-cell gridding on an
+        $N\times N$ uv-grid, cell $\Delta u = 1/(N\,\Delta l)$. Every visibility
+        enters together with its Hermitian conjugate
+        $V(-u,-v) = V^*(u,v)$, weighted with its data weight $1/\sigma^2$;
+        channels are gridded at their own frequency (multi-frequency
+        synthesis). An optional shift of the phase centre,
+        $V' = V\,e^{+2\pi i(ul_0+vm_0)}$, puts the offset $(l_0,m_0)$ into the
+        image centre. Visibilities outside the grid are counted.
+  \item[Weighting] (strategy pattern) per cell from the gridded weight
+        $W$: \texttt{NaturalWeighting} (factor 1 -- the data weights),
+        \texttt{UniformWeighting} ($1/W$ -- every occupied cell counts once),
+        \texttt{WienerWeighting(k)} ($W/(W^2+K)$, $K = k\,\langle W\rangle^2$;
+        notebook~A: for a sparsely sampled interferometer the Wiener filter
+        only re-weights the measured cells).
+  \item[\texttt{Imager}] inverse FFT of the weighted grid (dirty image) and
+        of the weight grid (dirty beam), normalised so that the beam peaks
+        at 1 and a point source shows its flux density in Jy/beam. Convention
+        as \texttt{SkyModel.visibility}:
+        $V = \sum S\,e^{-2\pi i(ul+vm)} \Rightarrow
+         I_D = \sum w\,V\,e^{+2\pi i(ul+vm)} = I * B_D$.
+  \item[\texttt{Image}] map with pixel size in arcsec, axes relative to the
+        image centre; peak, value at a position, rms outside a circle, FWHM of
+        the main lobe.
+\end{description}
+
+\section{Results}
+
+\paragraph*{OH masers with the project baseline.} Three masers of 70, 45
+and 20\,Jy within $15''$, 1665\,MHz, $\pm 8$\,h on the 11.5\,km baseline: the
+single ellipse in the uv-plane gives a dirty beam of concentric fringes with
+a main lobe of $1.8''\times1.6''$ and sidelobes up to 0.46
+(Fig.~\ref{fig:img-masers}). Each maser appears as a copy of the beam; the
+sidelobes of each fall on the others (M1: 62 instead of 70\,Jy/beam at its
+position) -- the task of deconvolution.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/img_masers_dirty.png}
+  \caption{OH maser group, 11.5\,km east--west, 16\,h: uv-coverage, dirty beam
+           and dirty image (natural weighting); circles: true positions.}
+  \label{fig:img-masers}
+\end{figure}
+
+\paragraph*{Weighting.} Natural weighting gives the lowest noise and the
+widest main lobe, uniform the sharpest main lobe and lower sidelobes at
+higher noise; the Wiener weighting lies in between, set by $k$
+(Fig.~\ref{fig:img-weighting}).
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Weighting & main lobe (FWHM) & highest sidelobe & noise [Jy/beam] \\
+\midrule
+natural          & $1.78''\times1.60''$ & 0.46 & 0.15 \\
+Wiener, $k = 1$    & $1.74''\times1.63''$ & 0.45 & 0.16 \\
+Wiener, $k = 0.01$ & $1.55''\times1.77''$ & 0.32 & 0.20 \\
+uniform          & $1.55''\times1.77''$ & 0.33 & 0.21 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/img_weighting.png}
+  \caption{Dirty beams (top) and dirty images (bottom) of the maser group with
+           natural, Wiener ($k=1$, $k=0.01$) and uniform weighting.}
+  \label{fig:img-weighting}
+\end{figure}
+
+\paragraph*{More baselines.} A hypothetical third station 6\,km north (not a
+planned site) adds two baselines of other orientations: the highest sidelobe
+drops from 0.46 to 0.19 and the masers stand out clearly
+(Fig.~\ref{fig:img-three}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/img_three_stations.png}
+  \caption{Project baseline alone (top) and with a hypothetical third station
+           (bottom): uv-coverage, dirty beam, dirty image.}
+  \label{fig:img-three}
+\end{figure}
+
+\paragraph*{Cygnus~A.} Baselines of 6--13\,km sample only 30--60\,k$\lambda$:
+the compact hotspots appear, the lobes ($45''\times25''$) are resolved out
+(Fig.~\ref{fig:img-cyga}). Without the zero spacing the integral of the dirty
+image vanishes; bright features sit in negative bowls. Short baselines (or a
+single-dish map) would be needed for the extended emission.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/img_cyga.png}
+  \caption{Cygnus~A at 1420\,MHz: sky model and dirty images (uniform weighting,
+           $\pm 8$\,h) with the project baseline and with three stations.}
+  \label{fig:img-cyga}
+\end{figure}

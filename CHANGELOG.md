@@ -6,6 +6,23 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-10-31
+
+### Added
+- Package `interferosim.imaging`: `Gridder` (nearest-cell gridding with
+  Hermitian conjugates, multi-frequency synthesis, phase-centre shift),
+  `NaturalWeighting`, `UniformWeighting`, `WienerWeighting` (notebook A),
+  `Imager` (dirty image and dirty beam in Jy/beam), `Image` (peak, value at
+  a position, rms, main-lobe FWHM).
+- `interferosim.plotting`: `plot_image`, `sky_marks`.
+- Notebook `06_imaging.ipynb` (principle, OH masers with the project
+  baseline, weighting comparison, three stations, Cygnus A, selector).
+- Documentation: chapter "Imaging" (implementation, results, four figures);
+  Sphinx API page; tests.
+
+### Changed
+- Road map: imaging in 0.7, deconvolution in 0.8, spectral lines in 0.9.
+
 ## [0.6.0] — 2026-10-31
 
 ### Added
