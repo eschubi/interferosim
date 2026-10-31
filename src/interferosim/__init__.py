@@ -6,6 +6,7 @@ notebooks):
 
 sky            sky models
 instrument     antennas, receiver, array
+signal         simulated SDR receiver signals (IQ), correlation check
 observation    geometry, uv-coverage, visibilities, correlator
 imaging        gridding, weighting, dirty image and beam
 deconvolution  Hoegbom-CLEAN, Wiener filter, restoration
@@ -14,6 +15,6 @@ plotting       reusable plot functions
 widgets        ipywidgets front end
 """
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 
 __all__ = ["__version__"]

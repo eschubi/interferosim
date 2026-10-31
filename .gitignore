@@ -58,9 +58,11 @@ docs/images/*
 !docs/images/b210_blockdiagram.tex
 !docs/images/b210_blockdiagram.pdf
 !docs/images/b210_blockdiagram.png
+!docs/images/signal_check.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json
+notebooks/sim_output/
 notebooks/Untitled*.ipynb
 # Local backup copies (e.g. a notebook saved before an update)
 *.bak

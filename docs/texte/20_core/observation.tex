@@ -1,8 +1,47 @@
 % docs/texte/20_core/observation.tex -- chapter "Observation" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-10-31) -- section "Geometry" (module observation.geometry)
+%   0.1.0 (2026-10-12): placeholder
 % ================================================================
+\label{ch:observation}
 
 Hour angle and elevation (sidereal and solar day), uv-coverage with
 Earth rotation synthesis, visibilities with noise, adding and
 multiplying interferometer, fringe rate and delay.
-\emph{Follows in phase~2.}
+The uv-coverage, the visibility simulation with noise and the transit
+follow with version~0.5; the geometry needed by the signal simulation
+(chapter~\ref{ch:signal}) is implemented since version~0.4.
+
+\section{Geometry}
+\index{geometric delay}\index{uvw}
+
+The module \texttt{interferosim.observation.geometry} computes the source
+direction in the earth-fixed frame (ECEF, chapter~\ref{ch:array}) from
+right ascension $\alpha$, declination $\delta$ and the Greenwich hour angle
+$H_G = \mathrm{GMST} - \alpha$ (or $H_G = H - \lambda$ from the local hour
+angle $H$ at a site of longitude $\lambda$):
+\begin{align}
+  \hat s_0 &= (\cos\delta\cos H_G,\; -\cos\delta\sin H_G,\; \sin\delta),\\
+  \hat e_E &= (\sin H_G,\; \cos H_G,\; 0),\qquad
+  \hat e_N = (-\sin\delta\cos H_G,\; \sin\delta\sin H_G,\; \cos\delta),
+\end{align}
+$\hat s_0$ towards the phase centre, $\hat e_E$ and $\hat e_N$ east
+(increasing $\alpha$) and north on the sky. A source at the offset $(l, m)$
+lies in the direction $\hat s = \sqrt{1-l^2-m^2}\,\hat s_0 + l\,\hat e_E +
+m\,\hat e_N$. GMST follows the IAU~1982 formula
+$\mathrm{GMST} = 280.46061837^\circ + 360.98564736629^\circ\,(JD-2451545)$;
+precession and nutation are neglected (AAS6 uses astropy; for the simulation
+it suffices that simulator and correlator use the same model).
+
+For a baseline $\vec B = \vec r_j - \vec r_i$ (station $i$ the reference):
+\begin{align}
+  \tau_g &= -\frac{\vec B\cdot\hat s}{c}
+     && \texttt{geometric\_delay}\\
+  (u, v, w) &= \frac{1}{\lambda}\,\bigl(\vec B\cdot\hat e_E,\;
+               \vec B\cdot\hat e_N,\; \vec B\cdot\hat s_0\bigr)
+     && \texttt{uvw}
+\end{align}
+$\tau_g > 0$ means the wavefront reaches station $j$ later. The delay rate
+\texttt{delay\_rate} follows from the Earth's rotation
+($\dot H_G = \omega_E$); for an east--west baseline it is
+$\omega_E\,b\cos\delta\cos H/c$, maximal at transit. \texttt{elevation\_deg}
+gives the elevation of a direction at a site.

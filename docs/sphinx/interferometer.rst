@@ -97,8 +97,10 @@ Processing chain of Interferosim
      - :mod:`interferosim.sky`
    * - Antennas (selectable types), receiver (Ettus USRP B210), array
      - :mod:`interferosim.instrument`
+   * - Simulated SDR receiver signals (IQ), instrument errors
+     - :mod:`interferosim.signal`
    * - Geometry, uv-coverage, visibilities, correlator
-     - :mod:`interferosim.observation` (in preparation)
+     - :mod:`interferosim.observation` (geometry implemented, rest in preparation)
    * - Gridding, weighting, dirty image and beam
      - :mod:`interferosim.imaging` (in preparation)
    * - Högbom-CLEAN, Wiener filter, restoration

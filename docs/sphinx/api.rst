@@ -47,6 +47,32 @@ interferosim.instrument
    :no-members:
    :no-index:
 
+interferosim.observation
+------------------------
+
+.. automodule:: interferosim.observation
+
+.. rubric:: Module notes
+
+.. automodule:: interferosim.observation.geometry
+   :no-members:
+   :no-index:
+
+interferosim.signal
+-------------------
+
+.. automodule:: interferosim.signal
+
+.. rubric:: Module notes
+
+.. automodule:: interferosim.signal.iq
+   :no-members:
+   :no-index:
+
+.. automodule:: interferosim.signal.correlate
+   :no-members:
+   :no-index:
+
 interferosim.plotting
 ---------------------
 
@@ -69,8 +95,6 @@ interferosim.constants
 
 Stages in preparation
 ---------------------
-
-.. automodule:: interferosim.observation
 
 .. automodule:: interferosim.imaging
 

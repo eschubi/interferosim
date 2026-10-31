@@ -10,9 +10,11 @@ teaching. A project of the University of Vienna.
 .. image:: ../images/sky_gallery.png
    :alt: Example skies of Interferosim
 
-**Status:** |release| -- sky models (:mod:`interferosim.sky`) and the
-instrument (:mod:`interferosim.instrument`: antennas, receiver, array) are
-implemented; observation, imaging and deconvolution are being migrated from
+**Status:** |release| -- sky models (:mod:`interferosim.sky`), the
+instrument (:mod:`interferosim.instrument`: antennas, receiver, array) and
+the signal simulation (:mod:`interferosim.signal`: IQ samples of every
+station) are implemented; observation, imaging and deconvolution are being
+migrated from
 ``aas6sim`` and the teaching notebooks step by step.
 
 .. toctree::

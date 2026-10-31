@@ -1,0 +1,108 @@
+% docs/texte/20_core/signal.tex -- chapter "Signal Simulation" (Interferosim)
+% Version: 0.1.0 (2026-10-31) -- package interferosim.signal (interferosim 0.4.0)
+% ================================================================
+\label{ch:signal}
+\index{signal simulation}\index{IQ samples}
+
+The package \texttt{interferosim.signal} generates the complex baseband
+samples (IQ) that the SDR of every station records, from a sky model
+(chapter~\ref{ch:sky-models}), an array (chapter~\ref{ch:array}) and a
+receiver profile (chapter~\ref{ch:receiver}). It closes the simulation
+chain at the level of the measured data: the correlator, imaging and
+deconvolution can be tested on simulated recordings exactly as on real
+ones. Origin: AAS6 \texttt{modules/sdr/iq\_record\_node.py}
+(\texttt{\_SimDualSource}) and \texttt{modules/interfero/skysim.py},
+extended to several sources, any number of stations and instrument errors.
+Notebook: \texttt{03\_signal\_simulation.ipynb}.
+
+\section{Signal model}
+
+A source of flux density $S$ radiates a stationary complex Gaussian signal
+$s(t)$ of power $S$. Station $k$ receives it delayed by $\tau_k(t)$ relative
+to the reference station; mixing with the LO at $f_c$ to complex baseband
+adds the phase $-2\pi f_c\tau_k$:
+\begin{equation}
+  x_k(t) = \sum_c \sqrt{P_k(\theta_c)}\; s_c\bigl(t-\tau_k(t)\bigr)\,
+           e^{-2\pi i f_c\tau_k(t)} + n_k(t)
+  \label{eq:iq-model}
+\end{equation}
+with the primary beam $P_k$ and receiver noise $n_k$ of power
+$\mathrm{SEFD}_k$. The unit of $x_k$ is $\sqrt{\mathrm{Jy}}$ per sample:
+\begin{equation}
+  \langle|x_k|^2\rangle = \mathrm{SEFD}_k + \sum_c S_c P_k,\qquad
+  \langle x_i x_j^*\rangle = \sum_c \sqrt{P_iP_j}\,V_c(u,v)\,e^{-2\pi i w}.
+\end{equation}
+After the delay and the phase of the phase centre are removed (delay
+tracking and fringe stopping, factor $e^{+2\pi i w}$), the correlation
+is the visibility of the sky model. Its noise for an average over
+$N = f_s\tau$ samples is
+\begin{equation}
+  \sigma_V = \sqrt{\frac{(\mathrm{SEFD}_i+S_i)(\mathrm{SEFD}_j+S_j)}{2N}},
+\end{equation}
+which reduces to the radiometer formula of chapter~\ref{ch:receiver} for
+weak sources.
+
+\section{Algorithm}
+
+\texttt{IQSimulator.simulate(duration, lha0)} works in blocks of
+\texttt{block\_size} samples. For each block, at its mid time:
+\begin{enumerate}
+  \item phase-centre delay $\tau_{0,k}$ and its rate for every station
+        (chapter~\ref{ch:observation});
+  \item covariance matrix of the station sky signals from the analytic
+        component visibilities,
+        $R_{ij} = \sum_c\sqrt{P_iP_j}\,V_c(u_{ij},v_{ij})$,
+        $R_{kk} = \sum_c S_c P_k$ -- extended components need no splitting
+        into points;
+  \item $n_\mathrm{st}$ correlated white streams $Y = L Z$ with
+        $LL^H = R$ (eigen-decomposition, robust for singular $R$);
+  \item for each station: fractional delay by $\tau_{0,k}$ plus clock
+        offset (with a margin against the circular shift), phase
+        $e^{-2\pi i f_c(\tau_{0,k}+\dot\tau_{0,k}(t-t_\mathrm{mid}))}$
+        sample by sample, receiver noise, LO offset and phase.
+\end{enumerate}
+The method is exact as long as the differential delays across the source
+are small against one sample (no bandwidth smearing); the largest value is
+reported in \texttt{meta["max\_differential\_delay\_samples"]}. Effects not
+modelled: bandpass shape, polarisation, spectral lines (version~0.5),
+elevation-dependent system temperature.
+
+\section{Instrument errors and quantisation}
+
+\texttt{StationErrors} holds the LO frequency offset $\Delta f$, the LO
+phase and the clock offset of a station; \texttt{from\_receiver()} draws them
+within the data-sheet limits of the receiver profile. A residual LO offset
+turns the fringe-stopped visibility at $\Delta f$; averaging over $T$
+reduces its amplitude by $|\mathrm{sinc}(\Delta f\,T)|$. With the B210
+profiles: TCXO ($\pm 2$\,ppm, 2.8\,kHz at 1420\,MHz) destroys the
+visibility in any practical average, a locked GPSDO ($< 1$\,ppb,
+$\le 1.4$\,Hz) allows coherent averages up to some 0.1\,s; longer ones
+need a fringe-rate solution. \texttt{quantize()} imitates an ADC or host
+format of a few bits with optimum thresholds for Gaussian noise; the
+correlation coefficient falls to $2/\pi$ at 1~bit (Van Vleck), about 0.88
+at 2~bits and 0.96 at 3~bits.
+
+\section{Correlation check and recording}
+
+\texttt{interferosim.signal.correlate} provides the minimum needed to check
+the simulation (the full FX correlator follows with notebook~05):
+\texttt{fractional\_delay} (from AAS6 \texttt{correlate.py}),
+\texttt{correct\_geometry} (delay tracking and fringe stopping with the
+model delay, optional LO offset), \texttt{cross\_correlate} and
+\texttt{measure\_visibilities} for all baselines of a run, with the
+expected noise. For Cygnus~A on east--west baselines from 20\,m to
+11.5\,km the correlated visibilities agree with the analytic visibility
+of the model within the noise (Fig.~\ref{fig:signal-check}).
+\texttt{IQBlock.save\_sigmf()} writes a block in the SigMF format
+(\texttt{cf32\_le} data plus JSON metadata), the format in which real B210
+recordings can be stored as well.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/signal_check.png}
+  \caption{Cygnus~A at 1420\,MHz: visibility amplitude of the sky model
+           (line) and correlated simulated IQ streams of two 3\,m dishes
+           with the B210, 20\,s at 50\,kS/s (points with $1\sigma$ error
+           bars). Notebook \texttt{03\_signal\_simulation.ipynb}, section~4.}
+  \label{fig:signal-check}
+\end{figure}

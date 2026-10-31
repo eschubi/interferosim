@@ -30,8 +30,8 @@ Simulation chain
      - antenna types and primary beams, dish transfer function, B210 receiver and sensitivity, arrays and baselines, choice of the baseline length (Cyg A), selector
      - available
    * - ``03_signal_simulation.ipynb``
-     - generating SDR receiver signals (IQ samples of both B210 channels) based on the sky model under variable baseline parameters
-     - planned
+     - generating SDR receiver signals (IQ samples of the B210 at each station) based on the sky model under variable baseline parameters: signal model, raw fringes, measured vs. model visibilities over the baseline length, clock errors (TCXO/GPSDO), quantisation, SigMF output, selector
+     - available
    * - ``04_observation.ipynb``
      - source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, transit (drift scan) of fixed antennas
      - proposal

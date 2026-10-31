@@ -6,6 +6,29 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-10-31
+
+### Added
+- Package `interferosim.signal`: `IQSimulator` (IQ samples of all stations
+  from the sky model: covariance from the analytic component visibilities,
+  phase-centre delay and fringe phase per sample, primary beams, receiver
+  noise), `IQBlock` (with SigMF output), `StationErrors` (LO offset and
+  phase, clock offset; `from_receiver` within the data-sheet limits),
+  `quantize`; `correlate`: `fractional_delay` (from AAS6), `correct_geometry`,
+  `cross_correlate`, `measure_visibilities`.
+- `interferosim.observation.geometry`: GMST, Greenwich hour angle, sky basis
+  and source direction in ECEF, geometric delay and rate, uvw, elevation.
+- Notebook `03_signal_simulation.ipynb` (signal model, IQ statistics and
+  spectrum, raw fringes, measured vs. model visibilities over the baseline
+  length, clock errors, quantisation, SigMF, selector).
+- Documentation: chapter "Signal Simulation", section "Geometry" in
+  "Observation", figure `signal_check.png`; Sphinx API pages for
+  `observation` and `signal`; tests `tests/test_signal.py`.
+
+### Changed
+- Road map: the signal simulation (package `signal`) is brought forward to
+  version 0.4; observation (uv-coverage, transit) and `visdata` follow.
+
 ## [0.3.2] — 2026-10-31
 
 ### Added

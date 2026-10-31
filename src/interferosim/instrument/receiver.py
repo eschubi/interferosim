@@ -38,8 +38,8 @@ directory); its keys are read first and overridden by the file
 (e.g. ``b210_gpsdo.toml`` builds on ``b210.toml``).
 
 Version 0.3.2 (2026-10-31): device profile (data-sheet fields), data rate,
-  LO offset / coherence time, receiver noise temperature, validate(),
-  profiles with ``base``.
+LO offset / coherence time, receiver noise temperature, validate(),
+profiles with ``base``.
 Version 0.3.0 (2026-10-12): first implementation.
 """
 
