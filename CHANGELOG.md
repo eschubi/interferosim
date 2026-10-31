@@ -6,6 +6,15 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-10-31
+
+### Changed
+- Notebook 03, section 2: the titles of the IQ figure say which part of the
+  recording is shown (first 2 ms of 10 s, all samples for the histogram,
+  number of blocks for the spectrum); new slider to move a window of
+  selectable length through the whole recording of both stations, with the
+  correlation coefficient of the window.
+
 ## [0.4.0] — 2026-10-31
 
 ### Added

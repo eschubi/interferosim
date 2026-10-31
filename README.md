@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.4.0 — sky models (`interferosim.sky`, notebook
+**Status:** 0.4.1 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
