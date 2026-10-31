@@ -19,14 +19,23 @@ Interferosim adds the component kind "disc" (fields ``diameter_deg``,
 ``limb``, ``limb_power``). Files written by Interferosim keep the AAS6 keys,
 so AAS6 can read them as long as only "point" and "gauss" are used.
 
+Spectra (since 0.9.0): a component entry may carry ``"spectrum": {"type":
+..., ...}`` (module :mod:`interferosim.sky.spectra`); the model keeps them in
+:attr:`SkyModel.spectra` by component name. Components without a spectrum
+are flat. :meth:`SkyModel.flux_at`, :meth:`SkyModel.at_frequency`,
+:meth:`SkyModel.spectrum_jy` and :meth:`SkyModel.visibility_spectrum` evaluate
+them; all other methods use ``flux_jy`` (continuum at the reference frequency).
+
 Version 0.2.0 (2026-10-12): first implementation.
 Version 0.2.1 (2026-10-12): demo component names in English.
+Version 0.9.0 (2026-11-01): spectra of the components.
 """
 
 from __future__ import annotations
 
+import copy
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -34,6 +43,7 @@ import numpy as np
 
 from .components import (GaussianSource, PointSource, SkyComponent,
                          component_from_dict)
+from .spectra import Spectrum, spectrum_from_dict
 
 __all__ = ["FieldCenter", "SkyModel", "AS", "AM"]
 
@@ -68,6 +78,7 @@ class SkyModel:
     center: FieldCenter = field(default_factory=FieldCenter)
     note: str = ""
     name: str = ""
+    spectra: Dict[str, Spectrum] = field(default_factory=dict)     # by component name (0.9.0)
 
     # ------------------------------------------------------------------
     # building
@@ -165,6 +176,49 @@ class SkyModel:
         return V
 
     # ------------------------------------------------------------------
+    # spectra (0.9.0)
+    def set_spectrum(self, name: str, spectrum: Spectrum) -> "SkyModel":
+        """Attach ``spectrum`` to the component ``name``; returns the model."""
+        self[name]                                        # KeyError if unknown
+        self.spectra[name] = spectrum
+        return self
+
+    def flux_at(self, component: Union[str, SkyComponent], freq_hz) -> np.ndarray:
+        """Flux density [Jy] of a component at the LSR-frame frequencies."""
+        c = self[component] if isinstance(component, str) else component
+        sp = self.spectra.get(c.name)
+        f = np.asarray(freq_hz, dtype=float)
+        return c.flux_jy * (sp.shape(f) if sp is not None else np.ones_like(f))
+
+    def at_frequency(self, freq_hz: float) -> "SkyModel":
+        """Copy of the model with every flux density evaluated at ``freq_hz``
+        (spectra dropped): a continuum snapshot for the single-frequency tools."""
+        comps = [replace(c, flux_jy=float(self.flux_at(c, freq_hz))) for c in self.components]
+        return SkyModel(components=comps, center=copy.copy(self.center), note=self.note,
+                        name=f"{self.name}@{freq_hz / 1e6:.4f}MHz")
+
+    def spectrum_jy(self, freq_hz) -> np.ndarray:
+        """Total flux density over frequency (single dish without beam)."""
+        f = np.asarray(freq_hz, dtype=float)
+        return np.sum([self.flux_at(c, f) for c in self.components], axis=0) if self.components \
+            else np.zeros_like(f)
+
+    def visibility_spectrum(self, u, v, freq_hz, ref_hz: float) -> np.ndarray:
+        """Visibilities [Jy] over frequency: u, v in wavelengths at ``ref_hz``
+        (shape (n,)), result shape (n, n_freq); every channel at its own
+        spatial frequency (u f/f_ref) and with the spectra of the components."""
+        u = np.atleast_1d(np.asarray(u, dtype=float))
+        v = np.atleast_1d(np.asarray(v, dtype=float))
+        f = np.atleast_1d(np.asarray(freq_hz, dtype=float))
+        out = np.zeros((u.size, f.size), complex)
+        for k, fk in enumerate(f):
+            s = fk / ref_hz
+            for c in self.components:
+                out[:, k] += c.visibility(u * s, v * s) * (self.flux_at(c, fk) / c.flux_jy
+                                                           if c.flux_jy else 0.0)
+        return out
+
+    # ------------------------------------------------------------------
     # file format (AAS6 sim_sky.json)
     def to_dict(self) -> Dict[str, Any]:
         d: Dict[str, Any] = {}
@@ -174,14 +228,19 @@ class SkyModel:
             d["name"] = self.name
         d["center"] = self.center.to_dict()
         d["components"] = [c.to_dict() for c in self.components]
+        for cd in d["components"]:
+            if cd["name"] in self.spectra:
+                cd["spectrum"] = self.spectra[cd["name"]].to_dict()
         return d
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "SkyModel":
         comps = [component_from_dict(c) for c in d.get("components", [])]
+        spectra = {c["name"]: spectrum_from_dict(c["spectrum"])
+                   for c in d.get("components", []) if isinstance(c.get("spectrum"), dict)}
         note = str(d.get("_note", d.get("_hinweis", "")))
         return cls(components=comps, center=FieldCenter.from_dict(d.get("center")),
-                   note=note, name=str(d.get("name", "")))
+                   note=note, name=str(d.get("name", "")), spectra=spectra)
 
     def to_json(self, path: Union[str, Path], indent: int = 2) -> Path:
         path = Path(path)

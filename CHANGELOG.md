@@ -6,6 +6,25 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-11-01
+
+### Added
+- Module `interferosim.sky.spectra`: `FlatSpectrum`, `PowerLawSpectrum`,
+  `GaussianLineSpectrum`, `AbsorptionSpectrum`, `spectrum_from_dict`,
+  `radio_velocity_kms`, `frequency_from_velocity`.
+- `SkyModel.spectra` (JSON key `"spectrum"` per component), `set_spectrum`,
+  `flux_at`, `at_frequency`, `spectrum_jy`, `visibility_spectrum`.
+- Module `interferosim.observation.doppler`: `observer_velocity_kms`,
+  `v_lsr_correction_kms` (checked against astropy within 0.02 km/s),
+  `topocentric_frequency_hz`, `lsr_velocity_from_topocentric`,
+  `regrid_to_lsr`.
+- `interferosim.observation.SpectralVisibilitySimulator` (multichannel
+  visibilities with spectra and Doppler shift).
+- `Imager.channel_images` (image cube).
+- Sky models `w3oh_masers_lines.json`, `cyg_a_hi.json`.
+- Notebook `09_spectral_lines.ipynb`.
+- Documentation: chapter "Spectral Lines" (five figures); tests.
+
 ## [0.8.1] — 2026-10-31
 
 ### Added

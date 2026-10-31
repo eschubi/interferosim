@@ -16,13 +16,16 @@ to the dirty image and the dirty beam.
   filter only re-weights the measured cells).
 * :class:`Imager` -- dirty image and dirty beam, normalised so that the beam
   peaks at 1 and a point source shows its flux density (Jy/beam); optional
-  shift of the phase centre to the image centre.
+  shift of the phase centre to the image centre; since 0.9.0
+  :meth:`Imager.channel_images` (one dirty image per channel, a cube for
+  spectral lines).
 
 Origin: notebook A (``Fall B``: gridding with ``np.add.at``, ``image_from``,
 ``wiener_weights``); conventions as ``SkyModel.visibility``:
 V(u, v) = sum S exp(-2 pi i (u l + v m))  =>  I(l, m) = sum V exp(+2 pi i (u l + v m)).
 
 Version 0.7.0 (2026-10-31): first implementation.
+Version 0.9.0 (2026-11-01): Imager.channel_images.
 """
 
 from __future__ import annotations
@@ -30,7 +33,7 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -231,3 +234,16 @@ class Imager:
                       name=f"dirty image ({self.weighting.name})", meta=meta),
                 Image(beam, self.gridder.cell_arcsec, "", tuple(center_deg),
                       name=f"dirty beam ({self.weighting.name})", meta=meta))
+
+    def channel_images(self, vd: VisData, channels: Optional[Sequence[int]] = None,
+                       center_deg: Tuple[float, float] = (0.0, 0.0)) -> List[Image]:
+        """One dirty image per channel (all channels by default): the image
+        cube of a spectral-line observation. ``meta["freq_hz"]`` holds the
+        channel frequency."""
+        out = []
+        for k in (range(vd.n_chan) if channels is None else channels):
+            img = self.dirty_image(vd.channel(int(k)), center_deg)
+            img.meta = dict(img.meta, channel=int(k), freq_hz=float(vd.freq_hz[int(k)]))
+            img.name = f"channel {int(k)}"
+            out.append(img)
+        return out

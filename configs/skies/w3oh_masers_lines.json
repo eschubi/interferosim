@@ -1,0 +1,62 @@
+{
+  "_note": "OH maser group M1-M3 of the aas6sim demo field with 1665 MHz line spectra (notebook 09). flux_jy is the peak line flux density. The LSR velocities (-44.0, -45.8, -42.3 km/s, near the systemic velocity of W3(OH) of about -45 km/s) and the widths of 0.4 km/s are illustrative values, not catalogue data.",
+  "name": "w3oh_masers_lines",
+  "center": {
+    "label": "W3(OH)",
+    "ra_deg": 36.7661,
+    "dec_deg": 61.8742
+  },
+  "components": [
+    {
+      "name": "Maser M1",
+      "dx_deg": 0.3,
+      "dy_deg": 0.45,
+      "flux_jy": 70.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0,
+      "spectrum": {
+        "type": "gauss_line",
+        "rest_hz": 1665402000.0,
+        "v_kms": -44.0,
+        "fwhm_kms": 0.4,
+        "continuum": 0.0
+      }
+    },
+    {
+      "name": "Maser M2",
+      "dx_deg": 0.30144444444444446,
+      "dy_deg": 0.44958333333333333,
+      "flux_jy": 45.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0,
+      "spectrum": {
+        "type": "gauss_line",
+        "rest_hz": 1665402000.0,
+        "v_kms": -45.8,
+        "fwhm_kms": 0.4,
+        "continuum": 0.0
+      }
+    },
+    {
+      "name": "Maser M3",
+      "dx_deg": 0.3038888888888889,
+      "dy_deg": 0.4525,
+      "flux_jy": 20.0,
+      "kind": "point",
+      "fwhm_x_deg": 0.0,
+      "fwhm_y_deg": 0.0,
+      "pa_deg": 0.0,
+      "spectrum": {
+        "type": "gauss_line",
+        "rest_hz": 1665402000.0,
+        "v_kms": -42.3,
+        "fwhm_kms": 0.4,
+        "continuum": 0.0
+      }
+    }
+  ]
+}

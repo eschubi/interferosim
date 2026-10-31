@@ -80,6 +80,12 @@ docs/images/*
 !docs/images/sun_raw_checks.png
 !docs/images/sun_transit.png
 !docs/images/sun_diameter.png
+!docs/images/lines_lsr.png
+!docs/images/lines_models.png
+!docs/images/lines_masers_spectra.png
+!docs/images/lines_channel_maps.png
+!docs/images/lines_no_doppler.png
+!docs/images/lines_hi_absorption.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json
@@ -89,3 +95,5 @@ notebooks/Untitled*.ipynb
 *.bak
 # Generated API documentation (doxygen Doxyfile)
 docs/api/
+# Python wheels downloaded into the working tree by accident
+*.whl

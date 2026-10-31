@@ -25,6 +25,10 @@ interferosim.sky
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.sky.spectra
+   :no-members:
+   :no-index:
+
 .. automodule:: interferosim.sky.cli
    :members: main, build_parser
 
@@ -67,6 +71,14 @@ interferosim.observation
    :no-index:
 
 .. automodule:: interferosim.observation.solar
+   :no-members:
+   :no-index:
+
+.. automodule:: interferosim.observation.doppler
+   :no-members:
+   :no-index:
+
+.. automodule:: interferosim.observation.spectral
    :no-members:
    :no-index:
 

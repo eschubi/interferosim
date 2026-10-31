@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.8.1 — sky models (`interferosim.sky`, notebook
+**Status:** 0.9.0 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -25,7 +25,9 @@ natural/uniform/Wiener weighting, dirty image and beam; notebook
 Högbom CLEAN, clean beam and restoration, Wiener filter; notebook
 `07_deconvolution.ipynb`) implemented, together with the first experiment:
 the Sun with two horns on one B210 (`interferosim.observation.solar`;
-notebook `08_sun_first_target.ipynb`). The
+notebook `08_sun_first_target.ipynb`), and spectral lines (spectra of the
+sky components, Doppler correction to the LSR, multichannel visibilities,
+channel maps; notebook `09_spectral_lines.ipynb`). The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 
