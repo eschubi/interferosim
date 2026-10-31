@@ -28,6 +28,11 @@ strictly higher than the previous one.
 - `notebooks/01_sky_models.local-backup.ipynb.bak` (local backup copy,
   committed by mistake); `*.bak` added to `.gitignore`.
 
+### Changed
+- Notebooks 00-02: first cell with `id: notebooks/<name>.ipynb` and the short
+  description of the notebook (01: the machine-specific localhost link
+  replaced by the repository path).
+
 ### Fixed
 - Notebooks 00-02 name the kernel `interferosim` ("Python (interferosim)",
   installed by `setup_venv`) instead of the generic `python3`, so Jupyter
