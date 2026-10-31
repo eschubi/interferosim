@@ -11,6 +11,10 @@ strictly higher than the previous one.
   interferometer in brief, installation, quick start, sky models,
   instrument, notebooks, API reference from the docstrings, change log;
   `build_sphinx_docs.bat`; optional dependency group `docs`.
+- README, `notebooks/README.md`, Sphinx page "Notebooks": notebook plan --
+  simulation chain 01-09 (03 signal simulation planned) and theory
+  notebooks A-E (A fringes, B Fourier transformation and correlation
+  planned), further notebooks as proposals.
 
 ### Fixed
 - Docstrings of `DiscSource` and `otf_circular`: valid reStructuredText.
