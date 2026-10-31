@@ -7,6 +7,13 @@ strictly higher than the previous one.
 ## [Unreleased]
 
 ### Added
+- `docs/images/array_geometry.tex` (TikZ, standalone class) and its PDF:
+  array of J antennas with geometric delay, primary beams, field of view,
+  baseline and receiver chains g_k -> x_k(t).
+- Notebook `00_general.ipynb`: project overview with the goal of a VLB
+  interferometer on the 11.5 km baseline Wilhelmsburg-Michelbach (principle,
+  VLBI concept, key figures, clock/timing requirements with B210 data-sheet
+  values, sensitivity, road map).
 - Sphinx documentation in `docs/sphinx/` (Furo theme): the radio
   interferometer in brief, installation, quick start, sky models,
   instrument, notebooks, API reference from the docstrings, change log;

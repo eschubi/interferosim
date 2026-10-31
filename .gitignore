@@ -52,6 +52,8 @@ docs/images/*
 !docs/images/instrument_beams.png
 !docs/images/instrument_arrays.png
 !docs/images/cyga_baseline.png
+!docs/images/array_geometry.tex
+!docs/images/array_geometry.pdf
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

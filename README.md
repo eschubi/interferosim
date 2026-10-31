@@ -81,6 +81,7 @@ interactive selector (ipywidgets):
 
 | Notebook | Content | Status |
 |---|---|---|
+| `00_general.ipynb` | project overview: goal of a VLB interferometer with an 11.5 km baseline (Wilhelmsburg–Michelbach), principle, key figures (resolution, delay, fringe rate, data rate), clock and timing requirements, sensitivity, road map | available |
 | `01_sky_models.ipynb` | sky models, file format, maps, own skies, visibilities, catalogue of known regions with selector | available |
 | `02_instrument.ipynb` | antenna types and primary beams, dish transfer function, B210 receiver and sensitivity, arrays and baselines, choice of the baseline length (Cyg A), selector | available |
 | `03_signal_simulation.ipynb` | generating SDR receiver signals (IQ samples of both B210 channels) based on the sky model under variable baseline parameters | planned |
