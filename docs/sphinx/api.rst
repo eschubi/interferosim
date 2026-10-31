@@ -101,6 +101,17 @@ interferosim.imaging
    :no-members:
    :no-index:
 
+interferosim.deconvolution
+--------------------------
+
+.. automodule:: interferosim.deconvolution
+
+.. rubric:: Module notes
+
+.. automodule:: interferosim.deconvolution.core
+   :no-members:
+   :no-index:
+
 interferosim.plotting
 ---------------------
 
@@ -123,8 +134,6 @@ interferosim.constants
 
 Stages in preparation
 ---------------------
-
-.. automodule:: interferosim.deconvolution
 
 .. automodule:: interferosim.io
 

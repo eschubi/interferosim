@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.7.0 — sky models (`interferosim.sky`, notebook
+**Status:** 0.8.0 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -21,7 +21,9 @@ notebook `04_observation.ipynb`) and the FX correlator
 (`interferosim.signal.FXCorrelator` with delay/rate search; notebook
 `05_correlator.ipynb`) and imaging (`interferosim.imaging`: gridding,
 natural/uniform/Wiener weighting, dirty image and beam; notebook
-`06_imaging.ipynb`) implemented. The
+`06_imaging.ipynb`) and deconvolution (`interferosim.deconvolution`:
+Högbom CLEAN, clean beam and restoration, Wiener filter; notebook
+`07_deconvolution.ipynb`) implemented. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 

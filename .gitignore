@@ -70,6 +70,11 @@ docs/images/*
 !docs/images/img_weighting.png
 !docs/images/img_three_stations.png
 !docs/images/img_cyga.png
+!docs/images/dec_clean_masers.png
+!docs/images/dec_clean_gain.png
+!docs/images/dec_wiener_clean.png
+!docs/images/dec_clean_three.png
+!docs/images/dec_clean_cyga.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

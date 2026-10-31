@@ -6,6 +6,25 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-10-31
+
+### Added
+- Package `interferosim.deconvolution`: interface `Deconvolver`
+  (`deconvolve`, alias `run`), `HogbomClean` (loop gain, iteration limit,
+  absolute and relative threshold, CLEAN window, positivity; convergence
+  history), `CleanBeam` (Gaussian fitted to the main lobe, kernel,
+  convolution), `DeconvResult` (model, residual, restored image,
+  components, flux within a circle), `WienerFilter` (W = S*/(|S|^2+NSR),
+  optional target resolution), `reference_image` (sky model on the image
+  grid, optionally attenuated by the primary beam and convolved with the
+  clean beam), `rms_error`.
+- `interferosim.plotting`: `plot_clean_history`.
+- Notebook `07_deconvolution.ipynb` (principle, CLEAN on the maser group,
+  convergence and loop gain, Wiener against CLEAN, three stations, limits
+  for Cygnus A, selector).
+- Documentation: chapter "Deconvolution" (implementation, results, five
+  figures); Sphinx API page; tests.
+
 ## [0.7.0] — 2026-10-31
 
 ### Added

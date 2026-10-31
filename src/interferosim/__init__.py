@@ -16,6 +16,6 @@ plotting       reusable plot functions
 widgets        ipywidgets front end
 """
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 __all__ = ["__version__"]

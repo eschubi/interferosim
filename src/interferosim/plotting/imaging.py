@@ -5,7 +5,10 @@
   to the left, optional zoom, source marks and colour bar.
 * :func:`sky_marks` -- marks (l, m, name) of the components of a sky model
   relative to an image centre, for :func:`plot_image`.
+* :func:`plot_clean_history` -- convergence of a CLEAN run: residual peak
+  and cumulative component flux against the iteration (since 0.8.0).
 
+Version 0.8.0 (2026-10-31): plot_clean_history.
 Version 0.7.0 (2026-10-31): first implementation.
 """
 
@@ -19,7 +22,7 @@ import numpy as np
 from ..imaging import Image
 from ..sky import SkyModel
 
-__all__ = ["plot_image", "sky_marks"]
+__all__ = ["plot_image", "sky_marks", "plot_clean_history"]
 
 
 def sky_marks(sky: SkyModel, center_deg: Tuple[float, float] = (0.0, 0.0),
@@ -56,3 +59,27 @@ def plot_image(img: Image, *, ax: Optional[plt.Axes] = None, zoom_arcsec: Option
         cb.set_label(img.unit or "relative")
     ax.set_title(title or img.name, fontsize=10)
     return fig, ax
+
+
+def plot_clean_history(result, *, ax: Optional[plt.Axes] = None, label: Optional[str] = None,
+                       title: Optional[str] = None):
+    """Residual peak (left axis, log) and cumulative CLEAN flux (right axis)
+    against the iteration of a :class:`~interferosim.deconvolution.DeconvResult`.
+    Returns (fig, ax, ax_right)."""
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    else:
+        fig = ax.figure
+    h = result.history
+    it = np.arange(1, len(h.get("peak", [])) + 1)
+    ax.semilogy(it, h["peak"], color="C0", label=label or "residual peak")
+    thr = result.meta.get("threshold_jy", 0.0)
+    if thr:
+        ax.axhline(thr, color="C0", ls=":", lw=1.0)
+    ax.set_xlabel("iteration"); ax.set_ylabel("residual peak  [Jy/beam]", color="C0")
+    ax.grid(alpha=0.3, which="both")
+    ax2 = ax.twinx()
+    ax2.plot(it, h["flux"], color="C3")
+    ax2.set_ylabel("flux in CLEAN components  [Jy]", color="C3")
+    ax.set_title(title or f"CLEAN convergence, {result.n_iter} iterations", fontsize=10)
+    return fig, ax, ax2
