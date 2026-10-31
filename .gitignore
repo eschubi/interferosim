@@ -75,6 +75,11 @@ docs/images/*
 !docs/images/dec_wiener_clean.png
 !docs/images/dec_clean_three.png
 !docs/images/dec_clean_cyga.png
+!docs/images/sun_baseline.png
+!docs/images/sun_year.png
+!docs/images/sun_raw_checks.png
+!docs/images/sun_transit.png
+!docs/images/sun_diameter.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

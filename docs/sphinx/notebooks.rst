@@ -45,8 +45,8 @@ Simulation chain
      - Högbom CLEAN, clean beam and restoration, Wiener filter (migrated from Appendix A): maser group with the project baseline, convergence and loop gain, Wiener against CLEAN, three stations, limits for Cygnus A, selector
      - available
    * - ``08_sun_first_target.ipynb``
-     - the Sun with two horns on one B210: transit, fringes, disc visibility (migrated from Appendix B)
-     - proposal
+     - the Sun with two horns on one B210 (migrated from Appendix B): signal strength, baseline choice, fringe rate over the year, raw-signal checks (covered horns, crosstalk, channel phase), transit with the solar day, radio diameter, procedure, selector
+     - available
    * - ``09_spectral_lines.ipynb``
      - multichannel spectra: HI 21 cm and the OH maser lines, Doppler/LSR velocity, line visibilities per channel
      - proposal

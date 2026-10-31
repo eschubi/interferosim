@@ -66,6 +66,10 @@ interferosim.observation
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.observation.solar
+   :no-members:
+   :no-index:
+
 interferosim.visdata
 --------------------
 

@@ -1,5 +1,6 @@
 % docs/texte/20_core/observation.tex -- chapter "Observation" (Interferosim)
-% Version: 0.3.1 (2026-10-31) -- subsection "Asymmetry of a track" (Cyg A)
+% Version: 0.4.0 (2026-10-31) -- section "The Sun as the first target" (interferosim 0.8.1)
+%   0.3.1 (2026-10-31): subsection "Asymmetry of a track" (Cyg A)
 %   0.3.0 (2026-10-31): Observation, uv-coverage, visibility and transit
 %   simulation, Sun position (interferosim 0.5.0)
 %   0.2.0 (2026-10-31): section "Geometry" (module observation.geometry)
@@ -161,4 +162,90 @@ low-precision formula of the Astronomical Almanac
            real part of the correlation (5\,s dumps) under the envelope of
            the horn beam, and a zoom around transit.}
   \label{fig:sun-transit}
+\end{figure}
+
+\section{The Sun as the first target}
+\label{sec:sun-first-target}
+\index{Sun}\index{solar diameter}
+
+Notebook \texttt{08\_sun\_first\_target.ipynb} (Appendix~B of the teaching
+material) works through the single-site test that precedes the 11.5\,km
+baseline: two 15\,dBi horns on the two RX channels of one B210. Module
+\texttt{observation.solar} (version~0.8.1):
+
+\begin{description}
+  \item[\texttt{sun\_flux\_jy}] $S = 2kT_b\Omega/\lambda^2$: the quiet Sun with
+        $T_b = 10^5$\,K and a radio diameter of $34'$ gives 476\,kJy (48\,SFU)
+        at 1420\,MHz.
+  \item[\texttt{solar\_transit\_mjd}] local apparent noon; at Wilhelmsburg on
+        2026-11-01 at 10:40:33\,UTC (16\,min before mean noon, equation of
+        time).
+  \item[\texttt{SolarTransitSimulator}] as \texttt{TransitSimulator}, but the
+        position of the Sun is recomputed for every dump: its hour angle
+        advances with the solar day, 0.27\,\% slower than for a fixed star.
+        On the 10\,m baseline the sidereal model is 0.06 fringe off after
+        2\,h (Fig.~\ref{fig:sun-transit-solar}).
+  \item[\texttt{disc\_amplitude}, \texttt{fit\_disc\_diameter}] $|V| =
+        S\,|2J_1(x)/x|$, $x = \pi\theta q$, and its least-squares fit.
+\end{description}
+
+\paragraph*{Signal and baseline.} Horn $\times$ horn: $T_A = 19$\,K on
+$T_\mathrm{sys} = 120$\,K, correlation coefficient 0.14, S/N about 280 in 1\,s
+(the OH maser M1 on two 3\,m dishes: $9\cdot10^{-4}$). A 3\,m dish sees
+$T_A \approx 730$\,K -- an attenuator in front of the LNA is mandatory. The
+first null of the disc visibility lies at $1.22\,\lambda/\theta = 26$\,m
+(uniform disc); 2--10\,m give the first fringes ($|V| > 0.75$), 10--38\,m the
+diameter measurement (Fig.~\ref{fig:sun-baseline}). The geometric delay of a
+10\,m baseline stays far below $1/2\Delta\nu$: no delay tracking.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/sun_baseline.png}
+  \caption{Visibility of the solar disc ($34'$) at 1420\,MHz over the baseline
+           length for a uniform and two limb-brightened profiles; green: first
+           fringes, orange: diameter measurement.}
+  \label{fig:sun-baseline}
+\end{figure}
+
+\paragraph*{Raw-signal checks.} IQ simulation of both channels at transit
+(4\,s, FX correlator without model correction): correlation coefficient
+0.103 as predicted, phase advancing by $1.2^\circ$/s. With covered horns the
+correlation drops to the noise level $1/\sqrt N = 3.5\cdot10^{-4}$; a common
+signal of 1\,\% of the system power (crosstalk) remains as $|\rho| = 0.01$ with
+a constant phase. A noise source on both inputs measures the unknown phase
+offset between the channels after a retune (here $70^\circ$) and removes it
+(Fig.~\ref{fig:sun-raw}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/sun_raw_checks.png}
+  \caption{Cross spectra (64 channels, 1\,s each) of the two horns: Sun,
+           covered horns, covered horns with 1\,\% crosstalk.}
+  \label{fig:sun-raw}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/sun_transit.png}
+  \caption{Sun transit with two fixed horns (\texttt{SolarTransitSimulator}):
+           real part and envelope, zoom of $\pm15$\,min, fringe rate of the
+           simulation against $\frac{B}{\lambda}\cos\delta\cos H\,\omega_\odot$,
+           phase difference to the sidereal model.}
+  \label{fig:sun-transit-solar}
+\end{figure}
+
+\paragraph*{Radio diameter.} 17 baseline settings from 2 to 38\,m, 60\,s each
+at transit, 3\,\% calibration error; the data come from the limb-brightened
+model (+50\,\%). The uniform-disc fit gives $35.39' \pm 0.03'$ -- 4.1\,\% above
+the true $34'$ with a formal error of 0.09\,\%; the fit with the
+limb-brightened profile gives $33.99' \pm 0.03'$ (Fig.~\ref{fig:sun-diameter}).
+For a resolved source the model, not the noise, is the dominant source of
+error.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/sun_diameter.png}
+  \caption{Fringe amplitude over the baseline length with the fits of a
+           uniform and a limb-brightened disc; right: logarithmic.}
+  \label{fig:sun-diameter}
 \end{figure}

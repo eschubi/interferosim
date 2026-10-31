@@ -6,6 +6,19 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.8.1] — 2026-10-31
+
+### Added
+- Module `interferosim.observation.solar`: `sun_flux_jy`,
+  `solar_transit_mjd` (local apparent noon), `SolarTransitSimulator`
+  (drift scan with the position of the Sun recomputed per dump, solar-day
+  rate), `disc_amplitude`, `fit_disc_diameter`.
+- Notebook `08_sun_first_target.ipynb` (Appendix B: signal strength,
+  baseline choice, fringe rate over the year, raw-signal checks with the IQ
+  simulation, transit, radio diameter, procedure, selector).
+- Documentation: section "The Sun as the first target" in chapter
+  "Observation" (five figures); tests.
+
 ## [0.8.0] — 2026-10-31
 
 ### Added
