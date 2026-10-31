@@ -1,5 +1,8 @@
 % docs/texte/20_core/receiver.tex -- chapter "Receiver" (Interferosim)
-% Version: 0.2.0 (2026-10-12) -- class Receiver, B210 profile, sensitivity
+% Version: 0.3.0 (2026-10-31) -- device data of the B210, profiles with base,
+%   derived quantities (data rate, LO offset, coherence time, T_rx), validate(),
+%   block diagram (images/b210_blockdiagram)
+%   0.2.0 (2026-10-12): class Receiver, B210 profile, sensitivity
 %   0.1.0: placeholder
 % ================================================================
 \label{ch:receiver}
@@ -26,11 +29,96 @@ Key & Value & Remark \\
 \texttt{t\_sys\_k} & 120 & system temperature of the notebooks \\
 \texttt{agc} & false & fixed manual gain \\
 \texttt{clock\_source} & internal & GPSDO only for frequency stability \\
+\texttt{center\_freq\_hz} & $1420.406\cdot10^6$ & HI line \\
+\texttt{sample\_format} & sc16 & complex int16, 4 bytes per sample \\
+\texttt{time\_source} & none & no PPS; both channels share the board clock \\
+\texttt{external\_lna} & true & $T_\mathrm{sys} = 120\,\mathrm{K}$ needs an LNA at the antenna \\
 \bottomrule
 \end{tabular}
 \end{center}
 The AD9361 resets the phase between the two channels on every retune:
 tune once, then calibrate the fixed offset with a common noise source.
+
+\paragraph*{Receive path.} Fig.~\ref{fig:b210-block} shows the signal path
+of one station: external LNA, the AD9361 (gain, quadrature mixer to
+complex baseband, low-pass filter, 12-bit ADC), the FPGA (decimation,
+time stamps) and the host, which records the IQ samples. LO and sample
+clock follow the reference -- the internal TCXO or a GPS-disciplined
+oscillator with PPS.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/b210_blockdiagram.pdf}
+  \caption{Receive path of the Ettus USRP B210 in Interferosim
+           (\texttt{images/b210\_blockdiagram.tex}). Both RX channels share
+           LO and clock; the reference decides the frequency accuracy.}
+  \label{fig:b210-block}
+\end{figure}
+
+\paragraph*{Device data.} Since version 0.3.2 the profile also carries the
+data-sheet values of the device \cite{ettus_b210,ettus_gpsdo}:
+\begin{center}
+\small
+\begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{3.3cm}@{}}
+\toprule
+Key & Value & Remark \\
+\midrule
+\texttt{freq\_min\_hz}, \texttt{freq\_max\_hz} & 70\,MHz -- 6\,GHz & RF range \\
+\texttt{adc\_bits} & 12 & ADC resolution \\
+\texttt{max\_sample\_rate\_sps} & 61.44\,MS/s & one channel \\
+\texttt{max\_sample\_rate\_2ch\_sps} & 30.72\,MS/s & two channels (2$\times$2) \\
+\texttt{max\_bandwidth\_hz} & 56\,MHz & one channel \\
+\texttt{max\_bandwidth\_2ch\_hz} & 30.72\,MHz & two channels \\
+\texttt{noise\_figure\_db} & 8\,dB & noise figure (upper limit) \\
+\texttt{rx\_gain\_range\_db} & 0 -- 76\,dB & as reported by UHD \\
+\texttt{iip3\_dbm} & $-20$\,dBm & at typical noise figure \\
+\texttt{adc\_sfdr\_dbc} & 78\,dBc & wideband SFDR \\
+\texttt{freq\_accuracy\_ppm} & $\pm 2$\,ppm & internal TCXO \\
+\texttt{freq\_accuracy\_gpsdo\_unlocked\_ppb} & 75\,ppb & GPSDO without GPS lock \\
+\texttt{freq\_accuracy\_gpsdo\_locked\_ppb} & $< 1$\,ppb & GPSDO, GPS locked \\
+\texttt{pps\_accuracy\_ns} & 50\,ns & PPS of a locked GPSDO \\
+\texttt{host\_interface} & USB 3.0 & USB 2.0 compatible \\
+\texttt{fpga} & Spartan-6 XC6SLX150 & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph*{Derived quantities.} \texttt{Receiver} computes from them
+\begin{align}
+  T_\mathrm{rx} &= 290\,\mathrm{K}\,\bigl(10^{\mathrm{NF}/10}-1\bigr)
+     && \texttt{receiver\_noise\_temperature\_k()}\\
+  R &= f_s \cdot n_\mathrm{bytes} \cdot n_\mathrm{ch}
+     && \texttt{data\_rate\_bytes\_per\_s()}\\
+  \Delta f_\mathrm{LO} &= y\,f_c
+     && \texttt{lo\_offset\_hz()}\\
+  t_1 &= \frac{1}{2\pi\,y\,f_c}
+     && \texttt{phase\_coherence\_time\_s()}
+\end{align}
+with the relative frequency error $y$ of the reference chosen by
+\texttt{clock\_source}. With NF = 8\,dB the B210 alone has
+$T_\mathrm{rx}\approx 1540\,\mathrm{K}$; the system temperature of 120\,K
+of the notebooks therefore requires a low-noise amplifier at the antenna
+(\texttt{external\_lna = true}). $t_1$ uses the data-sheet
+\emph{accuracy}; the short-term stability of a locked GPSDO is better, so
+$t_1$ is a lower limit. \texttt{validate()} returns warnings where a setting
+exceeds the device: sample rate or bandwidth above the maximum for the
+number of channels, bandwidth above the sample rate, centre frequency
+outside the RF range, gain outside its range, $T_\mathrm{sys} < T_\mathrm{rx}$
+without external LNA.
+
+\paragraph*{Profiles.} A profile may build on another with
+\texttt{base = \textquotedbl<name>\textquotedbl}; its keys are read first and overridden:
+\begin{center}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.2cm}rrr@{}}
+\toprule
+Profile & Settings & data rate & $\Delta f_\mathrm{LO}$ & $t_1$ \\
+\midrule
+\texttt{b210} & notebook~B: 2 channels, 2\,MS/s, 1420\,MHz, TCXO & 16\,MB/s & 2.8\,kHz & 0.06\,ms \\
+\texttt{b210\_gpsdo} & one station of the VLB interferometer: 1 channel, GPSDO with PPS & 8\,MB/s & 1.4\,Hz & 112\,ms \\
+\texttt{b210\_aas6\_sim} & AAS6 simulation (\texttt{sb\_iq\_sim\_a/b.json}): 1665.402\,MHz, 200\,kS/s, 40\,dB & 0.8\,MB/s & 3.3\,kHz & 0.05\,ms \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \section{Sensitivity}
 

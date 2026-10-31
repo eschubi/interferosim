@@ -6,7 +6,25 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-10-31
+
 ### Added
+- B210 device profile: `Receiver` with data-sheet fields (RF range, ADC,
+  maximum sample rate and bandwidth for one and two channels, noise figure,
+  gain range, IIP3, SFDR, reference accuracy TCXO/GPSDO, PPS accuracy, host
+  interface, FPGA) and operating settings `center_freq_hz`, `rx_gain_db`,
+  `sample_format`, `time_source`, `external_lna`; derived quantities
+  `data_rate_bytes_per_s`, `receiver_noise_temperature_k`,
+  `relative_frequency_error`, `lo_offset_hz`, `phase_coherence_time_s`;
+  `validate()`; profiles with `base = "<name>"`.
+- `configs/receivers/b210.toml` 0.2.0 (data-sheet values), new profiles
+  `b210_gpsdo.toml` (one VLBI station with GPSDO) and `b210_aas6_sim.toml`
+  (settings of the AAS6 simulation).
+- `docs/images/b210_blockdiagram.tex` (TikZ, standalone) with PDF/PNG:
+  receive path of the B210; notebook 02 section "B210 device profile";
+  documentation chapter "Receiver" extended, data formats, bibliography.
+- Hello-world example `interferosim.hello` / `interferosim-hello`
+  (E. Schubert).
 - `docs/images/array_geometry.tex` (TikZ, standalone class) and its PDF:
   array of J antennas with geometric delay, primary beams, field of view,
   baseline and receiver chains g_k -> x_k(t); PNG rendering embedded in

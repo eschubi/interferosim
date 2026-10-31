@@ -128,3 +128,45 @@ def test_instrument_plots_run():
     assert len(axes) == 2
     fig, ax = plot_array(Array.from_toml(CFG / "sites" / "aas6_sim_stations.toml"))
     assert "km" in ax.get_xlabel()
+
+
+# ---------------------------------------------------------------- B210 device profile (0.3.2)
+@pytest.mark.parametrize("name", ["b210", "b210_gpsdo", "b210_aas6_sim"])
+def test_b210_profiles_valid(name):
+    r = Receiver.from_toml(CFG / "receivers" / f"{name}.toml")
+    assert r.validate() == []
+    assert r.adc_bits == 12 and r.freq_max_hz == 6.0e9      # inherited via base
+    assert r.extra == {}
+
+
+def test_b210_profile_inheritance():
+    base = Receiver.from_toml(CFG / "receivers" / "b210.toml")
+    gps = Receiver.from_toml(CFG / "receivers" / "b210_gpsdo.toml")
+    sim = Receiver.from_toml(CFG / "receivers" / "b210_aas6_sim.toml")
+    assert gps.clock_source == "gpsdo" and gps.rx_channels == 1
+    assert gps.sample_rate_sps == base.sample_rate_sps
+    assert sim.center_freq_hz == pytest.approx(1665.402e6)
+    assert sim.sample_rate_sps == 2.0e5 and sim.rx_gain_db == 40.0
+
+
+def test_b210_derived_quantities():
+    r = Receiver.from_toml(CFG / "receivers" / "b210.toml")
+    assert r.data_rate_bytes_per_s() == pytest.approx(2.0e6 * 4 * 2)     # sc16, two channels
+    assert r.receiver_noise_temperature_k() == pytest.approx(290 * (10**0.8 - 1))
+    assert r.lo_offset_hz() == pytest.approx(2e-6 * HI_21CM)
+    assert r.lo_offset_hz(clock_source="gpsdo") == pytest.approx(1e-9 * HI_21CM)
+    t1 = r.phase_coherence_time_s(clock_source="gpsdo")
+    assert t1 == pytest.approx(1 / (2 * math.pi * 1e-9 * HI_21CM))
+
+
+def test_receiver_validate_flags_limits(tmp_path):
+    r = Receiver(sample_rate_sps=40e6, bandwidth_hz=50e6, rx_channels=2,
+                 max_sample_rate_2ch_sps=30.72e6, max_bandwidth_2ch_hz=30.72e6,
+                 center_freq_hz=10e9, freq_min_hz=70e6, freq_max_hz=6e9,
+                 rx_gain_db=90.0, rx_gain_range_db=[0.0, 76.0], noise_figure_db=8.0)
+    w = r.validate()
+    assert len(w) == 6
+    p = tmp_path / "a.toml"
+    p.write_text('base = "a"\n', encoding="utf-8")
+    with pytest.raises(ValueError):
+        Receiver.from_toml(p)

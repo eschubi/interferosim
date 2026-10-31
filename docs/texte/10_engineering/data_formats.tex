@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/data_formats.tex -- chapter "Data Formats" (Interferosim)
-% Version: 0.2.0 (2026-10-12) -- arrays: site/antenna/receiver references,
+% Version: 0.3.0 (2026-10-31) -- receiver keys of the device profile, base
+% 0.2.0 (2026-10-12) -- arrays: site/antenna/receiver references,
 %   stations as offsets east/north/up; horn design_freq_hz
 %   0.1.0: first version
 % ================================================================
@@ -49,7 +50,11 @@ See chapter~\ref{ch:sky-models}. JSON with \texttt{center}
 \texttt{name}, \texttt{rx\_channels}, \texttt{sample\_rate\_sps},
 \texttt{bandwidth\_hz}, \texttt{bits}, \texttt{t\_sys\_k}, \texttt{agc},
 \texttt{dc\_offset\_correction}, \texttt{iq\_balance\_correction},
-\texttt{clock\_source}.
+\texttt{clock\_source}; since 0.3.2 also \texttt{center\_freq\_hz},
+\texttt{rx\_gain\_db}, \texttt{sample\_format}, \texttt{time\_source},
+\texttt{external\_lna}, the device data of chapter~\ref{ch:receiver}
+(\texttt{freq\_min\_hz} \dots\ \texttt{fpga}) and \texttt{base} (name of a
+profile in the same directory whose keys are read first).
 
 \paragraph*{Sites and stations} (\texttt{configs/sites/*.toml}): a single
 site has \texttt{name}, \texttt{latitude\_deg}, \texttt{longitude\_deg},

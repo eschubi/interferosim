@@ -1,0 +1,13 @@
+# configs/receivers/b210_aas6_sim.toml -- B210 settings of the AAS6 interferometer simulation
+# Version 0.1.0 (2026-10-31)
+# Source: AAS6 json/nodes/sb_iq_sim_a.json and sb_iq_sim_b.json (one IQ
+# recording node per station): center_freq 1665402000 Hz (OH main line),
+# sample_rate 200000 S/s, gain 40 dB, bandwidth "auto" (= sample rate).
+# All other keys come from b210.toml.
+base = "b210"
+name = "Ettus USRP B210, AAS6 simulation (one station)"
+rx_channels = 1
+center_freq_hz = 1665.402e6      # OH 1665 MHz main line
+sample_rate_sps = 2.0e5
+bandwidth_hz = 2.0e5             # "auto" in AAS6: equal to the sample rate
+rx_gain_db = 40.0

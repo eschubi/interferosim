@@ -1,13 +1,49 @@
 # configs/receivers/b210.toml -- Ettus USRP B210, settings from notebook B (Appendix B)
+# Version 0.2.0 (2026-10-31): device data from the data sheet added (frequency
+#   range, ADC, maximum sample rate and bandwidth, noise figure, gain range,
+#   reference accuracy, PPS accuracy); centre frequency, RX gain, sample format
+#   and time source as operating settings. Settings of notebook B unchanged.
+# Version 0.1.0 (2026-10-12): settings of notebook B.
+# Sources of the device data: Ettus Research, "USRP B200/B210 spec sheet";
+#   Ettus knowledge base "GPSDO Selection Guide" (PPS accuracy); RX gain range
+#   as reported by UHD for the B200/B210 (AD9361).
+# Other profiles build on this file with  base = "b210"  (b210_gpsdo.toml,
+#   b210_aas6_sim.toml).
+
+# ---- operating settings (notebook B) --------------------------------
 name = "Ettus USRP B210"
 rx_channels = 2                  # RX-A and RX-B, common LO and clock
 sample_rate_sps = 2.0e6          # complex samples per channel
 bandwidth_hz = 2.0e6
-bits = 16
-t_sys_k = 120.0                  # system temperature used in the notebooks
+bits = 16                        # width of I and Q in the host format (sc16); the ADC has 12 bits
+t_sys_k = 120.0                  # system temperature used in the notebooks (with external LNA)
 agc = false                      # fixed manual gain
 dc_offset_correction = false
 iq_balance_correction = false
 clock_source = "internal"        # GPSDO only for frequency stability
+center_freq_hz = 1420.405751768e6   # HI line
+sample_format = "sc16"           # complex int16 = 4 bytes per sample
+time_source = "none"             # no PPS: both channels share the board clock
+external_lna = true              # t_sys_k = 120 K needs a low-noise amplifier at the antenna;
+                                 # the B210 alone (NF 8 dB) has about 1540 K
 # Note: the AD9361 resets the inter-channel phase on every retune;
 # tune once, then calibrate the fixed offset with a common noise source.
+
+# ---- device data (data sheet) ---------------------------------------
+freq_min_hz = 70.0e6
+freq_max_hz = 6.0e9
+adc_bits = 12
+max_sample_rate_sps = 61.44e6        # ADC / 16-bit host rate, one channel
+max_sample_rate_2ch_sps = 30.72e6    # 2x2 MIMO
+max_bandwidth_hz = 56.0e6            # instantaneous bandwidth, 1x1
+max_bandwidth_2ch_hz = 30.72e6       # 2x2
+noise_figure_db = 8.0                # receive noise figure: below 8 dB
+rx_gain_range_db = [0.0, 76.0]       # UHD gain range of the AD9361 receiver
+iip3_dbm = -20.0                     # at typical noise figure
+adc_sfdr_dbc = 78.0                  # ADC wideband SFDR
+freq_accuracy_ppm = 2.0              # internal TCXO
+freq_accuracy_gpsdo_unlocked_ppb = 75.0   # board-mounted GPSDO (TCXO), no GPS lock
+freq_accuracy_gpsdo_locked_ppb = 1.0      # GPS-locked: below 1 ppb
+pps_accuracy_ns = 50.0               # PPS of a locked GPSDO relative to GPS time
+host_interface = "USB 3.0 (USB 2.0 compatible)"
+fpga = "Xilinx Spartan-6 XC6SLX150"

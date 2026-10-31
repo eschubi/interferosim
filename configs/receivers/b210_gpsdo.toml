@@ -1,0 +1,11 @@
+# configs/receivers/b210_gpsdo.toml -- Ettus USRP B210 with board-mounted GPSDO, one per station
+# Version 0.1.0 (2026-10-31)
+# Profile for the VLB interferometer (notebook 00): each station has its own
+# B210 with a GPS-disciplined oscillator; frequency and time come from GPS
+# (10 MHz reference and PPS time stamps of the recorded IQ stream). All other
+# keys come from b210.toml.
+base = "b210"
+name = "Ettus USRP B210 + GPSDO (one station)"
+rx_channels = 1                  # one antenna per station
+clock_source = "gpsdo"           # frequency reference: GPS-locked TCXO
+time_source = "gpsdo"            # PPS from the GPSDO, sample time stamps in GPS time
