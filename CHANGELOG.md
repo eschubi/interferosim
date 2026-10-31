@@ -31,7 +31,8 @@ strictly higher than the previous one.
 ### Changed
 - Notebooks 00-02: first cell with `id: notebooks/<name>.ipynb` and the short
   description of the notebook (01: the machine-specific localhost link
-  replaced by the repository path).
+  replaced by the repository path); author line below the title of each
+  notebook (as added by E. Schubert in notebook 00).
 
 ### Fixed
 - Notebooks 00-02 name the kernel `interferosim` ("Python (interferosim)",
