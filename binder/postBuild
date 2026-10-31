@@ -1,5 +1,8 @@
 #!/bin/bash
 # binder/postBuild -- runs after the environment is built (repo2docker, project root)
+# Version 0.2.0 (2026-10-31): register the Jupyter kernel "interferosim" that the
+#   notebooks name in their metadata
 # Version 0.1.0 (2026-10-12)
 set -e
 pip install --no-deps -e .
+python -m ipykernel install --user --name interferosim --display-name "Python (interferosim)"

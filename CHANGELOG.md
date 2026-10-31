@@ -28,6 +28,10 @@ strictly higher than the previous one.
   committed by mistake); `*.bak` added to `.gitignore`.
 
 ### Fixed
+- Notebooks 00-02 name the kernel `interferosim` ("Python (interferosim)",
+  installed by `setup_venv`) instead of the generic `python3`, so Jupyter
+  starts them in the project environment; `binder/postBuild` registers the
+  kernel.
 - Docstrings of `DiscSource` and `otf_circular`: valid reStructuredText.
 
 ## [0.3.1] — 2026-10-12
