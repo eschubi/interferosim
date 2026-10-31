@@ -6,6 +6,19 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-10-31
+
+### Added
+- Theory notebook `A_fringes.ipynb` (first version): fringe pattern on the
+  sky, fringe rate from the Earth's rotation, fringe contrast and source size
+  (Sun with two horns), fringes in a long track -- Cygnus A on 11.5 km with
+  zooms of 5, 10, 15 and 20 min and the natural and structure fringe rates;
+  selector.
+- Notebook 04: section "Why the track is not symmetric about transit" with
+  the counter-check (jet axis turned east-west); documentation chapter
+  "Observation": subsection "Asymmetry of a track", figure
+  `obs_track_symmetry.png`.
+
 ## [0.5.0] — 2026-10-31
 
 ### Added

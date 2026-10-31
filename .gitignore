@@ -62,6 +62,7 @@ docs/images/*
 !docs/images/obs_uv_coverage.png
 !docs/images/obs_cyga_track.png
 !docs/images/obs_sun_transit.png
+!docs/images/obs_track_symmetry.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

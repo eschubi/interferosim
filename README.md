@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.5.0 — sky models (`interferosim.sky`, notebook
+**Status:** 0.5.1 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -99,7 +99,7 @@ interactive selector (ipywidgets):
 | `01_sky_models.ipynb` | sky models, file format, maps, own skies, visibilities, catalogue of known regions with selector | available |
 | `02_instrument.ipynb` | antenna types and primary beams, dish transfer function, B210 receiver and sensitivity, arrays and baselines, choice of the baseline length (Cyg A), selector | available |
 | `03_signal_simulation.ipynb` | generating SDR receiver signals (IQ samples of the B210 at each station) based on the sky model under variable baseline parameters: signal model, raw fringes, measured vs. model visibilities over the baseline length, clock errors (TCXO/GPSDO), quantisation, SigMF output, selector | available |
-| `04_observation.ipynb` | source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), selector | available |
+| `04_observation.ipynb` | source tracking, geometric delay and fringe rate, uv-tracks by Earth rotation, visibilities over a track, transit (drift scan) of fixed antennas (Sun with two horns), asymmetry of a track, selector | available |
 | `05_correlator.ipynb` | FX correlator on the simulated SDR signals: fractional delay, fringe stopping, delay/rate search, cross spectra, visibilities | proposal |
 | `06_imaging.ipynb` | gridding, natural/uniform/robust weighting, dirty beam and dirty image | proposal |
 | `07_deconvolution.ipynb` | Högbom CLEAN vs. Wiener filter, restoration (migrated from Appendix A) | proposal |
@@ -110,7 +110,7 @@ interactive selector (ipywidgets):
 
 | Notebook | Content | Status |
 |---|---|---|
-| `A_fringes.ipynb` | shows and explains how fringes evolve (geometric delay, baseline projection, fringe rate, effect of source size) | planned |
+| `A_fringes.ipynb` | shows and explains how fringes evolve: fringe pattern on the sky, fringe rate from the Earth's rotation, effect of the source size (fringe contrast), fringes in a long track (Cygnus A with zooms of 5–20 min, natural and structure fringe rate), selector | available (first version) |
 | `B_fourier.ipynb` | explains the details of the Fourier transformation and the correlation (van Cittert–Zernike theorem, cross-correlation vs. cross spectrum, FX vs. XF) | planned |
 | `C_sampling_iq.ipynb` | sampling and complex baseband: Nyquist, IQ mixing, aliasing, quantisation, what the B210 delivers | proposal |
 | `D_noise_sensitivity.ipynb` | radiometer equation, SEFD, noise of a visibility, S/N against integration time, bandwidth and baseline length | proposal |

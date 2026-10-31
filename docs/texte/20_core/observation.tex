@@ -1,5 +1,6 @@
 % docs/texte/20_core/observation.tex -- chapter "Observation" (Interferosim)
-% Version: 0.3.0 (2026-10-31) -- Observation, uv-coverage, visibility and transit
+% Version: 0.3.1 (2026-10-31) -- subsection "Asymmetry of a track" (Cyg A)
+%   0.3.0 (2026-10-31): Observation, uv-coverage, visibility and transit
 %   simulation, Sun position (interferosim 0.5.0)
 %   0.2.0 (2026-10-31): section "Geometry" (module observation.geometry)
 %   0.1.0 (2026-10-12): placeholder
@@ -104,6 +105,38 @@ IQ streams of the signal simulation within the noise (test
   \caption{Cygnus~A on the 11.5\,km east--west baseline, $\pm 6$\,h, one-minute
            integrations with noise (points) and the noise-free model (line).}
   \label{fig:cyga-track}
+\end{figure}
+
+\subsection{Asymmetry of a track}
+
+The track of Fig.~\ref{fig:cyga-track} is not symmetric about transit,
+although the Earth's rotation moves the baseline symmetrically: for an
+east--west baseline $u = (b/\lambda)\cos H$ and
+$v = (b/\lambda)\sin H\sin\delta$, so at $-H$ and $+H$ the coordinate $u$
+is the same and $v$ changes sign. The two halves of the track sample the
+sky at $(u,-v)$ and $(u,+v)$, mirrored at the $u$ axis, and the amplitudes
+agree only for a source that is mirror-symmetric north--south. The jet axis
+of Cygnus~A lies at a position angle of about $-70^\circ$; the fringe of the
+two hotspots depends on $u\,\Delta x + v\,\Delta y$, i.e. on
+$u\,\Delta x - |v|\,\Delta y$ before and $u\,\Delta x + |v|\,\Delta y$ after
+transit. The oscillations therefore run at different speeds on the two
+sides, and the envelope of the elongated lobes differs as well; the phase
+changes sign under the mirror ($V(-u,-v) = V^*(u,v)$).
+Counter-check (Fig.~\ref{fig:track-symmetry}): the largest difference
+$|V(+H)| - |V(-H)|$ over $\pm 6$\,h is 86\,Jy for the model as it is and
+1.6\,Jy for the same source with its axis turned east--west; the small rest
+comes from the baseline at $48^\circ$ latitude not lying exactly
+perpendicular to the Earth's axis. The asymmetry carries the orientation of
+the source -- the reason why a source is observed over the whole day.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/obs_track_symmetry.png}
+  \caption{Cygnus~A on the 11.5\,km east--west baseline without noise: the half
+           of the track after transit mirrored onto the half before it. Left:
+           the model (jet axis at $-70^\circ$); right: the same source with its
+           axis turned east--west. Notebook \texttt{04\_observation.ipynb}.}
+  \label{fig:track-symmetry}
 \end{figure}
 
 \section{Transit of fixed antennas}
