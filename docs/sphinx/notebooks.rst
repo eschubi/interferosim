@@ -71,8 +71,8 @@ Theory
      - sampling and complex baseband: Nyquist and aliasing, IQ mixing, IQ imbalance and DC offset, band edges, quantisation (efficiency, input level, Van Vleck), what the B210 delivers, selector
      - available
    * - ``D_noise_sensitivity.ipynb``
-     - radiometer equation, SEFD, noise of a visibility, S/N against integration time, bandwidth and baseline length
-     - proposal
+     - radiometer equation, SEFD and antenna temperature, noise of a visibility (simulation check), S/N against integration time, bandwidth and baseline length for the project targets, coherence and clocks (random-walk phase, coherent vs. incoherent averaging), image noise, selector
+     - available
    * - ``E_coordinates.ipynb``
      - coordinate frames: equatorial, horizontal, WGS84/ECEF, local east-north-up, uvw
      - proposal

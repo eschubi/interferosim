@@ -1,5 +1,6 @@
 % docs/texte/20_core/receiver.tex -- chapter "Receiver" (Interferosim)
-% Version: 0.3.0 (2026-10-31) -- device data of the B210, profiles with base,
+% Version: 0.4.0 (2026-11-01) -- section "Sensitivity" (interferosim 0.9.3)
+%   0.3.0 (2026-10-31): device data of the B210, profiles with base,
 %   derived quantities (data rate, LO offset, coherence time, T_rx), validate(),
 %   block diagram (images/b210_blockdiagram)
 %   0.2.0 (2026-10-12): class Receiver, B210 profile, sensitivity
@@ -147,3 +148,40 @@ On the long baseline the sources are largely resolved (chapter
 \enquote{Sky Models}); on the short one the Sun dominates by far. The
 notebook \texttt{02\_instrument.ipynb} computes the table for all
 sky models.
+
+\section{Sensitivity}
+\label{sec:sensitivity}
+\index{sensitivity}\index{coherence time}
+
+Module \texttt{instrument.sensitivity} (version~0.9.3, theory notebook
+\texttt{D\_noise\_sensitivity.ipynb}) collects the formulas of the chain
+system temperature $\to$ SEFD $\to$ visibility noise $\to$ S/N, each checked
+there by simulation:
+radiometer equation $\sigma_T = T_\mathrm{sys}/\sqrt{Bt}$ (85\,mK in 1\,s);
+visibility noise $\sigma_V = \sqrt{(\mathrm{SEFD}_1+S_1)(\mathrm{SEFD}_2+S_2)/(2Bt)}/\eta_Q$
+(39\,Jy in 1\,s for two 3\,m dishes); integration time for a given S/N;
+image noise $\sigma_V/\sqrt{N_\mathrm{bl}}$. On the 11.5\,km baseline the
+median correlated flux over a track is 73\,Jy for the maser group, 30\,Jy for
+Cygnus~A and 1.3\,Jy for Cas~A: S/N 10 in 2\,MHz after 29\,s, 171\,s and 26\,h.
+
+The averaging is coherent only while the clocks agree. For white frequency
+noise $\sigma_y(\tau) = \sigma_1/\sqrt\tau$ per clock the phase difference of
+two stations performs a random walk, $\sigma_\varphi(T) = 2\pi f\sigma_1\sqrt{2T}$;
+the coherence time ($\sigma_\varphi$ = 1\,rad) is 63\,s at 1420\,MHz for
+$\sigma_1 = 10^{-11}$ (OCXO class, the short-term stability of a GPSDO), and
+a coherent average over $T$ keeps $4(1-e^{-\sigma^2/4})/\sigma^2$ of the
+amplitude with the phase referred to the middle of the interval. Averaging
+$|V|^2$ of coherent segments detects with
+$\mathrm{S/N} = s^2\sqrt n/(2\sqrt{1+s^2})$, always below the coherent
+$s\sqrt n$ (Fig.~\ref{fig:noise-coherence}). The oscillator values are
+illustrative short-term stabilities, not data-sheet values.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/noise_coherence.png}
+  \caption{Left: amplitude kept by a coherent average over $T$ for two
+           clocks with $\sigma_y(1\,\mathrm{s}) = 10^{-11}$ (simulation and
+           formula). Right: S/N of the maser group on the 11.5\,km baseline with
+           ideal clocks, with the clock noise, and with incoherent segments.}
+  \label{fig:noise-coherence}
+\end{figure}

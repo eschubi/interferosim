@@ -51,6 +51,10 @@ interferosim.instrument
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.instrument.sensitivity
+   :no-members:
+   :no-index:
+
 interferosim.observation
 ------------------------
 

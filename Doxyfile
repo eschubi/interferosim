@@ -10,7 +10,7 @@
 
 #---- project -----------------------------------------------------------
 PROJECT_NAME           = "Interferosim"
-PROJECT_NUMBER         = 0.9.2
+PROJECT_NUMBER         = 0.9.3
 PROJECT_BRIEF          = "Open-source simulator for radio interferometry"
 OUTPUT_DIRECTORY       = docs/api
 OUTPUT_LANGUAGE        = English

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "interferosim"
-version = "0.9.2"
+version = "0.9.3"
 description = "Open-source simulator for radio interferometry with interactive teaching notebooks"
 readme = "README.md"
 requires-python = ">=3.11"

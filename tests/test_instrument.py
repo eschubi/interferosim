@@ -170,3 +170,24 @@ def test_receiver_validate_flags_limits(tmp_path):
     p.write_text('base = "a"\n', encoding="utf-8")
     with pytest.raises(ValueError):
         Receiver.from_toml(p)
+
+
+# ---------------------------------------------------------------- sensitivity (0.9.3)
+def test_sensitivity_formulas():
+    from interferosim.instrument import (antenna_temperature_k, coherence_time_s, image_noise_jy,
+                                         incoherent_snr, integration_time_s, phase_rms_white_fm_rad,
+                                         radiometer_sigma_k, random_walk_coherence, visibility_sigma_jy)
+    assert radiometer_sigma_k(120.0, 2e6, 1.0) == pytest.approx(120.0 / np.sqrt(2e6))
+    assert antenna_temperature_k(1e4, 1.0) == pytest.approx(1e4 * 1e-26 / (2 * 1.380649e-23))
+    s = visibility_sigma_jy(1e5, 1e5, 2e6, 1.0)
+    assert s == pytest.approx(1e5 / 2000.0)
+    # integration time inverts the noise: |V| / sigma(t) = S/N
+    t = integration_time_s(20.0, 7.0, 1e5, 1e5, 2e6)
+    assert 20.0 / visibility_sigma_jy(1e5, 1e5, 2e6, t) == pytest.approx(7.0)
+    assert image_noise_jy(1e5, 2e6, 1.0, 4) == pytest.approx(s / 2)
+    tc = coherence_time_s(1.42e9, 1e-11)
+    assert phase_rms_white_fm_rad(1.42e9, 1e-11, tc) == pytest.approx(1.0)
+    assert random_walk_coherence(0.0) == pytest.approx(1.0)
+    assert random_walk_coherence(1.0) == pytest.approx(4 * (1 - np.exp(-0.25)))
+    assert incoherent_snr(0.1, 100) == pytest.approx(0.01 * 10 / (2 * np.sqrt(1.01)))
+    assert incoherent_snr(10.0, 25) < 10.0 * 5                        # below coherent s sqrt(n)

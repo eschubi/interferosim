@@ -6,6 +6,17 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.3] — 2026-11-01
+
+### Added
+- Module `interferosim.instrument.sensitivity`: `antenna_temperature_k`,
+  `radiometer_sigma_k`, `visibility_sigma_jy`, `integration_time_s`,
+  `image_noise_jy`, `coherence_factor`, `phase_rms_white_fm_rad`,
+  `coherence_time_s`, `random_walk_coherence`, `incoherent_snr`.
+- Theory notebook `D_noise_sensitivity.ipynb`.
+- Documentation: section "Sensitivity" in chapter "Receiver" (one figure);
+  test.
+
 ## [0.9.2] — 2026-11-01
 
 ### Added
