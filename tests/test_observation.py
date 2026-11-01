@@ -180,3 +180,24 @@ def test_channels_gridded_at_their_frequency():
                   np.repeat(vd.weight, 2, axis=1), f, vd.baseline_names)
     pk, l, m = Imager(Gridder(256, 0.4)).dirty_image(vd2).peak()
     assert l == pytest.approx(2.0, abs=0.45)
+
+
+# ---------------------------------------------------------------- coordinates (0.9.4)
+def test_azimuth_elevation_parallactic_and_precession():
+    from interferosim.observation import (azimuth_elevation_deg, direction, lst_deg,
+                                          parallactic_angle_deg, precess_deg)
+    lat, lon = 48.088056, 15.756111
+    # a source at transit (GHA = -lon) south of the zenith: azimuth 180, elevation 90 - lat + dec
+    az, el = azimuth_elevation_deg(direction(20.0, (-lon) % 360), lat, lon)
+    assert float(az) == pytest.approx(180.0, abs=1e-9) and float(el) == pytest.approx(90 - lat + 20.0)
+    # rising in the east for H = -6 h on the equator: azimuth < 180
+    az, el = azimuth_elevation_deg(direction(0.0, (-90.0 - lon) % 360), lat, lon)
+    assert float(az) == pytest.approx(90.0, abs=1e-6) and float(el) == pytest.approx(0.0, abs=1e-6)
+    assert parallactic_angle_deg(0.0, 20.0, lat) == pytest.approx(0.0)
+    assert parallactic_angle_deg(30.0, 20.0, lat) > 0 > parallactic_angle_deg(-30.0, 20.0, lat)
+    assert float(lst_deg(0.0, lon)) == pytest.approx((float(gmst_deg(0.0)) + lon) % 360)
+    # precession J2000 -> 2026.8: about 0.37 deg in RA cos(dec) for Tau A, nothing at J2000
+    ra, dec = precess_deg(83.633, 22.0145, 51544.5)
+    assert float(ra) == pytest.approx(83.633, abs=1e-9) and float(dec) == pytest.approx(22.0145, abs=1e-9)
+    ra, dec = precess_deg(83.633, 22.0145, mjd_from_iso("2026-11-01"))
+    assert (float(ra) - 83.633) * np.cos(np.radians(22.0)) == pytest.approx(0.374, abs=0.005)

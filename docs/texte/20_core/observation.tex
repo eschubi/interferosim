@@ -1,5 +1,6 @@
 % docs/texte/20_core/observation.tex -- chapter "Observation" (Interferosim)
-% Version: 0.4.0 (2026-10-31) -- section "The Sun as the first target" (interferosim 0.8.1)
+% Version: 0.5.0 (2026-11-01) -- subsection "Horizontal coordinates and precession" (interferosim 0.9.4)
+%   0.4.0 (2026-10-31): section "The Sun as the first target" (interferosim 0.8.1)
 %   0.3.1 (2026-10-31): subsection "Asymmetry of a track" (Cyg A)
 %   0.3.0 (2026-10-31): Observation, uv-coverage, visibility and transit
 %   simulation, Sun position (interferosim 0.5.0)
@@ -51,6 +52,36 @@ $\tau_g > 0$ means the wavefront reaches station $j$ later. The delay rate
 ($\dot H_G = \omega_E$); for an east--west baseline it is
 $\omega_E\,b\cos\delta\cos H/c$, maximal at transit. \texttt{elevation\_deg}
 gives the elevation of a direction at a site.
+
+\subsection*{Horizontal coordinates and precession}
+\index{parallactic angle}\index{precession}
+
+Added in version~0.9.4 (theory notebook \texttt{E\_coordinates.ipynb}):
+\texttt{lst\_deg} (LST = GMST + $\lambda$), \texttt{azimuth\_elevation\_deg}
+(projection of $\hat s$ on east, north and up of a site; azimuth from north
+through east), \texttt{parallactic\_angle\_deg}
+($q = \operatorname{atan2}(\sin H, \tan\varphi\cos\delta - \sin\delta\cos H)$) and
+\texttt{precess\_deg} (IAU~1976 angles $\zeta, z, \theta$; within 0.1$''$ of
+astropy). The notebook checks \texttt{uvw} against the classical matrix form
+(Thompson, Moran \& Swenson) to $10^{-11}\,\lambda$ and the uv-ellipse
+$u^2/a^2 + (v-v_0)^2/(a\sin\delta)^2 = 1$, $a = \sqrt{L_X^2+L_Y^2}/\lambda$,
+$v_0 = L_Z\cos\delta/\lambda$ (Fig.~\ref{fig:coord-uv}).
+
+The simulators use the J2000 coordinates directly with the GMST of the date;
+simulator and correlator share this model. For real recordings the
+coordinates of date are needed: in 2026 the precession alone moves the sources
+of the project by 0.19--0.38$^\circ$, which on the 11.5\,km baseline changes the
+geometric delay by up to 250\,ns (with \texttt{precess\_deg} the azimuth and
+elevation agree with astropy within 0.01$^\circ$; nutation and aberration,
+${\approx}20''$, remain).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/coord_uv_ellipse.png}
+  \caption{uv-tracks of an 11.5\,km east--west and north--south baseline over
+           24\,h for four declinations (dashed: conjugate tracks).}
+  \label{fig:coord-uv}
+\end{figure}
 
 \section{Observation and uv-coverage}
 \index{uv-coverage}\index{Earth rotation synthesis}

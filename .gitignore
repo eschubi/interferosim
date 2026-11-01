@@ -101,6 +101,9 @@ docs/images/*
 !docs/images/noise_radiometer.png
 !docs/images/noise_snr.png
 !docs/images/noise_coherence.png
+!docs/images/coord_horizontal.png
+!docs/images/coord_uv_ellipse.png
+!docs/images/coord_delay.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

@@ -74,8 +74,8 @@ Theory
      - radiometer equation, SEFD and antenna temperature, noise of a visibility (simulation check), S/N against integration time, bandwidth and baseline length for the project targets, coherence and clocks (random-walk phase, coherent vs. incoherent averaging), image noise, selector
      - available
    * - ``E_coordinates.ipynb``
-     - coordinate frames: equatorial, horizontal, WGS84/ECEF, local east-north-up, uvw
-     - proposal
+     - coordinate frames: equatorial (RA/Dec, hour angle, sidereal time), horizontal (azimuth/elevation, circumpolar sources, parallactic angle), WGS84/ECEF/ENU and the baseline vector, uvw and the uv-ellipse (checked against the classical formulas), delay and w, precession J2000 → date, selector
+     - available
 
 *available*: in the repository; *planned*: decided, not yet written;
 *proposal*: suggestion for discussion. The former Appendices A (Wiener

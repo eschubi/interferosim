@@ -14,6 +14,20 @@ GHA = GMST - RA. All baselines are ECEF vectors (``Array.baselines()``).
 * :func:`uvw` -- baseline in wavelengths, projected on (e_E, e_N, s0).
 * :func:`elevation_deg` -- elevation of a direction at a site.
 
+Added in 0.9.4 (theory notebook E):
+
+* :func:`lst_deg` -- local sidereal time, GMST + longitude.
+* :func:`azimuth_elevation_deg` -- azimuth (from north through east) and
+  elevation of a direction at a site.
+* :func:`parallactic_angle_deg` -- angle between the direction to the
+  zenith and to the north celestial pole at the source,
+  q = atan2(sin H, tan(phi) cos(delta) - sin(delta) cos H).
+* :func:`precess_deg` -- precession of J2000 coordinates to the mean
+  equator and equinox of a date (IAU 1976 angles zeta, z, theta). The
+  simulators use the catalogue coordinates directly with the GMST of the
+  date (self-consistent: the correlator uses the same model); for real data
+  the coordinates must be referred to the date (notebook E shows the size).
+
 Conventions (as AAS6 ``modules/interfero/geometry.py``)
 -------------------------------------------------------
 * B = r_j - r_i; station i is the reference.
@@ -31,6 +45,8 @@ precession/nutation -- sufficient for the simulation, where the correlator
 uses the same model.
 
 Version 0.4.0 (2026-10-31): first implementation.
+Version 0.9.4 (2026-11-01): lst_deg, azimuth_elevation_deg,
+parallactic_angle_deg, precess_deg.
 """
 
 from __future__ import annotations
@@ -43,7 +59,8 @@ import numpy as np
 from ..constants import C_LIGHT, OMEGA_SIDEREAL
 
 __all__ = ["gmst_deg", "gha_deg", "sky_basis", "direction", "geometric_delay",
-           "delay_rate", "uvw", "elevation_deg", "SIDEREAL_DEG_PER_S"]
+           "delay_rate", "uvw", "elevation_deg", "SIDEREAL_DEG_PER_S",
+           "lst_deg", "azimuth_elevation_deg", "parallactic_angle_deg", "precess_deg"]
 
 SIDEREAL_DEG_PER_S = math.degrees(OMEGA_SIDEREAL)     # 0.004178 deg/s
 
@@ -115,3 +132,44 @@ def elevation_deg(s, lat_deg: float, lon_deg: float) -> np.ndarray:
     p, l = math.radians(lat_deg), math.radians(lon_deg)
     up = np.array([math.cos(p) * math.cos(l), math.cos(p) * math.sin(l), math.sin(p)])
     return np.degrees(np.arcsin(np.clip(np.asarray(s) @ up, -1.0, 1.0)))
+
+
+# -- added in 0.9.4 (theory notebook E) -----------------------------------------
+def lst_deg(unix_time_s, lon_deg: float) -> np.ndarray:
+    """Local (mean) sidereal time in degrees: GMST + east longitude."""
+    return np.mod(gmst_deg(unix_time_s) + lon_deg, 360.0)
+
+
+def azimuth_elevation_deg(s, lat_deg: float, lon_deg: float) -> Tuple[np.ndarray, np.ndarray]:
+    """(azimuth, elevation) in degrees of the ECEF unit vector(s) ``s`` at a
+    site; azimuth from north through east, 0..360."""
+    p, l = math.radians(lat_deg), math.radians(lon_deg)
+    east = np.array([-math.sin(l), math.cos(l), 0.0])
+    north = np.array([-math.sin(p) * math.cos(l), -math.sin(p) * math.sin(l), math.cos(p)])
+    up = np.array([math.cos(p) * math.cos(l), math.cos(p) * math.sin(l), math.sin(p)])
+    s = np.asarray(s, dtype=float)
+    e, n, u = s @ east, s @ north, s @ up
+    return np.mod(np.degrees(np.arctan2(e, n)), 360.0), np.degrees(np.arcsin(np.clip(u, -1.0, 1.0)))
+
+
+def parallactic_angle_deg(ha_deg, dec_deg: float, lat_deg: float) -> np.ndarray:
+    """Parallactic angle q in degrees (positive west of the meridian):
+    q = atan2(sin H, tan(phi) cos(delta) - sin(delta) cos H)."""
+    h = np.radians(np.asarray(ha_deg, dtype=float))
+    d, p = math.radians(dec_deg), math.radians(lat_deg)
+    return np.degrees(np.arctan2(np.sin(h), math.tan(p) * math.cos(d) - math.sin(d) * np.cos(h)))
+
+
+def precess_deg(ra_deg, dec_deg, mjd) -> Tuple[np.ndarray, np.ndarray]:
+    """Precess J2000 coordinates to the mean equator and equinox of ``mjd``
+    (IAU 1976: zeta, z, theta as cubic polynomials in Julian centuries)."""
+    t = (np.asarray(mjd, dtype=float) - 51544.5) / 36525.0
+    asec = math.pi / (180.0 * 3600.0)
+    zeta = (2306.2181 * t + 0.30188 * t ** 2 + 0.017998 * t ** 3) * asec
+    z = (2306.2181 * t + 1.09468 * t ** 2 + 0.018203 * t ** 3) * asec
+    theta = (2004.3109 * t - 0.42665 * t ** 2 - 0.041833 * t ** 3) * asec
+    a, d = np.radians(np.asarray(ra_deg, dtype=float)), np.radians(np.asarray(dec_deg, dtype=float))
+    A = np.cos(d) * np.sin(a + zeta)
+    B = np.cos(theta) * np.cos(d) * np.cos(a + zeta) - np.sin(theta) * np.sin(d)
+    C = np.sin(theta) * np.cos(d) * np.cos(a + zeta) + np.cos(theta) * np.sin(d)
+    return np.mod(np.degrees(np.arctan2(A, B) + z), 360.0), np.degrees(np.arcsin(np.clip(C, -1.0, 1.0)))

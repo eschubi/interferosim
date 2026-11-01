@@ -26,7 +26,7 @@ Teaching notebooks, one per topic. Planned notebooks and proposals are listed wi
 | `B_fourier.ipynb` | explains the Fourier transformation and the correlation: transform pairs and convolution theorem, van Cittert–Zernike (numerical check against the analytic visibilities), one baseline = one Fourier component, the dish as low-pass filter, cross-correlation and cross spectrum (XF vs. FX, Wiener–Khinchin), the delay beam, selector | available |
 | `C_sampling_iq.ipynb` | sampling and complex baseband: Nyquist and aliasing, IQ mixing, IQ imbalance and DC offset, band edges, quantisation (efficiency, input level, Van Vleck), what the B210 delivers, selector | available |
 | `D_noise_sensitivity.ipynb` | radiometer equation, SEFD and antenna temperature, noise of a visibility (simulation check), S/N against integration time, bandwidth and baseline length for the project targets, coherence and clocks (random-walk phase, coherent vs. incoherent averaging), image noise, selector | available |
-| `E_coordinates.ipynb` | coordinate frames: equatorial, horizontal, WGS84/ECEF, local east-north-up, uvw | proposal |
+| `E_coordinates.ipynb` | coordinate frames: equatorial (RA/Dec, hour angle, sidereal time), horizontal (azimuth/elevation, circumpolar sources, parallactic angle), WGS84/ECEF/ENU and the baseline vector, uvw and the uv-ellipse (checked against the classical formulas), delay and w, precession J2000 → date, selector | available |
 
 *available*: in the repository; *planned*: decided, not yet written;
 *proposal*: suggestion for discussion. The former Appendices A (Wiener

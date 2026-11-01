@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.9.3 — sky models (`interferosim.sky`, notebook
+**Status:** 0.9.4 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -29,8 +29,8 @@ notebook `08_sun_first_target.ipynb`), and spectral lines (spectra of the
 sky components, Doppler correction to the LSR, multichannel visibilities,
 channel maps; notebook `09_spectral_lines.ipynb`). The simulation chain
 00–09 is complete; the theory notebooks A (fringes), B (Fourier
-transformation and correlation), C (sampling and complex baseband) and D
-(noise and sensitivity) are available. The
+transformation and correlation), C (sampling and complex baseband), D
+(noise and sensitivity) and E (coordinate frames) are available. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 

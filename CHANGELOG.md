@@ -6,6 +6,17 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.4] — 2026-11-01
+
+### Added
+- `interferosim.observation.geometry`: `lst_deg`, `azimuth_elevation_deg`,
+  `parallactic_angle_deg`, `precess_deg` (IAU 1976 precession, within 0.1″
+  of astropy).
+- Theory notebook `E_coordinates.ipynb`; with it all planned notebooks
+  (00–09, A–E) are available.
+- Documentation: subsection "Horizontal coordinates and precession" in
+  chapter "Observation" (one figure); test.
+
 ## [0.9.3] — 2026-11-01
 
 ### Added
