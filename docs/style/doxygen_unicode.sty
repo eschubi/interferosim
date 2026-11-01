@@ -1,0 +1,24 @@
+% docs/style/doxygen_unicode.sty -- Unicode characters for the Doxygen PDF reference manual (Interferosim)
+% Version: 0.1.0 (2026-11-01)
+% Doxygen writes the docstrings unchanged into the LaTeX sources; pdflatex
+% with inputenc knows o-umlaut, en/em dash and ellipsis, but not the signs used
+% in the docstrings for arc minutes, superscripts and the degree. Included via
+% LATEX_EXTRA_STYLESHEET in the Doxyfile.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{doxygen_unicode}[2026/11/01 v0.1.0 Unicode characters for refman]
+\RequirePackage{textcomp}
+\DeclareUnicodeCharacter{00B0}{\ensuremath{^\circ}}        % degree
+\DeclareUnicodeCharacter{00B2}{\ensuremath{^{2}}}          % superscript two
+\DeclareUnicodeCharacter{00B3}{\ensuremath{^{3}}}          % superscript three
+\DeclareUnicodeCharacter{2032}{\ensuremath{^{\prime}}}             % prime (arc minute)
+\DeclareUnicodeCharacter{2033}{\ensuremath{^{\prime\prime}}}            % double prime (arc second)
+\DeclareUnicodeCharacter{207B}{\ensuremath{^{-}}}          % superscript minus
+\DeclareUnicodeCharacter{2212}{\ensuremath{-}}             % minus sign
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}        % multiplication sign
+\DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}       % almost equal
+\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}           % plus-minus
+\DeclareUnicodeCharacter{03BB}{\ensuremath{\lambda}}       % lambda
+\DeclareUnicodeCharacter{03C3}{\ensuremath{\sigma}}        % sigma
+\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}          % tau
+\DeclareUnicodeCharacter{00B5}{\ensuremath{\mu}}           % micro
+\endinput

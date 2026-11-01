@@ -68,8 +68,8 @@ Theory
      - explains the Fourier transformation and the correlation: transform pairs and convolution theorem, van Cittert–Zernike (numerical check against the analytic visibilities), one baseline = one Fourier component, the dish as low-pass filter, cross-correlation and cross spectrum (XF vs. FX, Wiener–Khinchin), the delay beam, selector
      - available
    * - ``C_sampling_iq.ipynb``
-     - sampling and complex baseband: Nyquist, IQ mixing, aliasing, quantisation, what the B210 delivers
-     - proposal
+     - sampling and complex baseband: Nyquist and aliasing, IQ mixing, IQ imbalance and DC offset, band edges, quantisation (efficiency, input level, Van Vleck), what the B210 delivers, selector
+     - available
    * - ``D_noise_sensitivity.ipynb``
      - radiometer equation, SEFD, noise of a visibility, S/N against integration time, bandwidth and baseline length
      - proposal

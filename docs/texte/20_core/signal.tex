@@ -1,5 +1,6 @@
 % docs/texte/20_core/signal.tex -- chapter "Signal Simulation" (Interferosim)
-% Version: 0.1.0 (2026-10-31) -- package interferosim.signal (interferosim 0.4.0)
+% Version: 0.2.0 (2026-11-01) -- section "Baseband and quantisation" (interferosim 0.9.2)
+%   0.1.0 (2026-10-31): package interferosim.signal (interferosim 0.4.0)
 % ================================================================
 \label{ch:signal}
 \index{signal simulation}\index{IQ samples}
@@ -105,4 +106,53 @@ recordings can be stored as well.
            with the B210, 20\,s at 50\,kS/s (points with $1\sigma$ error
            bars). Notebook \texttt{03\_signal\_simulation.ipynb}, section~4.}
   \label{fig:signal-check}
+\end{figure}
+
+\section{Baseband and quantisation}
+\label{sec:baseband}
+\index{complex baseband}\index{IQ imbalance}\index{quantisation efficiency}
+
+Module \texttt{signal.baseband} (version~0.9.2, theory notebook
+\texttt{C\_sampling\_iq.ipynb}) describes the imperfections of the receive
+path between the antenna and the samples:
+
+\begin{description}
+  \item[\texttt{iq\_imbalance}, \texttt{image\_rejection\_db}] gain error $g$
+        and phase error $\varphi$ between the I and Q branches; a tone at $+f$
+        gets an image at $-f$, suppressed by
+        $\mathrm{IRR} = (1+2g\cos\varphi+g^2)/(1-2g\cos\varphi+g^2)$
+        (0.1\,dB and $1^\circ$: 40\,dB; 0.5\,dB and $3^\circ$: 28\,dB). A DC offset
+        (LO leakage) common to the two channels of one B210 correlates in the
+        centre channel and is flagged; the automatic corrections of the B210
+        stay off.
+  \item[\texttt{quantizer\_levels}, \texttt{quantization\_efficiency}] thresholds
+        and levels of the mid-rise quantiser of \texttt{quantize} and its
+        efficiency for weak correlations,
+        $\eta_Q = [\sum_k y_k(\phi(t_k)-\phi(t_{k+1}))]^2 /
+        \sum_k y_k^2(\Phi(t_{k+1})-\Phi(t_k))$: 0.637 (1 bit), 0.881 (2 bits),
+        0.963 (3 bits), 0.989 (4 bits) at the optimum steps; measured with
+        \texttt{quantize} 0.624, 0.877, 0.960, 0.988 (statistical error 0.014).
+  \item[\texttt{van\_vleck\_1bit}] the arcsine law
+        $\rho_q = \frac{2}{\pi}\arcsin\rho$ and its inverse.
+\end{description}
+2 bits keep 88\,\% of the correlation with a quarter of the data volume of
+8 bits; two B210 channels at 2\,MS/s need 58\,GB/h in \texttt{sc16}, 7.2\,GB/h
+re-quantised to 2 bits (Fig.~\ref{fig:iq-quant}). The usable band is the inner
+$\approx 80\,\%$ of the channels (anti-aliasing filter, Fig.~\ref{fig:iq-edges}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/iq_quantisation.png}
+  \caption{Quantisation efficiency against the quantiser step (dots: the
+           optimum steps of \texttt{quantize}); 1-bit correlation against the
+           true one with the arcsine law and the Van Vleck correction.}
+  \label{fig:iq-quant}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/iq_band_edges.png}
+  \caption{Band shape after an anti-aliasing filter and decimation to 2\,MS/s
+           for three filter edges; shaded: the inner 80\,\% of the band.}
+  \label{fig:iq-edges}
 \end{figure}

@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/api_docs.tex -- chapter "API Documentation" (Interferosim)
-% Version: 0.1.1 (2026-10-12) -- script build_api_docs
+% Version: 0.1.2 (2026-11-01) -- Unicode style file for the PDF reference manual
+%   0.1.1 (2026-10-12): script build_api_docs
 %   0.1.0: first version
 % ================================================================
 
@@ -61,6 +62,12 @@ The folder \texttt{docs/api/} is generated and therefore excluded from
 version control (\texttt{.gitignore}). The main page is the project
 \texttt{README.md}. The version shown (\texttt{PROJECT\_NUMBER}) is
 raised together with the package version.
+
+Since \texttt{Doxyfile} 1.1.0 the style file
+\texttt{docs/style/doxygen\_unicode.sty} (setting
+\texttt{LATEX\_EXTRA\_STYLESHEET}) defines the Unicode characters used in
+the docstrings (degree, prime, superscripts, Greek letters) for pdflatex;
+without it the PDF reference manual stops at the first such character.
 
 \section{Docstrings}
 

@@ -93,6 +93,11 @@ docs/images/*
 !docs/images/fourier_visibility_dish.png
 !docs/images/fourier_xf_fx.png
 !docs/images/fourier_delay_beam.png
+!docs/images/iq_aliasing.png
+!docs/images/iq_baseband.png
+!docs/images/iq_imbalance.png
+!docs/images/iq_band_edges.png
+!docs/images/iq_quantisation.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json

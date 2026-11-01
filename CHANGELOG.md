@@ -6,6 +6,19 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.2] — 2026-11-01
+
+### Added
+- Module `interferosim.signal.baseband`: `iq_imbalance`,
+  `image_rejection_db`, `quantizer_levels`, `quantization_efficiency`,
+  `van_vleck_1bit`.
+- Theory notebook `C_sampling_iq.ipynb`.
+- Doxygen: `docs/style/doxygen_unicode.sty` (Unicode characters of the
+  docstrings for the PDF reference manual), `LATEX_EXTRA_STYLESHEET` in the
+  `Doxyfile`; the reference manual builds without errors (321 pages for 0.9.1).
+- Documentation: section "Baseband and quantisation" in chapter "Signal
+  Simulation" (two figures); tests.
+
 ## [0.9.1] — 2026-11-01
 
 ### Added

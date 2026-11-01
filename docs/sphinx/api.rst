@@ -106,6 +106,10 @@ interferosim.signal
    :no-members:
    :no-index:
 
+.. automodule:: interferosim.signal.baseband
+   :no-members:
+   :no-index:
+
 interferosim.imaging
 --------------------
 

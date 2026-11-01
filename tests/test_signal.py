@@ -218,3 +218,29 @@ def test_lag_correlation_peak_and_xf_equals_fx_without_delay():
     inner = np.abs(f) < 0.45
     slope = np.polyfit(f[inner], np.unwrap(np.angle(S[inner])), 1)[0] / (2 * np.pi)
     assert slope == pytest.approx(2.5, abs=0.02)
+
+
+# ---------------------------------------------------------------- baseband (0.9.2)
+def test_quantization_efficiency_known_values_and_measured():
+    from interferosim.signal import quantization_efficiency, quantize
+    assert quantization_efficiency(1) == pytest.approx(2 / np.pi, rel=1e-6)
+    assert quantization_efficiency(2) == pytest.approx(0.881, abs=0.001)
+    assert quantization_efficiency(3) == pytest.approx(0.963, abs=0.002)
+    assert quantization_efficiency(8) > 0.999
+    rng = np.random.default_rng(4)
+    n, rho = 2 ** 19, 0.1
+    s = (rng.standard_normal(n) + 1j * rng.standard_normal(n)) / np.sqrt(2)
+    mk = lambda: np.sqrt(rho) * s + np.sqrt(1 - rho) * (rng.standard_normal(n) + 1j * rng.standard_normal(n)) / np.sqrt(2)
+    a, b = mk(), mk()
+    c = lambda x, y: np.real(np.mean(x * np.conj(y)) / np.sqrt(np.mean(abs(x) ** 2) * np.mean(abs(y) ** 2)))
+    assert c(quantize(a, 2), quantize(b, 2)) / c(a, b) == pytest.approx(0.881, abs=0.02)
+
+
+def test_iq_imbalance_image_and_van_vleck():
+    from interferosim.signal import image_rejection_db, iq_imbalance, van_vleck_1bit
+    t = np.arange(8192)
+    x = np.exp(2j * np.pi * (1024 / 8192) * t)
+    X = np.abs(np.fft.fft(iq_imbalance(x, 0.5, 3.0))) ** 2
+    assert 10 * np.log10(X[1024] / X[-1024]) == pytest.approx(image_rejection_db(0.5, 3.0), abs=0.2)
+    assert image_rejection_db(0.0, 0.0) == float("inf")
+    assert van_vleck_1bit(2 / np.pi * np.arcsin(0.6)) == pytest.approx(0.6)
