@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<!-- demo/interferometer_demo.html -- live two-element interferometer demo (Interferosim 0.9.6) -->
+<!--
+  Version 0.1.0 (2026-11-01): first version.
+  Self-contained page (HTML + canvas + JavaScript, no libraries): a source above and to the
+  right of two antennas at a distance d radiates with the flux density p [Jy] at f [GHz].
+  The page animates the wavefronts, the received signals (wave trains), delay compensation,
+  the correlator (multiplying and complex), the fringe pattern over the direction, the fringes
+  over time (Earth rotation, fringe stopping) and the sensitivity. Every parameter is a slider;
+  all panels update in real time. Steps 1-7 guide a demonstration (presets and captions).
+  Physics as in the package: radio convention, tau_g = (r1 - r2) / c, Gaussian band of width
+  delta_nu (wave-train length), visibility of a uniform disc 2 J1(x)/x, primary beam
+  HPBW = 1.2 lambda / D, normalised correlation rho = T_A / (T_A + T_sys) |V| and noise
+  1 / sqrt(2 delta_nu tau) as in interferosim.instrument.sensitivity.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-Element Interferometer Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* one visual world: the dark screen of a measuring instrument; layout: controls left, panels in a grid right */
+  --bg: #0f1520;
+  --panel: #161f2d;
+  --line: #2a3648;
+  --text: #dbe3ee;
+  --muted: #8796ab;
+  --amber: #f2b33d;      /* antenna 1 */
+  --cyan: #4fc7e6;       /* antenna 2 */
+  --magenta: #e2679b;    /* product / correlation */
+  --green: #8fd18a;      /* envelopes, model */
+  --display: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--display); font-size: 14px; }
+.app { display: grid; grid-template-columns: 300px 1fr; gap: 12px; padding: 12px 16px; min-height: 100%; }
+aside { display: flex; flex-direction: column; gap: 10px; }
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.brand h1 { font-size: 17px; margin: 0; font-weight: 600; text-wrap: balance; }
+.brand .lang button { font: 500 12px var(--mono); }
+fieldset { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 4px; margin: 0; background: var(--panel); }
+legend { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 4px; }
+.ctl { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; margin-bottom: 6px; }
+.ctl label { font-size: 13px; }
+.ctl output { font: 500 12px var(--mono); color: var(--text); font-variant-numeric: tabular-nums; text-align: right; }
+.ctl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--cyan); }
+.chk { display: flex; gap: 6px; align-items: center; font-size: 13px; margin-bottom: 6px; }
+.chk input { accent-color: var(--cyan); }
+button { background: #223047; color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 5px 9px; font: 500 13px var(--display); cursor: pointer; }
+button:hover { border-color: var(--cyan); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+button.on { background: var(--cyan); color: #08121c; border-color: var(--cyan); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; }
+main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.steps { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.caption { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 6px; padding: 8px 12px; line-height: 1.45; max-width: 100ch; }
+.caption b { color: var(--amber); font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; transition: border-color .2s; }
+.card.hl { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber) inset; }
+.card h2 { font-size: 13px; font-weight: 600; margin: 0; display: flex; justify-content: space-between; gap: 8px; }
+.card h2 span:last-child { color: var(--muted); font: 400 12px var(--mono); text-align: right; }
+.wide { grid-column: 1 / -1; }
+canvas { width: 100%; display: block; background: #0b1119; border-radius: 4px; }
+.readout { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px 14px; font: 12px var(--mono); font-variant-numeric: tabular-nums; }
+.readout div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--line); padding: 2px 0; }
+.readout span:first-child { color: var(--muted); font-family: var(--display); }
+.legend { font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+.sw { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+footer { color: var(--muted); font-size: 12px; }
+@media (max-width: 1100px) { .app { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand">
+    <h1 data-i="title">Two-element interferometer, live</h1>
+    <div class="lang row"><button id="lang-en" class="on">EN</button><button id="lang-de">DE</button></div>
+  </div>
+  <div class="row">
+    <button id="play" class="on" data-i="pause">Pause</button>
+    <button id="reset" data-i="reset">Reset</button>
+    <button id="comp" data-i="compensate">Compensate delay</button>
+  </div>
+  <fieldset><legend data-i="g_source">Source</legend>
+    <div class="ctl"><label for="f" data-i="f">Frequency f</label><output id="f_o"></output><input type="range" id="f" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="p" data-i="p">Flux density p</label><output id="p_o"></output><input type="range" id="p" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="el" data-i="el">Direction (elevation, right horizon = 0°)</label><output id="el_o"></output><input type="range" id="el" min="1" max="179" step="any" value="60"></div>
+    <div class="ctl"><label for="d" data-i="d">Distance d</label><output id="d_o"></output><input type="range" id="d" min="0" max="1000" value="1000"></div>
+    <div class="ctl"><label for="size" data-i="size">Source size (disc)</label><output id="size_o"></output><input type="range" id="size" min="0" max="1000" value="0"></div>
+  </fieldset>
+  <fieldset><legend data-i="g_ant">Antennas</legend>
+    <div class="ctl"><label for="B" data-i="B">Baseline B</label><output id="B_o"></output><input type="range" id="B" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="D" data-i="D">Dish diameter D</label><output id="D_o"></output><input type="range" id="D" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="ep" data-i="ep">Pointing (elevation)</label><output id="ep_o"></output><input type="range" id="ep" min="1" max="179" step="any" value="60"></div>
+    <label class="chk"><input type="checkbox" id="track" checked> <span data-i="track">antennas track the source</span></label>
+  </fieldset>
+  <fieldset><legend data-i="g_rx">Receiver and correlator</legend>
+    <div class="ctl"><label for="bw" data-i="bw">Bandwidth Δν</label><output id="bw_o"></output><input type="range" id="bw" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="tsys" data-i="tsys">System temperature T_sys</label><output id="tsys_o"></output><input type="range" id="tsys" min="10" max="500" step="1" value="120"></div>
+    <div class="ctl"><label for="tint" data-i="tint">Integration time τ</label><output id="tint_o"></output><input type="range" id="tint" min="0" max="1000" value="0"></div>
+    <div class="ctl"><label for="ti" data-i="ti">Instrumental delay τ_i</label><output id="ti_o"></output><input type="range" id="ti" min="-1000" max="1000" value="0"></div>
+    <label class="chk"><input type="checkbox" id="noise"> <span data-i="noise">show receiver noise (true ratio)</span></label>
+    <label class="chk"><input type="checkbox" id="dtrack"> <span data-i="dtrack">delay tracking (τ_i follows τ_g)</span></label>
+    <label class="chk"><input type="checkbox" id="fstop"> <span data-i="fstop">fringe stopping (model phase removed)</span></label>
+  </fieldset>
+  <fieldset><legend data-i="g_anim">Animation</legend>
+    <div class="ctl"><label for="speed" data-i="speed">Slow motion: periods per second</label><output id="speed_o"></output><input type="range" id="speed" min="0" max="1000" value="0"></div>
+    <label class="chk"><input type="checkbox" id="rot"> <span data-i="rot">Earth rotation: the source moves</span></label>
+    <div class="ctl"><label for="rate" data-i="rate">Rotation (degrees per second shown)</label><output id="rate_o"></output><input type="range" id="rate" min="0" max="1000" value="0"></div>
+  </fieldset>
+  <footer data-i="footer">Interferosim live demo · physics as in the package (radio convention, Gaussian band, uniform-disc visibility, primary beam 1.2 λ/D).</footer>
+</aside>
+
+<main>
+  <div class="steps" id="steps"></div>
+  <div class="caption" id="caption"></div>
+  <div class="grid">
+    <section class="card wide" id="c-geo"><h2><span data-i="h_geo">1 · Source, wavefronts and path difference</span><span id="geo_info"></span></h2><canvas id="cv-geo" height="290"></canvas></section>
+    <section class="card" id="c-sig"><h2><span data-i="h_sig">2 · Received signals (wave trains)</span><span id="sig_info"></span></h2><canvas id="cv-sig" height="230"></canvas>
+      <div class="legend"><span><i class="sw" style="background:var(--amber)"></i><span data-i="l_a1">antenna 1 (left)</span></span><span><i class="sw" style="background:var(--cyan)"></i><span data-i="l_a2">antenna 2 (right), after τ_i</span></span><span><i class="sw" style="background:var(--muted)"></i><span data-i="l_a2raw">antenna 2 before τ_i</span></span></div></section>
+    <section class="card" id="c-cor"><h2><span data-i="h_cor">3–4 · Correlator: multiply and average</span><span id="cor_info"></span></h2><canvas id="cv-cor" height="230"></canvas>
+      <div class="legend"><span><i class="sw" style="background:var(--magenta)"></i><span data-i="l_prod">product s₁·s₂</span></span><span><i class="sw" style="background:var(--green)"></i><span data-i="l_mean">running mean</span></span><span data-i="l_phasor">right: complex visibility (cos and sin channel)</span></div></section>
+    <section class="card" id="c-fr"><h2><span data-i="h_fr">5 · Fringe pattern over the direction</span><span id="fr_info"></span></h2><canvas id="cv-fr" height="230"></canvas>
+      <div class="legend"><span><i class="sw" style="background:var(--magenta)"></i><span data-i="l_resp">correlator output</span></span><span><i class="sw" style="background:var(--green)"></i><span data-i="l_env">envelope: band × beam × source size</span></span><span><i class="sw" style="background:var(--amber)"></i><span data-i="l_now">current direction</span></span></div></section>
+    <section class="card" id="c-time"><h2><span data-i="h_time">6 · Fringes over time (Earth rotation)</span><span id="time_info"></span></h2><canvas id="cv-time" height="230"></canvas>
+      <div class="legend"><span><i class="sw" style="background:var(--magenta)"></i><span data-i="l_re">real part (cos channel)</span></span><span><i class="sw" style="background:var(--cyan)"></i><span data-i="l_im">imaginary part (sin channel)</span></span><span><i class="sw" style="background:var(--green)"></i><span data-i="l_amp">amplitude</span></span></div></section>
+    <section class="card wide" id="c-num"><h2><span data-i="h_num">7 · Numbers: geometry, signal and sensitivity</span><span></span></h2><div class="readout" id="readout"></div></section>
+  </div>
+</main>
+</div>
+
+<script>
+"use strict";
+// ------------------------------------------------------------------ constants
+const C = 299792458, KB = 1.380649e-23, JY = 1e-26, ETA = 0.6;
+
+// ------------------------------------------------------------------ texts (EN / DE)
+const T = {
+ en: {title:"Two-element interferometer, live", pause:"Pause", play:"Play", reset:"Reset", compensate:"Compensate delay",
+  g_source:"Source", f:"Frequency f", p:"Flux density p", el:"Direction (elevation, right horizon = 0°)", d:"Distance d", size:"Source size (disc)",
+  g_ant:"Antennas", B:"Baseline B", D:"Dish diameter D", ep:"Pointing (elevation)", track:"antennas track the source",
+  g_rx:"Receiver and correlator", bw:"Bandwidth Δν", tsys:"System temperature T_sys", tint:"Integration time τ", ti:"Instrumental delay τ_i",
+  noise:"show receiver noise (true ratio)", dtrack:"delay tracking (τ_i follows τ_g)", fstop:"fringe stopping (model phase removed)",
+  g_anim:"Animation", speed:"Slow motion: periods per second", rot:"Earth rotation: the source moves", rate:"Rotation (degrees per second shown)",
+  footer:"Interferosim live demo · physics as in the package (radio convention, Gaussian band, uniform-disc visibility, primary beam 1.2 λ/D).",
+  h_geo:"1 · Source, wavefronts and path difference", h_sig:"2 · Received signals (wave trains)", h_cor:"3–4 · Correlator: multiply and average",
+  h_fr:"5 · Fringe pattern over the direction", h_time:"6 · Fringes over time (Earth rotation)", h_num:"7 · Numbers: geometry, signal and sensitivity",
+  l_a1:"antenna 1 (left)", l_a2:"antenna 2 (right), after τ_i", l_a2raw:"antenna 2 before τ_i", l_prod:"product s₁·s₂", l_mean:"running mean",
+  l_phasor:"right: complex visibility (cos and sin channel)", l_resp:"correlator output", l_env:"envelope: band × beam × source size", l_now:"current direction",
+  l_re:"real part (cos channel)", l_im:"imaginary part (sin channel)", l_amp:"amplitude",
+  step:"Step", all:"All", src:"source", plane:"plane wave (d → ∞)", every:"every %n-th wavefront shown", offscreen:"source at d = %d, outside the view",
+  extra:"extra path ΔL", a1:"antenna 1", a2:"antenna 2", time:"time", dir:"elevation of the source", hist:"seconds shown",
+  r_lam:"wavelength λ", r_bl:"baseline B/λ", r_tg:"geometric delay τ_g", r_dl:"path difference ΔL", r_phi:"phase 2π f τ_g", r_tr:"residual delay τ_g − τ_i",
+  r_pk:"wave train (band)", r_cl:"coherence length c/Δν", r_fs:"fringe spacing λ/(B sin e)", r_ta:"antenna temperature T_A", r_sefd:"SEFD",
+  r_pw:"received power (one pol.)", r_v:"voltage at 50 Ω (rms)", r_vis:"source visibility |V|", r_beam:"primary beam gain", r_rho:"correlation ρ (amplitude)",
+  r_sig:"noise σ per component", r_snr:"S/N after τ", r_hpbw:"primary beam HPBW", r_np:"plane / spherical wave", r_meas:"measured (one realisation)",
+  sph:"spherical", pl:"plane", cont:"≈ continuous", ppt:"periods per train", noisex:"noise ×", overlap:"overlap", frate:"fringe rate (shown)", spacing:"fringe spacing", periods:"periods"},
+ de: {title:"Zwei-Element-Interferometer, live", pause:"Pause", play:"Start", reset:"Zurücksetzen", compensate:"Verzögerung ausgleichen",
+  g_source:"Quelle", f:"Frequenz f", p:"Flussdichte p", el:"Richtung (Elevation, rechter Horizont = 0°)", d:"Abstand d", size:"Quellgröße (Scheibe)",
+  g_ant:"Antennen", B:"Basislinie B", D:"Schüsseldurchmesser D", ep:"Ausrichtung (Elevation)", track:"Antennen folgen der Quelle",
+  g_rx:"Empfänger und Korrelator", bw:"Bandbreite Δν", tsys:"Systemtemperatur T_sys", tint:"Integrationszeit τ", ti:"Instrumentelle Verzögerung τ_i",
+  noise:"Empfängerrauschen zeigen (wahres Verhältnis)", dtrack:"Delay-Nachführung (τ_i folgt τ_g)", fstop:"Fringe-Stopping (Modellphase entfernt)",
+  g_anim:"Animation", speed:"Zeitlupe: Perioden pro Sekunde", rot:"Erdrotation: die Quelle wandert", rate:"Drehung (Grad pro Sekunde Anzeige)",
+  footer:"Interferosim-Live-Demo · Physik wie im Paket (Radiokonvention, Gauß-Band, Sichtbarkeit einer Scheibe, Primärkeule 1,2 λ/D).",
+  h_geo:"1 · Quelle, Wellenfronten und Wegunterschied", h_sig:"2 · Empfangssignale (Wellenzüge)", h_cor:"3–4 · Korrelator: multiplizieren und mitteln",
+  h_fr:"5 · Streifenmuster über der Richtung", h_time:"6 · Streifen über der Zeit (Erdrotation)", h_num:"7 · Zahlen: Geometrie, Signal und Empfindlichkeit",
+  l_a1:"Antenne 1 (links)", l_a2:"Antenne 2 (rechts), nach τ_i", l_a2raw:"Antenne 2 vor τ_i", l_prod:"Produkt s₁·s₂", l_mean:"gleitender Mittelwert",
+  l_phasor:"rechts: komplexe Visibility (Kosinus- und Sinuskanal)", l_resp:"Korrelatorausgang", l_env:"Hüllkurve: Band × Keule × Quellgröße", l_now:"aktuelle Richtung",
+  l_re:"Realteil (Kosinuskanal)", l_im:"Imaginärteil (Sinuskanal)", l_amp:"Betrag",
+  step:"Schritt", all:"Alle", src:"Quelle", plane:"ebene Welle (d → ∞)", every:"jede %n. Wellenfront gezeigt", offscreen:"Quelle in d = %d, außerhalb des Bildes",
+  extra:"Umweg ΔL", a1:"Antenne 1", a2:"Antenne 2", time:"Zeit", dir:"Elevation der Quelle", hist:"Sekunden Anzeige",
+  r_lam:"Wellenlänge λ", r_bl:"Basislinie B/λ", r_tg:"geometrische Verzögerung τ_g", r_dl:"Wegunterschied ΔL", r_phi:"Phase 2π f τ_g", r_tr:"Restverzögerung τ_g − τ_i",
+  r_pk:"Wellenzug (Band)", r_cl:"Kohärenzlänge c/Δν", r_fs:"Streifenabstand λ/(B sin e)", r_ta:"Antennentemperatur T_A", r_sefd:"SEFD",
+  r_pw:"Empfangsleistung (eine Pol.)", r_v:"Spannung an 50 Ω (eff.)", r_vis:"Sichtbarkeit der Quelle |V|", r_beam:"Gewinn der Primärkeule", r_rho:"Korrelation ρ (Betrag)",
+  r_sig:"Rauschen σ je Komponente", r_snr:"S/N nach τ", r_hpbw:"Halbwertsbreite der Primärkeule", r_np:"ebene / Kugelwelle", r_meas:"gemessen (eine Realisierung)",
+  sph:"Kugelwelle", pl:"eben", cont:"≈ kontinuierlich", ppt:"Perioden pro Zug", noisex:"Rauschen ×", overlap:"Überlappung", frate:"Fringe-Rate (Anzeige)", spacing:"Streifenabstand", periods:"Perioden"}
+};
+const STEPS = [
+ {hl:["c-geo"], set:{f:1.42e9, B:1.5, el:60, d:Infinity, bw:400e6, ti:0, size:0, D:3, noise:false, rot:false, dtrack:false, fstop:false, speed:0.6},
+  en:"<b>Source and antennas.</b> A distant source above and to the right radiates; its wavefronts arrive almost plane. They reach the right antenna first: the left one has the extra path ΔL = B cos e. Move the direction, the baseline, the distance (a near source gives spherical waves) and the frequency.",
+  de:"<b>Quelle und Antennen.</b> Eine ferne Quelle rechts oben strahlt; ihre Wellenfronten kommen fast eben an. Sie erreichen zuerst die rechte Antenne: die linke hat den Umweg ΔL = B cos e. Verändere Richtung, Basislinie, Abstand (eine nahe Quelle gibt Kugelwellen) und Frequenz."},
+ {hl:["c-geo","c-sig"], set:{bw:400e6, ti:0, speed:0.6},
+  en:"<b>Received signals.</b> Each antenna receives the same wave trains, the left one later by τ_g = ΔL/c. The length of a wave train is set by the bandwidth Δν (about 1/Δν): wide band, short trains. The phase shift alone repeats every period – only the shift of the trains shows the delay unambiguously.",
+  de:"<b>Empfangssignale.</b> Beide Antennen empfangen dieselben Wellenzüge, die linke um τ_g = ΔL/c später. Die Länge eines Wellenzugs folgt aus der Bandbreite Δν (etwa 1/Δν): breites Band, kurze Züge. Die Phasenverschiebung allein wiederholt sich jede Periode – erst der Versatz der Züge zeigt die Verzögerung eindeutig."},
+ {hl:["c-sig","c-cor"], set:{bw:400e6, ti:0, speed:0.6},
+  en:"<b>Delay compensation.</b> The instrumental delay τ_i delays the signal of antenna 2 until the wave trains coincide (button: compensate). Only overlapping trains correlate: the correlation falls with the residual delay τ_g − τ_i within about one train length. As in a real receiver the delay acts after mixing to the baseband: it shifts the train, not the carrier phase.",
+  de:"<b>Verzögerungsausgleich.</b> Die instrumentelle Verzögerung τ_i verzögert das Signal von Antenne 2, bis die Wellenzüge übereinander liegen (Schaltfläche: ausgleichen). Nur überlappende Züge korrelieren: die Korrelation fällt mit der Restverzögerung τ_g − τ_i innerhalb etwa einer Zuglänge. Wie im echten Empfänger wirkt die Verzögerung nach dem Mischen ins Basisband: sie verschiebt den Zug, nicht die Trägerphase."},
+ {hl:["c-cor"], set:{speed:0.6},
+  en:"<b>Correlator.</b> The two signals are multiplied and averaged. The mean is proportional to cos(2π f τ_g) times the overlap of the trains: the fringe. A second channel with the signal shifted by a quarter period gives sin; together amplitude and phase – the complex visibility, the arrow on the right.",
+  de:"<b>Korrelator.</b> Die beiden Signale werden multipliziert und gemittelt. Der Mittelwert ist proportional zu cos(2π f τ_g) mal der Überlappung der Züge: der Streifen. Ein zweiter Kanal mit um eine Viertelperiode verschobenem Signal liefert sin; zusammen Betrag und Phase – die komplexe Visibility, der Pfeil rechts."},
+ {hl:["c-fr"], set:{speed:0.6},
+  en:"<b>Fringe pattern.</b> Over the direction the output oscillates with the spacing λ/(B sin e): a longer baseline gives narrower fringes – higher resolution. The envelope comes from the band (wave-train length), the primary beam of the dishes and the size of the source.",
+  de:"<b>Streifenmuster.</b> Über der Richtung schwingt der Ausgang mit dem Abstand λ/(B sin e): eine längere Basislinie gibt engere Streifen – höhere Auflösung. Die Hüllkurve kommt vom Band (Länge der Wellenzüge), von der Primärkeule der Schüsseln und von der Größe der Quelle."},
+ {hl:["c-time","c-fr"], set:{rot:true, rate:3, dtrack:true, fstop:false, speed:0.6},
+  en:"<b>Earth rotation.</b> The source moves across the sky and through the fringes: the output oscillates in time (fringe rate). Delay tracking keeps the trains aligned; fringe stopping removes the model phase – then the visibility stays still and can be averaged. Switch both on and off.",
+  de:"<b>Erdrotation.</b> Die Quelle wandert über den Himmel und durch die Streifen: der Ausgang schwingt in der Zeit (Fringe-Rate). Delay-Nachführung hält die Züge übereinander; Fringe-Stopping entfernt die Modellphase – dann steht die Visibility still und lässt sich mitteln. Schalte beides ein und aus."},
+ {hl:["c-num","c-time"], set:{rot:true, rate:3, dtrack:true, fstop:true, noise:true, bw:2e6, size:0.5},
+  en:"<b>Source size and noise.</b> An extended source has a smaller visibility on long baselines (resolved). Real signals are far below the receiver noise: T_A ≪ T_sys. Only integration over many samples, σ = 1/√(2Δν τ), brings the correlation out of the noise. Raise p, D, Δν and τ.",
+  de:"<b>Quellgröße und Rauschen.</b> Eine ausgedehnte Quelle hat auf langen Basislinien eine kleinere Visibility (aufgelöst). Echte Signale liegen weit unter dem Empfängerrauschen: T_A ≪ T_sys. Erst die Integration über viele Samples, σ = 1/√(2Δν τ), hebt die Korrelation aus dem Rauschen. Erhöhe p, D, Δν und τ."}
+];
+
+// ------------------------------------------------------------------ slider mappings (log where useful)
+const logmap = (lo, hi) => ({to: v => lo * Math.pow(hi / lo, v / 1000), from: x => 1000 * Math.log(x / lo) / Math.log(hi / lo)});
+const MAP = {
+  f: logmap(0.1e9, 10e9), p: logmap(1, 1e7), B: logmap(0.2, 30), D: logmap(0.1, 10), bw: logmap(1e5, 3e9),
+  tint: logmap(1e-6, 1e4), speed: logmap(0.05, 5), rate: logmap(0.2, 20), size: {to: v => 5 * v / 1000, from: x => 1000 * x / 5},
+  d: {to: v => v >= 1000 ? Infinity : 2 * Math.pow(5000, v / 990), from: x => x === Infinity ? 1000 : Math.min(990, 990 * Math.log(x / 2) / Math.log(5000))},
+  el: {to: v => +v, from: x => x}, ep: {to: v => +v, from: x => x}, tsys: {to: v => +v, from: x => x},
+  ti: {to: v => v / 1000, from: x => x * 1000}            // fraction of the maximum B/c
+};
+const S = {lang: "en", playing: true, step: 0, t: 0, hist: [], lastDump: 0, meas: {re: 0, im: 0}, seed: 1};
+const $ = id => document.getElementById(id);
+function val(id) { const el = $(id); return el.type === "checkbox" ? el.checked : MAP[id].to(+el.value); }
+function setVal(id, x) { const el = $(id); if (el.type === "checkbox") el.checked = !!x; else el.value = MAP[id].from(x); }
+
+// ------------------------------------------------------------------ formatting
+const fmtSI = (x, unit, digits = 3) => {
+  if (!isFinite(x)) return "∞ " + unit;
+  const a = Math.abs(x); const pre = [[1e9, "G"], [1e6, "M"], [1e3, "k"], [1, ""], [1e-3, "m"], [1e-6, "µ"], [1e-9, "n"], [1e-12, "p"], [1e-15, "f"]];
+  for (const [m, s] of pre) if (a >= m * 0.9995 || m === 1e-15) return (x / m).toPrecision(digits) + " " + s + unit;
+};
+const fmtJy = x => x >= 1e6 ? (x / 1e6).toPrecision(3) + " MJy" : x >= 1e3 ? (x / 1e3).toPrecision(3) + " kJy" : x.toPrecision(3) + " Jy";
+const fmtT = x => x < 1e-3 ? fmtSI(x, "s") : x < 60 ? x.toPrecision(3) + " s" : x < 3600 ? (x / 60).toPrecision(3) + " min" : (x / 3600).toPrecision(3) + " h";
+const tr = k => T[S.lang][k] || k;
+
+// ------------------------------------------------------------------ physics
+function besselJ1(x) {                           // integral (1/π) ∫0^π cos(t − x sin t) dt, Simpson; asymptotic for x > 25
+  if (x > 25) return Math.sqrt(2 / (Math.PI * x)) * (Math.cos(x - 0.75 * Math.PI) + 0.375 / x * Math.sin(x - 0.75 * Math.PI));
+  const n = 64, h = Math.PI / n; let s = 0;
+  for (let i = 0; i <= n; i++) { const t = i * h, w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2); s += w * Math.cos(t - x * Math.sin(t)); }
+  return s * h / 3 / Math.PI;
+}
+const discVis = x => x < 1e-6 ? 1 : Math.abs(2 * besselJ1(x) / x);   // uniform disc
+function model() {
+  const P = {f: val("f"), p: val("p"), el: val("el"), d: val("d"), size: val("size"), B: val("B"), D: val("D"), ep: val("ep"),
+             track: val("track"), bw: val("bw"), tsys: val("tsys"), tint: val("tint"), noise: val("noise"), dtrack: val("dtrack"),
+             fstop: val("fstop"), speed: val("speed"), rot: val("rot"), rate: val("rate")};
+  P.lam = C / P.f;
+  P.plane = !isFinite(P.d);
+  const e = P.el * Math.PI / 180;
+  P.s = [Math.cos(e), Math.sin(e)];                        // unit vector towards the source
+  P.A1 = [-P.B / 2, 0]; P.A2 = [P.B / 2, 0];
+  if (P.plane) { P.r1 = -(P.A1[0] * P.s[0]); P.r2 = -(P.A2[0] * P.s[0]); P.src = null; }
+  else { P.src = [P.d * P.s[0], P.d * P.s[1]]; P.r1 = Math.hypot(P.src[0] - P.A1[0], P.src[1]); P.r2 = Math.hypot(P.src[0] - P.A2[0], P.src[1]); }
+  P.tg = (P.r1 - P.r2) / C;                                // > 0: antenna 1 later
+  P.tmax = P.B / C;
+  if (P.dtrack) { P.ti = P.tg; setVal("ti", Math.max(-1, Math.min(1, P.tg / P.tmax))); } else P.ti = val("ti") * P.tmax;
+  P.tr = P.tg - P.ti;
+  P.sigt = 0.187 / P.bw;                                   // Gaussian band: FWHM_t = 0.441 / Δν
+  P.cyc = 1.12 / P.bw * P.f;                               // visible train length in periods
+  P.spacing = 1.6 / P.bw;
+  P.coh = Math.exp(-P.tr * P.tr / (4 * P.sigt * P.sigt));  // overlap of the trains
+  if (P.track) setVal("ep", P.el);
+  P.epoint = P.track ? P.el : P.ep;
+  P.hpbw = 1.2 * P.lam / P.D * 180 / Math.PI;
+  P.beam = Math.exp(-4 * Math.LN2 * Math.pow((P.el - P.epoint) / P.hpbw, 2));
+  P.bproj = P.B * Math.sin(e);
+  P.vis = discVis(Math.PI * P.size * Math.PI / 180 * P.bproj / P.lam);
+  P.aeff = ETA * Math.PI * P.D * P.D / 4;
+  P.ta = P.p * JY * P.aeff / (2 * KB) * P.beam;
+  P.sefd = 2 * KB * P.tsys / P.aeff / JY;
+  P.pw = KB * P.ta * P.bw;
+  P.vrms = Math.sqrt(P.pw * 50);
+  P.rho = P.ta / (P.ta + P.tsys) * P.vis * P.coh;
+  P.sig = 1 / Math.sqrt(2 * P.bw * P.tint);
+  P.snr = P.rho / P.sig;
+  P.phi = 2 * Math.PI * P.f * P.tg;                        // fringe phase: the delay tau_i acts on the envelope after mixing (LO at f)
+  P.phiModel = 2 * Math.PI * P.f * P.tg;
+  P.phiOut = P.fstop ? 0 : P.phi;                          // fringe stopping with the exact model: phase 0
+  return P;
+}
+
+// ------------------------------------------------------------------ signals
+function envelope(t, P) {                                   // train of Gaussian wave trains, period "spacing"
+  if (P.cyc > 60) return 1;                                 // long trains: continuous within the view
+  const u = ((t % P.spacing) + P.spacing) % P.spacing - P.spacing / 2;
+  return Math.exp(-u * u / (2 * P.sigt * P.sigt));
+}
+const sig = (t, P) => envelope(t, P) * Math.cos(2 * Math.PI * P.f * t);
+// antenna 2 after the instrumental delay: delayed in baseband, the carrier phase (relative to the LO) is not delayed
+const sigDelayed = (t, P) => envelope(t - P.ti, P) * Math.cos(2 * Math.PI * P.f * t);
+let rngState = 12345;
+function randn() { rngState = (1103515245 * rngState + 12345) % 2147483648; const u1 = (rngState + 1) / 2147483649;
+  rngState = (1103515245 * rngState + 12345) % 2147483648; const u2 = (rngState + 1) / 2147483649;
+  return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2); }
+
+// ------------------------------------------------------------------ canvas helpers
+function prep(cv) {
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.height_css || (cv.height_css = cv.height);
+  if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + "px"; }
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  return [g, w, h];
+}
+const CSS = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function axes(g, x0, y0, w, h, xl, yl) {
+  g.strokeStyle = CSS("--line"); g.lineWidth = 1; g.strokeRect(x0, y0, w, h);
+  g.fillStyle = CSS("--muted"); g.font = "11px " + CSS("--display");
+  if (xl) { g.textAlign = "center"; g.fillText(xl, x0 + w / 2, y0 + h + 16); }
+  if (yl) { g.save(); g.translate(x0 - 8, y0 + h / 2); g.rotate(-Math.PI / 2); g.textAlign = "center"; g.fillText(yl, 0, 0); g.restore(); }
+}
+function trace(g, xs, ys, color, lw = 1.6, alpha = 1) {
+  g.strokeStyle = color; g.globalAlpha = alpha; g.lineWidth = lw; g.beginPath();
+  for (let i = 0; i < xs.length; i++) i ? g.lineTo(xs[i], ys[i]) : g.moveTo(xs[i], ys[i]);
+  g.stroke(); g.globalAlpha = 1;
+}
+
+// ------------------------------------------------------------------ panel 1: geometry
+function drawGeo(P) {
+  const cv = $("cv-geo"); const [g, w, h] = prep(cv);
+  const view = Math.max(P.B * 1.7, 6 * P.lam);              // metres across the width
+  const k = w / view, ox = w / 2, oy = h - 34;
+  const X = x => ox + x * k, Y = y => oy - y * k;
+  const tphys = S.t;                                        // physical time [s]
+  // wavefronts (crests), opacity from the wave-train envelope
+  const lamPx = P.lam * k; let every = 1; while (lamPx * every < 7) every *= 2;
+  const maxR = Math.hypot(w, h) / k;
+  g.lineWidth = 1.3;
+  if (P.plane) {
+    const ex = -P.s[1], ey = P.s[0];                         // along the wavefront
+    for (let n = -200; n <= 200; n++) {
+      const q = n * P.lam * every - ((C * tphys) % (P.lam * every));   // position along s of the crest
+      if (Math.abs(q) > maxR) continue;
+      const tret = tphys + q / C; const a = envelope(tret, P);         // a crest at x·s = q left the source at tphys + q/c (relative)
+      if (a < 0.03) continue;
+      g.strokeStyle = CSS("--text"); g.globalAlpha = 0.15 + 0.6 * a;
+      const cx = q * P.s[0], cy = q * P.s[1];
+      g.beginPath(); g.moveTo(X(cx - ex * maxR), Y(cy - ey * maxR)); g.lineTo(X(cx + ex * maxR), Y(cy + ey * maxR)); g.stroke();
+    }
+    g.globalAlpha = 1;
+  } else {
+    const dmin = Math.max(0, Math.hypot(P.src[0], P.src[1]) - maxR), dmax = Math.hypot(P.src[0], P.src[1]) + maxR;
+    const stepR = P.lam * every, phase = (C * tphys) % stepR;
+    for (let r = Math.floor(dmin / stepR) * stepR + phase; r < dmax; r += stepR) {
+      if (r <= 0) continue;
+      const a = envelope(tphys - r / C, P); if (a < 0.03) continue;
+      g.strokeStyle = CSS("--text"); g.globalAlpha = 0.15 + 0.6 * a;
+      g.beginPath(); g.arc(X(P.src[0]), Y(P.src[1]), r * k, 0, 2 * Math.PI); g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+  // ground
+  g.fillStyle = "#1a2433"; g.fillRect(0, oy, w, h - oy);
+  g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(0, oy); g.lineTo(w, oy); g.stroke();
+  // rays to the source and path difference
+  const far = 3 * maxR;
+  const toSrc = A => P.plane ? [A[0] + P.s[0] * far, A[1] + P.s[1] * far] : P.src;
+  for (const [A, col] of [[P.A1, CSS("--amber")], [P.A2, CSS("--cyan")]]) {
+    const T2 = toSrc(A); g.strokeStyle = col; g.globalAlpha = 0.55; g.setLineDash([5, 5]);
+    g.beginPath(); g.moveTo(X(A[0]), Y(A[1])); g.lineTo(X(T2[0]), Y(T2[1])); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+  }
+  // extra path: foot of the perpendicular from antenna 2 onto the ray of antenna 1 (plane wave)
+  const dl = P.r1 - P.r2;
+  if (dl > 0) {
+    const ux = P.plane ? P.s[0] : (P.src[0] - P.A1[0]) / P.r1, uy = P.plane ? P.s[1] : P.src[1] / P.r1;
+    const foot = [P.A1[0] + ux * dl, P.A1[1] + uy * dl];
+    g.strokeStyle = CSS("--magenta"); g.lineWidth = 4; g.beginPath(); g.moveTo(X(P.A1[0]), Y(P.A1[1])); g.lineTo(X(foot[0]), Y(foot[1])); g.stroke();
+    g.lineWidth = 1; g.setLineDash([3, 3]); g.strokeStyle = CSS("--muted"); g.beginPath(); g.moveTo(X(foot[0]), Y(foot[1])); g.lineTo(X(P.A2[0]), Y(P.A2[1])); g.stroke(); g.setLineDash([]);
+    g.fillStyle = CSS("--magenta"); g.font = "12px " + CSS("--mono"); g.textAlign = "left";
+    const lx = Math.min(w - 260, Math.max(8, (X(P.A1[0]) + X(foot[0])) / 2 + 10)), ly = Math.min(oy - 10, Math.max(16, (Y(P.A1[1]) + Y(foot[1])) / 2));
+    g.fillText(tr("extra") + " = " + fmtSI(dl, "m") + " = " + (dl / P.lam).toFixed(2) + " λ", lx, ly);
+  }
+  // antennas (dish symbol pointing at the pointing elevation)
+  const ep = P.epoint * Math.PI / 180, dpx = Math.max(10, Math.min(46, P.D * k));
+  for (const [A, col, lab] of [[P.A1, CSS("--amber"), tr("a1")], [P.A2, CSS("--cyan"), tr("a2")]]) {
+    const ax = X(A[0]), ay = Y(A[1]);
+    g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 2.5;
+    g.beginPath(); g.moveTo(ax, oy + 1); g.lineTo(ax, ay - 8); g.stroke();
+    g.save(); g.translate(ax, ay - 10); g.rotate(-(ep - Math.PI / 2));
+    g.beginPath(); g.ellipse(0, 0, dpx / 2, dpx / 7, 0, Math.PI, 2 * Math.PI); g.stroke(); g.restore();
+    g.font = "12px " + CSS("--display"); g.textAlign = "center"; g.fillText(lab, ax, oy + 15);
+  }
+  // baseline
+  g.strokeStyle = CSS("--muted"); g.lineWidth = 1; g.beginPath(); g.moveTo(X(P.A1[0]), oy + 22); g.lineTo(X(P.A2[0]), oy + 22); g.stroke();
+  g.fillStyle = CSS("--muted"); g.textAlign = "center"; g.font = "11px " + CSS("--mono"); g.fillText("B = " + fmtSI(P.B, "m"), ox, oy + 33);
+  // source symbol or arrow
+  g.font = "12px " + CSS("--display");
+  if (!P.plane && X(P.src[0]) < w - 10 && Y(P.src[1]) > 10) {
+    g.fillStyle = CSS("--amber"); g.beginPath(); g.arc(X(P.src[0]), Y(P.src[1]), 7, 0, 2 * Math.PI); g.fill();
+    g.textAlign = "left"; g.fillText(tr("src"), X(P.src[0]) + 10, Y(P.src[1]) + 4);
+  } else {
+    const L = Math.min(w, h) * 0.32, bx = ox + P.s[0] * L * 1.4, by = oy - P.s[1] * L;
+    const ax = Math.min(w - 14, Math.max(14, bx)), ay = Math.max(16, by);
+    g.strokeStyle = CSS("--amber"); g.fillStyle = CSS("--amber"); g.lineWidth = 2;
+    g.beginPath(); g.moveTo(ax - P.s[0] * 30, ay + P.s[1] * 30); g.lineTo(ax, ay); g.stroke();
+    g.beginPath(); g.arc(ax, ay, 5, 0, 2 * Math.PI); g.fill();
+    g.textAlign = P.s[0] > 0 ? "right" : "left";
+    g.fillText(P.plane ? tr("plane") : tr("offscreen").replace("%d", fmtSI(P.d, "m")), ax + (P.s[0] > 0 ? -10 : 10), ay + 16);
+  }
+  if (every > 1) { g.fillStyle = CSS("--muted"); g.textAlign = "left"; g.fillText(tr("every").replace("%n", every), 8, 16); }
+  $("geo_info").textContent = "λ = " + fmtSI(P.lam, "m") + " · τ_g = " + fmtSI(P.tg, "s");
+}
+
+// ------------------------------------------------------------------ panel 2: signals
+function sigWindow(P) { return Math.min(Math.max(3 * P.spacing, 3 / P.f), 40 / P.f); }
+function drawSig(P) {
+  const cv = $("cv-sig"); const [g, w, h] = prep(cv);
+  const x0 = 34, x1 = w - 8, W = sigWindow(P), n = 700, t0 = S.t - W;
+  const rows = [{y: h * 0.28, col: CSS("--amber")}, {y: h * 0.68, col: CSS("--cyan")}];
+  const amp = h * 0.15;
+  const nscale = P.noise ? Math.sqrt(0.5 * P.tsys / Math.max(P.ta, 1e-30)) : 0;   // signal power 1/2, noise power ratio T_sys/T_A
+  const norm = 1 / (1 + 2.5 * nscale);
+  const xs = [], y1 = [], y2 = [], y2raw = [];
+  for (let i = 0; i < n; i++) {
+    const t = t0 + W * i / (n - 1); xs.push(x0 + (x1 - x0) * i / (n - 1));
+    const a = sig(t - P.r1 / C + P.r2 / C, P);                // antenna 1 receives later by tau_g (antenna 2 is the reference)
+    const b0 = sig(t, P), b = sigDelayed(t, P);
+    const na = nscale * randn(), nb = nscale * randn();
+    y1.push(rows[0].y - amp * norm * (a + na)); y2.push(rows[1].y - amp * norm * (b + nb)); y2raw.push(rows[1].y - amp * norm * b0);
+  }
+  axes(g, x0, 6, x1 - x0, h - 28, tr("time") + " (" + fmtSI(W, "s") + ")", "");
+  for (const r of rows) { g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(x0, r.y); g.lineTo(x1, r.y); g.stroke(); }
+  if (!P.noise && Math.abs(P.ti) > 1e-15) trace(g, xs, y2raw, CSS("--muted"), 1, 0.6);
+  trace(g, xs, y1, rows[0].col, 1.6); trace(g, xs, y2, rows[1].col, 1.6);
+  g.fillStyle = CSS("--muted"); g.font = "11px " + CSS("--display"); g.textAlign = "left";
+  g.fillText("s₁", 10, rows[0].y + 4); g.fillText("s₂", 10, rows[1].y + 4);
+  $("sig_info").textContent = (P.cyc > 60 ? tr("cont") : P.cyc.toFixed(1) + " " + tr("ppt")) + (P.noise ? " · " + tr("noisex") + nscale.toPrecision(2) : "");
+}
+
+// ------------------------------------------------------------------ panel 3: correlator
+function drawCor(P) {
+  const cv = $("cv-cor"); const [g, w, h] = prep(cv);
+  const pw = Math.min(h - 30, w * 0.34), x0 = 34, x1 = w - pw - 26, W = sigWindow(P), n = 700, t0 = S.t - W;
+  const yc = 6 + (h - 28) / 2, amp = (h - 28) * 0.42;
+  const xs = [], yp = [], ym = []; let acc = 0;
+  for (let i = 0; i < n; i++) {
+    const t = t0 + W * i / (n - 1); xs.push(x0 + (x1 - x0) * i / (n - 1));
+    const prod = sig(t - P.tg, P) * sigDelayed(t, P);
+    acc += prod; yp.push(yc - amp * prod); ym.push(yc - amp * acc / (i + 1));
+  }
+  axes(g, x0, 6, x1 - x0, h - 28, tr("time"), "");
+  g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(x0, yc); g.lineTo(x1, yc); g.stroke();
+  trace(g, xs, yp, CSS("--magenta"), 1.2, 0.9); trace(g, xs, ym, CSS("--green"), 2.2);
+  // phasor diagram
+  const cx = w - pw / 2 - 10, cy = 6 + (h - 28) / 2, R = pw / 2 - 8;
+  g.strokeStyle = CSS("--line"); g.beginPath(); g.arc(cx, cy, R, 0, 2 * Math.PI); g.stroke();
+  g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
+  const amp2 = P.vis * P.coh * P.beam, ph = P.phiOut;
+  const vx = cx + R * amp2 * Math.cos(ph), vy = cy - R * amp2 * Math.sin(ph);
+  g.strokeStyle = CSS("--magenta"); g.fillStyle = CSS("--magenta"); g.lineWidth = 2.5;
+  g.beginPath(); g.moveTo(cx, cy); g.lineTo(vx, vy); g.stroke(); g.beginPath(); g.arc(vx, vy, 4, 0, 2 * Math.PI); g.fill();
+  if (P.noise) {                                           // measured visibility with noise (normalised by rho_max)
+    const sc = R / Math.max(P.ta / (P.ta + P.tsys), 1e-30);
+    const mx = cx + sc * S.meas.re, my = cy - sc * S.meas.im;
+    g.fillStyle = CSS("--amber"); g.beginPath(); g.arc(Math.max(cx - R, Math.min(cx + R, mx)), Math.max(cy - R, Math.min(cy + R, my)), 4, 0, 2 * Math.PI); g.fill();
+  }
+  g.fillStyle = CSS("--muted"); g.font = "11px " + CSS("--mono"); g.textAlign = "center";
+  g.fillText("Re", cx + R - 8, cy - 4); g.fillText("Im", cx + 10, cy - R + 10);
+  $("cor_info").textContent = "cos(2πfτ_g) = " + Math.cos(P.phi).toFixed(3) + " · " + tr("overlap") + " " + P.coh.toFixed(3);
+}
+
+// ------------------------------------------------------------------ panel 4: fringe pattern over the direction
+function respAt(eDeg, P) {
+  const e = eDeg * Math.PI / 180;
+  const tg = P.plane ? P.B * Math.cos(e) / C : (Math.hypot(P.d * Math.cos(e) + P.B / 2, P.d * Math.sin(e)) - Math.hypot(P.d * Math.cos(e) - P.B / 2, P.d * Math.sin(e))) / C;
+  const trr = tg - P.ti;
+  const coh = Math.exp(-trr * trr / (4 * P.sigt * P.sigt));
+  const beam = Math.exp(-4 * Math.LN2 * Math.pow((eDeg - P.epoint) / P.hpbw, 2));
+  const vis = discVis(Math.PI * P.size * Math.PI / 180 * P.B * Math.sin(e) / P.lam);
+  const envl = coh * beam * vis;
+  return [envl * Math.cos(2 * Math.PI * P.f * tg), envl];
+}
+function drawFr(P) {
+  const cv = $("cv-fr"); const [g, w, h] = prep(cv);
+  const x0 = 34, x1 = w - 8, y0 = 6, hh = h - 36, n = Math.min(4000, Math.max(800, Math.round(8 * P.B / P.lam * 2)));
+  const X = e => x0 + (x1 - x0) * e / 180, Y = v => y0 + hh / 2 - v * hh * 0.46;
+  const xs = [], yr = [], ye = [], yen = [];
+  // keep the beam centred on the current direction while tracking
+  for (let i = 0; i <= n; i++) {
+    const e = 180 * i / n; const [r, en] = respAt(e, P);
+    xs.push(X(e)); yr.push(Y(r)); ye.push(Y(en)); yen.push(Y(-en));
+  }
+  axes(g, x0, y0, x1 - x0, hh, "", "");
+  g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(x0, Y(0)); g.lineTo(x1, Y(0)); g.stroke();
+  g.fillStyle = CSS("--muted"); g.font = "10px " + CSS("--mono"); g.textAlign = "center";
+  for (let e = 0; e <= 180; e += 30) g.fillText(e + "°", X(e), y0 + hh + 12);
+  g.font = "11px " + CSS("--display"); g.fillText(tr("dir"), (x0 + x1) / 2, y0 + hh + 27);
+  trace(g, xs, yr, CSS("--magenta"), 1.1); trace(g, xs, ye, CSS("--green"), 1.4); trace(g, xs, yen, CSS("--green"), 1.4);
+  g.strokeStyle = CSS("--amber"); g.lineWidth = 2; g.beginPath(); g.moveTo(X(P.el), y0); g.lineTo(X(P.el), y0 + hh); g.stroke();
+  const fs = P.lam / Math.max(P.B * Math.sin(P.el * Math.PI / 180), 1e-9) * 180 / Math.PI;
+  $("fr_info").textContent = tr("spacing") + " " + fs.toPrecision(3) + "° · HPBW " + P.hpbw.toPrecision(3) + "°";
+}
+
+// ------------------------------------------------------------------ panel 5: fringes over time
+function drawTime(P) {
+  const cv = $("cv-time"); const [g, w, h] = prep(cv);
+  const x0 = 34, x1 = w - 8, y0 = 6, hh = h - 28, span = 20;
+  const Y = v => y0 + hh / 2 - v * hh * 0.44;
+  axes(g, x0, y0, x1 - x0, hh, tr("hist") + " (" + span + " s)", "");
+  g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(x0, Y(0)); g.lineTo(x1, Y(0)); g.stroke();
+  const now = S.wall, H = S.hist.filter(p => now - p.w < span);
+  S.hist = H;
+  const X = p => x1 - (now - p.w) / span * (x1 - x0);
+  const pts = k => H.map(p => [X(p), Y(p[k])]);
+  for (const [k, col, lw] of [["amp", CSS("--green"), 2], ["im", CSS("--cyan"), 1.3], ["re", CSS("--magenta"), 1.6]]) {
+    const q = pts(k); if (q.length > 1) trace(g, q.map(a => a[0]), q.map(a => a[1]), col, lw);
+  }
+  const rate = P.rot ? 2 * Math.PI * P.f * P.B / C * Math.sin(P.el * Math.PI / 180) * (P.rate * Math.PI / 180) / (2 * Math.PI) : 0;
+  $("time_info").textContent = P.rot ? tr("frate") + " " + rate.toPrecision(3) + " Hz" : "—";
+}
+
+// ------------------------------------------------------------------ readout
+function drawNum(P) {
+  const rows = [
+    ["r_lam", fmtSI(P.lam, "m")], ["r_bl", (P.B / P.lam).toPrecision(4)], ["r_np", P.plane ? tr("pl") : tr("sph")],
+    ["r_dl", fmtSI(P.r1 - P.r2, "m") + " = " + ((P.r1 - P.r2) / P.lam).toFixed(2) + " λ"], ["r_tg", fmtSI(P.tg, "s")],
+    ["r_phi", (((P.phiModel * 180 / Math.PI) % 360 + 360) % 360).toFixed(1) + "°"], ["r_tr", fmtSI(P.tr, "s")],
+    ["r_pk", (P.cyc > 60 ? "> 60" : P.cyc.toFixed(1)) + " " + tr("periods")], ["r_cl", fmtSI(C / P.bw, "m")],
+    ["r_fs", (P.lam / Math.max(P.B * Math.sin(P.el * Math.PI / 180), 1e-9) * 180 / Math.PI).toPrecision(3) + "°"],
+    ["r_hpbw", P.hpbw.toPrecision(3) + "°"], ["r_beam", P.beam.toFixed(3)], ["r_vis", P.vis.toFixed(3)],
+    ["r_ta", fmtSI(P.ta, "K")], ["r_sefd", fmtJy(P.sefd)], ["r_pw", fmtSI(P.pw, "W") + " = " + (10 * Math.log10(P.pw / 1e-3)).toFixed(1) + " dBm"],
+    ["r_v", fmtSI(P.vrms, "V")], ["r_rho", P.rho.toExponential(2)], ["r_sig", P.sig.toExponential(2) + " (τ = " + fmtT(P.tint) + ")"],
+    ["r_snr", P.snr >= 100 ? P.snr.toExponential(2) : P.snr.toPrecision(3)],
+    ["r_meas", "Re " + S.meas.re.toExponential(2) + ", Im " + S.meas.im.toExponential(2)]
+  ];
+  $("readout").innerHTML = rows.map(([k, v]) => `<div><span>${tr(k)}</span><span>${v}</span></div>`).join("");
+}
+
+// ------------------------------------------------------------------ main loop
+function updateOutputs(P) {
+  $("f_o").textContent = fmtSI(P.f, "Hz"); $("p_o").textContent = fmtJy(P.p); $("el_o").textContent = P.el.toFixed(1) + "°";
+  $("d_o").textContent = P.plane ? "∞" : fmtSI(P.d, "m"); $("size_o").textContent = P.size.toFixed(2) + "°";
+  $("B_o").textContent = fmtSI(P.B, "m"); $("D_o").textContent = fmtSI(P.D, "m"); $("ep_o").textContent = P.epoint.toFixed(1) + "°";
+  $("bw_o").textContent = fmtSI(P.bw, "Hz"); $("tsys_o").textContent = P.tsys.toFixed(0) + " K"; $("tint_o").textContent = fmtT(P.tint);
+  $("ti_o").textContent = fmtSI(P.ti, "s"); $("speed_o").textContent = P.speed.toPrecision(2); $("rate_o").textContent = P.rate.toPrecision(2) + " °/s";
+}
+let lastWall = performance.now();
+function frame(now) {
+  const dt = Math.min(0.1, (now - lastWall) / 1000); lastWall = now; S.wall = now / 1000;
+  let P = model();
+  if (S.playing) {
+    S.t += dt * P.speed / P.f;                                // slow motion: "speed" periods per second
+    if (P.rot) {
+      let e = val("el") - P.rate * dt; if (e < 1) e = 179;    // the source sets towards the right horizon
+      setVal("el", e); P = model();
+    }
+    // correlator dump twice per second: expected visibility plus noise
+    if (S.wall - S.lastDump > 0.12) {
+      S.lastDump = S.wall;
+      const rmax = P.ta / (P.ta + P.tsys);
+      const ph = P.phiOut;
+      const v = rmax * P.vis * P.coh;
+      const nn = P.noise ? P.sig : 0;
+      S.meas = {re: v * Math.cos(ph) + nn * randn(), im: v * Math.sin(ph) + nn * randn()};
+      const norm = Math.max(rmax, 1e-30);
+      const re = S.meas.re / norm, im = S.meas.im / norm;
+      const clip = x => Math.max(-1.6, Math.min(1.6, x));
+      S.hist.push({w: S.wall, re: clip(re), im: clip(im), amp: clip(Math.hypot(re, im))});
+    }
+  }
+  updateOutputs(P); drawGeo(P); drawSig(P); drawCor(P); drawFr(P); drawTime(P); drawNum(P);
+  requestAnimationFrame(frame);
+}
+
+// ------------------------------------------------------------------ UI
+function applyLang() {
+  document.documentElement.lang = S.lang;
+  document.querySelectorAll("[data-i]").forEach(el => { const k = el.dataset.i; if (k === "pause") el.textContent = S.playing ? tr("pause") : tr("play"); else el.textContent = tr(k); });
+  $("lang-en").classList.toggle("on", S.lang === "en"); $("lang-de").classList.toggle("on", S.lang === "de");
+  buildSteps(); showStep(S.step, false);
+}
+function buildSteps() {
+  const box = $("steps"); box.innerHTML = "";
+  STEPS.forEach((s, i) => { const b = document.createElement("button"); b.id = "step-" + (i + 1); b.textContent = tr("step") + " " + (i + 1);
+    b.onclick = () => showStep(i, true); box.appendChild(b); });
+  const all = document.createElement("button"); all.id = "step-all"; all.textContent = tr("all"); all.onclick = () => showStep(-1, false); box.appendChild(all);
+}
+function showStep(i, apply) {
+  S.step = i;
+  document.querySelectorAll("#steps button").forEach((b, k) => b.classList.toggle("on", k === i || (i < 0 && b.id === "step-all")));
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("hl"));
+  if (i < 0) { $("caption").innerHTML = S.lang === "de" ? "<b>Alle Schritte.</b> Alle Regler wirken auf alle Felder gleichzeitig." : "<b>All steps.</b> Every slider acts on every panel at once."; return; }
+  const st = STEPS[i]; st.hl.forEach(id => $(id).classList.add("hl"));
+  $("caption").innerHTML = st[S.lang];
+  if (apply) { for (const [k, v] of Object.entries(st.set)) setVal(k, v); S.hist = []; }
+}
+function defaults() {
+  for (const [k, v] of Object.entries({f: 1.42e9, p: 1e4, el: 60, d: Infinity, size: 0, B: 1.5, D: 3, ep: 60, bw: 400e6, tsys: 120, tint: 1, ti: 0, speed: 0.6, rate: 3}))
+    setVal(k, v);
+  for (const k of ["noise", "dtrack", "fstop", "rot"]) setVal(k, false);
+  setVal("track", true); S.hist = []; S.t = 0;
+}
+$("play").onclick = () => { S.playing = !S.playing; $("play").classList.toggle("on", S.playing); $("play").textContent = S.playing ? tr("pause") : tr("play"); };
+$("reset").onclick = () => { defaults(); showStep(0, false); };
+$("comp").onclick = () => { const P = model(); setVal("dtrack", false); setVal("ti", Math.max(-1, Math.min(1, P.tg / P.tmax))); };
+$("lang-en").onclick = () => { S.lang = "en"; applyLang(); };
+$("lang-de").onclick = () => { S.lang = "de"; applyLang(); };
+$("ti").addEventListener("input", () => setVal("dtrack", false));
+defaults(); applyLang(); showStep(0, false);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

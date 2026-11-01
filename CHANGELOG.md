@@ -6,6 +6,20 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.6] — 2026-11-01
+
+### Added
+- `demo/interferometer_demo.html`: live two-element interferometer demo
+  (canvas and JavaScript, no libraries, EN/DE). Sliders for frequency, flux
+  density, direction, distance (spherical or plane wave), source size,
+  baseline, dish diameter, pointing, bandwidth (wave-train length), system
+  temperature, integration time, instrumental delay, slow motion and Earth
+  rotation; panels for the wavefronts, the received signals, the correlator
+  with the complex visibility, the fringe pattern, the fringes over time and
+  the sensitivity; seven guided steps for demonstrations and screen
+  recordings. Delay compensation acts on the envelope after mixing, as in a
+  real receiver; the formulas follow the package.
+
 ## [0.9.5] — 2026-11-01
 
 ### Changed

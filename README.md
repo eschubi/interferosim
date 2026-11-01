@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.9.5 — sky models (`interferosim.sky`, notebook
+**Status:** 0.9.6 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -30,7 +30,16 @@ sky components, Doppler correction to the LSR, multichannel visibilities,
 channel maps; notebook `09_spectral_lines.ipynb`). The simulation chain
 00–09 is complete; the theory notebooks A (fringes), B (Fourier
 transformation and correlation), C (sampling and complex baseband), D
-(noise and sensitivity) and E (coordinate frames) are available. The
+(noise and sensitivity) and E (coordinate frames) are available.
+
+**Live demo:** `demo/interferometer_demo.html` – a self-contained page
+(open it in any browser, no installation): a source above and to the right
+of two antennas radiates with the flux density p at the frequency f; every
+parameter is a slider and all panels follow in real time – wavefronts and
+path difference, received wave trains, delay compensation, correlator and
+complex visibility, fringe pattern over the direction, fringes over time
+(Earth rotation, delay tracking, fringe stopping), sensitivity. Steps 1–7
+guide a demonstration; English and German. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 
