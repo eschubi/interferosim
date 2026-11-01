@@ -6,6 +6,15 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.5] — 2026-11-01
+
+### Changed
+- Notebook `D_noise_sensitivity.ipynb`, section 7 "Summary": a formula table
+  (step, quantity, formula, dependence, package function, section) and a
+  table of project values computed in the notebook (conditions stated per
+  row, 12- and 2-bit times, coherence, incoherent detection, image noise)
+  instead of the former static table with rounded values.
+
 ## [0.9.4] — 2026-11-01
 
 ### Added
