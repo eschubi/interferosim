@@ -6,6 +6,20 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.7] — 2026-11-01
+
+### Fixed
+- Live demo: the scope traces now use the same absolute time as the
+  wavefronts of panel 1 (before, antenna 2 was the time reference and the
+  traces ran out of step with the wavefronts); the right edge of each trace
+  is marked "now", and a bar beside each antenna shows the signal it
+  receives at this moment.
+
+### Changed
+- Live demo: German as default language; the angle of incidence e is shown
+  in panel 1 (arc at antenna 2) and at the marker of the fringe pattern
+  (panel 5), so the current direction can be compared with the fringe peak.
+
 ## [0.9.6] — 2026-11-01
 
 ### Added

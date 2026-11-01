@@ -8,7 +8,7 @@ teaching. A project of the University of Vienna.
 Repository: <https://github.com/eschubi/interferosim> (private until the
 licence questions are settled).
 
-**Status:** 0.9.6 — sky models (`interferosim.sky`, notebook
+**Status:** 0.9.7 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -39,7 +39,7 @@ parameter is a slider and all panels follow in real time – wavefronts and
 path difference, received wave trains, delay compensation, correlator and
 complex visibility, fringe pattern over the direction, fringes over time
 (Earth rotation, delay tracking, fringe stopping), sensitivity. Steps 1–7
-guide a demonstration; English and German. The
+guide a demonstration; German (default) and English. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
 

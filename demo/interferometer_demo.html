@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<!-- demo/interferometer_demo.html -- live two-element interferometer demo (Interferosim 0.9.6) -->
+<!-- demo/interferometer_demo.html -- live two-element interferometer demo (Interferosim 0.9.7) -->
 <!--
+  Version 0.1.1 (2026-11-01): scope traces in the same absolute time as the wavefronts (a crest at an
+  antenna is a maximum at the right edge "now" of its trace), instantaneous signal bars at the antennas,
+  angle of incidence shown in panel 1 and at the marker in panel 5, German as default language.
   Version 0.1.0 (2026-11-01): first version.
   Self-contained page (HTML + canvas + JavaScript, no libraries): a source above and to the
   right of two antennas at a distance d radiates with the flux density p [Jy] at f [GHz].
@@ -13,7 +16,7 @@
   HPBW = 1.2 lambda / D, normalised correlation rho = T_A / (T_A + T_sys) |V| and noise
   1 / sqrt(2 delta_nu tau) as in interferosim.instrument.sensitivity.
 -->
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -83,7 +86,7 @@ footer { color: var(--muted); font-size: 12px; }
 <aside>
   <div class="brand">
     <h1 data-i="title">Two-element interferometer, live</h1>
-    <div class="lang row"><button id="lang-en" class="on">EN</button><button id="lang-de">DE</button></div>
+    <div class="lang row"><button id="lang-de" class="on">DE</button><button id="lang-en">EN</button></div>
   </div>
   <div class="row">
     <button id="play" class="on" data-i="pause">Pause</button>
@@ -163,7 +166,7 @@ const T = {
   r_pk:"wave train (band)", r_cl:"coherence length c/Δν", r_fs:"fringe spacing λ/(B sin e)", r_ta:"antenna temperature T_A", r_sefd:"SEFD",
   r_pw:"received power (one pol.)", r_v:"voltage at 50 Ω (rms)", r_vis:"source visibility |V|", r_beam:"primary beam gain", r_rho:"correlation ρ (amplitude)",
   r_sig:"noise σ per component", r_snr:"S/N after τ", r_hpbw:"primary beam HPBW", r_np:"plane / spherical wave", r_meas:"measured (one realisation)",
-  sph:"spherical", pl:"plane", cont:"≈ continuous", ppt:"periods per train", noisex:"noise ×", overlap:"overlap", frate:"fringe rate (shown)", spacing:"fringe spacing", periods:"periods"},
+  sph:"spherical", pl:"plane", now:"now", cont:"≈ continuous", ppt:"periods per train", noisex:"noise ×", overlap:"overlap", frate:"fringe rate (shown)", spacing:"fringe spacing", periods:"periods"},
  de: {title:"Zwei-Element-Interferometer, live", pause:"Pause", play:"Start", reset:"Zurücksetzen", compensate:"Verzögerung ausgleichen",
   g_source:"Quelle", f:"Frequenz f", p:"Flussdichte p", el:"Richtung (Elevation, rechter Horizont = 0°)", d:"Abstand d", size:"Quellgröße (Scheibe)",
   g_ant:"Antennen", B:"Basislinie B", D:"Schüsseldurchmesser D", ep:"Ausrichtung (Elevation)", track:"Antennen folgen der Quelle",
@@ -182,7 +185,7 @@ const T = {
   r_pk:"Wellenzug (Band)", r_cl:"Kohärenzlänge c/Δν", r_fs:"Streifenabstand λ/(B sin e)", r_ta:"Antennentemperatur T_A", r_sefd:"SEFD",
   r_pw:"Empfangsleistung (eine Pol.)", r_v:"Spannung an 50 Ω (eff.)", r_vis:"Sichtbarkeit der Quelle |V|", r_beam:"Gewinn der Primärkeule", r_rho:"Korrelation ρ (Betrag)",
   r_sig:"Rauschen σ je Komponente", r_snr:"S/N nach τ", r_hpbw:"Halbwertsbreite der Primärkeule", r_np:"ebene / Kugelwelle", r_meas:"gemessen (eine Realisierung)",
-  sph:"Kugelwelle", pl:"eben", cont:"≈ kontinuierlich", ppt:"Perioden pro Zug", noisex:"Rauschen ×", overlap:"Überlappung", frate:"Fringe-Rate (Anzeige)", spacing:"Streifenabstand", periods:"Perioden"}
+  sph:"Kugelwelle", pl:"eben", now:"jetzt", cont:"≈ kontinuierlich", ppt:"Perioden pro Zug", noisex:"Rauschen ×", overlap:"Überlappung", frate:"Fringe-Rate (Anzeige)", spacing:"Streifenabstand", periods:"Perioden"}
 };
 const STEPS = [
  {hl:["c-geo"], set:{f:1.42e9, B:1.5, el:60, d:Infinity, bw:400e6, ti:0, size:0, D:3, noise:false, rot:false, dtrack:false, fstop:false, speed:0.6},
@@ -217,7 +220,7 @@ const MAP = {
   el: {to: v => +v, from: x => x}, ep: {to: v => +v, from: x => x}, tsys: {to: v => +v, from: x => x},
   ti: {to: v => v / 1000, from: x => x * 1000}            // fraction of the maximum B/c
 };
-const S = {lang: "en", playing: true, step: 0, t: 0, hist: [], lastDump: 0, meas: {re: 0, im: 0}, seed: 1};
+const S = {lang: "de", playing: true, step: 0, t: 0, hist: [], lastDump: 0, meas: {re: 0, im: 0}, seed: 1};
 const $ = id => document.getElementById(id);
 function val(id) { const el = $(id); return el.type === "checkbox" ? el.checked : MAP[id].to(+el.value); }
 function setVal(id, x) { const el = $(id); if (el.type === "checkbox") el.checked = !!x; else el.value = MAP[id].from(x); }
@@ -286,8 +289,11 @@ function envelope(t, P) {                                   // train of Gaussian
   return Math.exp(-u * u / (2 * P.sigt * P.sigt));
 }
 const sig = (t, P) => envelope(t, P) * Math.cos(2 * Math.PI * P.f * t);
+// received signals in the same absolute time as the wavefronts of panel 1: s_k(t) = sig(t - r_k / c)
+const rx1 = (t, P) => sig(t - P.r1 / C, P);
+const rx2 = (t, P) => sig(t - P.r2 / C, P);
 // antenna 2 after the instrumental delay: delayed in baseband, the carrier phase (relative to the LO) is not delayed
-const sigDelayed = (t, P) => envelope(t - P.ti, P) * Math.cos(2 * Math.PI * P.f * t);
+const rx2d = (t, P) => envelope(t - P.r2 / C - P.ti, P) * Math.cos(2 * Math.PI * P.f * (t - P.r2 / C));
 let rngState = 12345;
 function randn() { rngState = (1103515245 * rngState + 12345) % 2147483648; const u1 = (rngState + 1) / 2147483649;
   rngState = (1103515245 * rngState + 12345) % 2147483648; const u2 = (rngState + 1) / 2147483649;
@@ -378,6 +384,21 @@ function drawGeo(P) {
     g.beginPath(); g.ellipse(0, 0, dpx / 2, dpx / 7, 0, Math.PI, 2 * Math.PI); g.stroke(); g.restore();
     g.font = "12px " + CSS("--display"); g.textAlign = "center"; g.fillText(lab, ax, oy + 15);
   }
+  // instantaneous received signal as a bar beside each antenna (the right edge "now" of the traces in panel 2)
+  for (const [A, col, v] of [[P.A1, CSS("--amber"), rx1(tphys, P)], [P.A2, CSS("--cyan"), rx2(tphys, P)]]) {
+    const bx = X(A[0]) + (A[0] < 0 ? -22 : 16), by = oy - 30, bh = 24 * v;
+    g.strokeStyle = CSS("--line"); g.lineWidth = 1; g.strokeRect(bx, by - 25, 6, 50);
+    g.fillStyle = col; g.fillRect(bx, Math.min(by, by - bh), 6, Math.abs(bh));
+  }
+  // angle of incidence (elevation of the source, from the right horizon) at antenna 2
+  {
+    const ax = X(P.A2[0]), ay = oy, rr = Math.min(70, Math.max(40, h * 0.2)), e = P.el * Math.PI / 180;
+    g.strokeStyle = CSS("--amber"); g.lineWidth = 1.5; g.beginPath(); g.arc(ax, ay, rr, -e, 0); g.stroke();
+    g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + rr * 1.25, ay); g.stroke();
+    g.fillStyle = CSS("--amber"); g.font = "600 14px " + CSS("--mono"); g.textAlign = "left";
+    const lx = ax + (rr + 8) * Math.cos(e / 2), ly = ay - (rr + 8) * Math.sin(e / 2);
+    g.fillText("e = " + P.el.toFixed(1) + "°", Math.min(w - 110, lx), Math.max(18, ly));
+  }
   // baseline
   g.strokeStyle = CSS("--muted"); g.lineWidth = 1; g.beginPath(); g.moveTo(X(P.A1[0]), oy + 22); g.lineTo(X(P.A2[0]), oy + 22); g.stroke();
   g.fillStyle = CSS("--muted"); g.textAlign = "center"; g.font = "11px " + CSS("--mono"); g.fillText("B = " + fmtSI(P.B, "m"), ox, oy + 33);
@@ -411,8 +432,8 @@ function drawSig(P) {
   const xs = [], y1 = [], y2 = [], y2raw = [];
   for (let i = 0; i < n; i++) {
     const t = t0 + W * i / (n - 1); xs.push(x0 + (x1 - x0) * i / (n - 1));
-    const a = sig(t - P.r1 / C + P.r2 / C, P);                // antenna 1 receives later by tau_g (antenna 2 is the reference)
-    const b0 = sig(t, P), b = sigDelayed(t, P);
+    const a = rx1(t, P);                                      // antenna 1 receives later by tau_g
+    const b0 = rx2(t, P), b = rx2d(t, P);
     const na = nscale * randn(), nb = nscale * randn();
     y1.push(rows[0].y - amp * norm * (a + na)); y2.push(rows[1].y - amp * norm * (b + nb)); y2raw.push(rows[1].y - amp * norm * b0);
   }
@@ -420,7 +441,11 @@ function drawSig(P) {
   for (const r of rows) { g.strokeStyle = CSS("--line"); g.beginPath(); g.moveTo(x0, r.y); g.lineTo(x1, r.y); g.stroke(); }
   if (!P.noise && Math.abs(P.ti) > 1e-15) trace(g, xs, y2raw, CSS("--muted"), 1, 0.6);
   trace(g, xs, y1, rows[0].col, 1.6); trace(g, xs, y2, rows[1].col, 1.6);
-  g.fillStyle = CSS("--muted"); g.font = "11px " + CSS("--display"); g.textAlign = "left";
+  // "now" at the right edge: the value the antenna receives at this moment (as the bars in panel 1)
+  g.strokeStyle = CSS("--text"); g.globalAlpha = 0.35; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x1, 6); g.lineTo(x1, h - 22); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+  for (const [yy, col] of [[y1[n - 1], rows[0].col], [y2[n - 1], rows[1].col]]) { g.fillStyle = col; g.beginPath(); g.arc(x1, yy, 4, 0, 2 * Math.PI); g.fill(); }
+  g.fillStyle = CSS("--muted"); g.font = "11px " + CSS("--display"); g.textAlign = "right"; g.fillText(tr("now"), x1 - 4, 18);
+  g.textAlign = "left";
   g.fillText("s₁", 10, rows[0].y + 4); g.fillText("s₂", 10, rows[1].y + 4);
   $("sig_info").textContent = (P.cyc > 60 ? tr("cont") : P.cyc.toFixed(1) + " " + tr("ppt")) + (P.noise ? " · " + tr("noisex") + nscale.toPrecision(2) : "");
 }
@@ -433,7 +458,7 @@ function drawCor(P) {
   const xs = [], yp = [], ym = []; let acc = 0;
   for (let i = 0; i < n; i++) {
     const t = t0 + W * i / (n - 1); xs.push(x0 + (x1 - x0) * i / (n - 1));
-    const prod = sig(t - P.tg, P) * sigDelayed(t, P);
+    const prod = rx1(t, P) * rx2d(t, P);
     acc += prod; yp.push(yc - amp * prod); ym.push(yc - amp * acc / (i + 1));
   }
   axes(g, x0, 6, x1 - x0, h - 28, tr("time"), "");
@@ -485,6 +510,8 @@ function drawFr(P) {
   g.font = "11px " + CSS("--display"); g.fillText(tr("dir"), (x0 + x1) / 2, y0 + hh + 27);
   trace(g, xs, yr, CSS("--magenta"), 1.1); trace(g, xs, ye, CSS("--green"), 1.4); trace(g, xs, yen, CSS("--green"), 1.4);
   g.strokeStyle = CSS("--amber"); g.lineWidth = 2; g.beginPath(); g.moveTo(X(P.el), y0); g.lineTo(X(P.el), y0 + hh); g.stroke();
+  g.fillStyle = CSS("--amber"); g.font = "600 12px " + CSS("--mono"); g.textAlign = X(P.el) > (x0 + x1) / 2 ? "right" : "left";
+  g.fillText("e = " + P.el.toFixed(1) + "°", X(P.el) + (X(P.el) > (x0 + x1) / 2 ? -6 : 6), y0 + 14);
   const fs = P.lam / Math.max(P.B * Math.sin(P.el * Math.PI / 180), 1e-9) * 180 / Math.PI;
   $("fr_info").textContent = tr("spacing") + " " + fs.toPrecision(3) + "° · HPBW " + P.hpbw.toPrecision(3) + "°";
 }
