@@ -1,5 +1,6 @@
 % docs/texte/20_core/correlator.tex -- chapter "Correlator" (Interferosim)
-% Version: 0.1.0 (2026-10-31) -- FX correlator (interferosim 0.6.0)
+% Version: 0.2.0 (2026-11-01) -- section "XF and FX" (interferosim 0.9.1)
+%   0.1.0 (2026-10-31): FX correlator (interferosim 0.6.0)
 % ================================================================
 \label{ch:correlator}
 \index{correlator}\index{FX correlator}\index{fringe search}
@@ -87,4 +88,48 @@ the noise of the channel average does not depend on $N_\mathrm{FFT}$.
            channel (mean over 12\,s), channel-averaged visibility per 1-s
            integration with and without the solution.}
   \label{fig:fx-after}
+\end{figure}
+
+\section{XF and FX}
+\label{sec:xf-fx}
+\index{XF correlator}\index{Wiener--Khinchin theorem}\index{delay beam}
+
+The cross-correlation function and the cross spectrum are a Fourier pair
+(Wiener--Khinchin),
+$R_{ab}(\tau) = \langle a(t+\tau)\,b^*(t)\rangle \leftrightarrow
+S_{ab}(f) = \langle A(f)\,B^*(f)\rangle$. Version~0.9.1 adds the XF route for
+comparison (theory notebook \texttt{B\_fourier.ipynb}):
+\texttt{lag\_correlation} computes $R(k)$ over the lags $-N/2 \dots N/2-1$,
+\texttt{xf\_cross\_spectrum} its Fourier transform in the channel layout and
+unit of \texttt{Accumulator.visibility()/window\_power}.
+
+For two noise streams with correlated power 1 and a delay of 3.4 samples
+both correlators give the delay from the phase slope across the band (3.395
+and 3.397 samples); the FX amplitude is lower by $(N-\tau)/N = 0.947$ for
+$N = 64$, because a block of one station contains only $N-\tau$ samples of
+the signal in the corresponding block of the other -- the reason why the FX
+correlator removes the delay before the FFT (Fig.~\ref{fig:xf-fx}). Per sample
+and baseline XF needs $N$ multiplications, FX about $\log_2 N + 1$ operations:
+a factor 9 for 64 and 315 for 4096 channels.
+
+A residual delay $\tau$ reduces the band-averaged amplitude by
+$|\mathrm{sinc}(B\tau)|$, the Fourier transform of the flat band (delay beam);
+first null at $1/B = 500$\,ns for the 2\,MHz of the B210, 10\,\% loss at
+130\,ns (Fig.~\ref{fig:delay-beam}). The geometric delay of the 11.5\,km
+baseline reaches 38\,\textmu s, 77 times $1/B$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{images/fourier_xf_fx.png}
+  \caption{Lag spectrum, cross-spectrum amplitude and phase of the XF and the
+           FX correlator for a delay of 3.4 samples.}
+  \label{fig:xf-fx}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{images/fourier_delay_beam.png}
+  \caption{Delay beam of a flat band: simulated zero-lag correlation against
+           $|\mathrm{sinc}(B\tau)|$.}
+  \label{fig:delay-beam}
 \end{figure}

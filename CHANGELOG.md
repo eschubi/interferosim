@@ -6,6 +6,17 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [0.9.1] — 2026-11-01
+
+### Added
+- `interferosim.signal`: `lag_correlation` (cross-correlation function over
+  the lags) and `xf_cross_spectrum` (XF correlator, Wiener–Khinchin).
+- Theory notebook `B_fourier.ipynb` (transform pairs, convolution theorem,
+  van Cittert–Zernike with numerical check, one baseline = one Fourier
+  component, aperture autocorrelation, XF vs. FX, delay beam, selector).
+- Documentation: section "XF and FX" in chapter "Correlator" (two figures);
+  test.
+
 ## [0.9.0] — 2026-11-01
 
 ### Added

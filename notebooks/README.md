@@ -23,7 +23,7 @@ Teaching notebooks, one per topic. Planned notebooks and proposals are listed wi
 | Notebook | Content | Status |
 |---|---|---|
 | `A_fringes.ipynb` | shows and explains how fringes evolve: fringe pattern on the sky, fringe rate from the Earth's rotation, effect of the source size (fringe contrast), fringes in a long track (Cygnus A with zooms of 5–20 min, natural and structure fringe rate), selector | available (first version) |
-| `B_fourier.ipynb` | explains the details of the Fourier transformation and the correlation (van Cittert–Zernike theorem, cross-correlation vs. cross spectrum, FX vs. XF) | planned |
+| `B_fourier.ipynb` | explains the Fourier transformation and the correlation: transform pairs and convolution theorem, van Cittert–Zernike (numerical check against the analytic visibilities), one baseline = one Fourier component, the dish as low-pass filter, cross-correlation and cross spectrum (XF vs. FX, Wiener–Khinchin), the delay beam, selector | available |
 | `C_sampling_iq.ipynb` | sampling and complex baseband: Nyquist, IQ mixing, aliasing, quantisation, what the B210 delivers | proposal |
 | `D_noise_sensitivity.ipynb` | radiometer equation, SEFD, noise of a visibility, S/N against integration time, bandwidth and baseline length | proposal |
 | `E_coordinates.ipynb` | coordinate frames: equatorial, horizontal, WGS84/ECEF, local east-north-up, uvw | proposal |

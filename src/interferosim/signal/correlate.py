@@ -33,11 +33,19 @@ solution of :func:`delay_rate_search` by fitting the phase slope across the
 band (delay) and the phase drift in time (rate); the quadratic peak
 interpolation of the search has a sub-sample bias of up to ~0.3 samples.
 
+New in Interferosim 0.9.1 (theory notebook B): :func:`lag_correlation` --
+the cross-correlation function R(k) = <a[n+k] b*[n]> over the lags
+-n/2 .. n/2-1, and :func:`xf_cross_spectrum` -- the cross spectrum of the XF
+correlator (correlate first, then Fourier transform the lags; Wiener-Khinchin).
+Its channels have the layout and the unit of ``Accumulator.visibility() /
+window_power`` with a rectangular window.
+
 All spectral averages are linear in complex amplitude or power -- never in
 dB (AAS6 rule).
 
 Version 0.4.0 (2026-10-31): first implementation.
 Version 0.6.0 (2026-10-31): AAS6 correlation kernels added (see above).
+Version 0.9.1 (2026-11-01): lag_correlation, xf_cross_spectrum.
 """
 
 from __future__ import annotations
@@ -50,7 +58,7 @@ import numpy as np
 __all__ = ["fractional_delay", "correct_geometry", "cross_correlate", "measure_visibilities",
            "integer_align", "fringe_stop", "Accumulator", "cross_spectrum", "FringeSolution",
            "delay_rate_search", "apply_fringe_solution", "stokes_from_products",
-           "refine_fringe_solution"]
+           "refine_fringe_solution", "lag_correlation", "xf_cross_spectrum"]
 
 
 def fractional_delay(x: np.ndarray, delay_samples: float) -> np.ndarray:
@@ -417,3 +425,30 @@ def refine_fringe_solution(a: np.ndarray, b: np.ndarray, sol: FringeSolution, fs
         drift = np.polyfit(t, seg_ph, 1)[0]                          # rad / s
         out = _replace(out, rate_hz=float(out.rate_hz - drift / (2.0 * np.pi)))
     return out
+
+
+# -- added in Interferosim 0.9.1 (theory notebook B) ------------------------
+def lag_correlation(a: np.ndarray, b: np.ndarray, n_lags: int) -> Tuple[np.ndarray, np.ndarray]:
+    """Cross-correlation function R(k) = mean_n a[n+k] conj(b[n]) for the
+    lags k = -n_lags/2 .. n_lags/2 - 1 (the same samples n for every lag).
+    Returns (lags, R). If b is a delayed by d samples (b[n] = a[n-d]), the
+    peak lies at k = -d; if a is b delayed by d (a[n] = b[n-d]), at k = +d.
+    The cross spectrum X_a X_b* then has the phase +2 pi f d (b delayed)."""
+    a = np.asarray(a); b = np.asarray(b)
+    h = n_lags // 2
+    lags = np.arange(-h, n_lags - h)
+    n = min(a.size, b.size) - n_lags
+    if n <= 0:
+        raise ValueError("series shorter than the number of lags")
+    bb = np.conj(b[h:h + n])
+    R = np.array([np.mean(a[h + k:h + k + n] * bb) for k in lags])
+    return lags, R
+
+
+def xf_cross_spectrum(a: np.ndarray, b: np.ndarray, n_lags: int) -> np.ndarray:
+    """XF correlator: Fourier transform of :func:`lag_correlation` (Wiener-
+    Khinchin). n_lags channels in fftshift order (as ``Accumulator``); unit
+    of the per-sample correlation, comparable to ``Accumulator.visibility()
+    / window_power`` with the rectangular window."""
+    lags, R = lag_correlation(a, b, n_lags)
+    return np.fft.fftshift(np.fft.fft(np.fft.ifftshift(R)))

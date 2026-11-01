@@ -195,3 +195,26 @@ def test_fx_correlator_with_errors():
     assert abs(np.mean(avg.vis[:, 0]) - exp) < 5 * avg.sigma[0, 0] / math.sqrt(3) + 0.2 * abs(exp)
     raw = fx.correlate(bl, sim).average_channels()
     assert abs(np.mean(raw.vis[:, 0])) < 0.5 * abs(exp)
+
+
+# ---------------------------------------------------------------- XF correlator (0.9.1)
+def test_lag_correlation_peak_and_xf_equals_fx_without_delay():
+    from interferosim.signal.correlate import Accumulator, fractional_delay, lag_correlation, xf_cross_spectrum
+    rng = np.random.default_rng(2)
+    n = 2 ** 16
+    s = (rng.standard_normal(n) + 1j * rng.standard_normal(n)) / np.sqrt(2)
+    b = fractional_delay(s, 4.0)                                    # b[n] = s[n-4]
+    lags, R = lag_correlation(s, b, 32)
+    assert lags[np.argmax(np.abs(R))] == -4 and abs(R).max() > 0.95
+    # no delay: XF and FX (rectangular window) give the same mean cross spectrum
+    a2 = s + 0.5 * (rng.standard_normal(n) + 1j * rng.standard_normal(n))
+    xf = xf_cross_spectrum(a2, s, 32)
+    acc = Accumulator.create(32, "rect"); acc.add(a2, s)
+    fx = acc.visibility() / acc.window_power
+    assert np.abs(xf).mean() == pytest.approx(np.abs(fx).mean(), rel=0.03)
+    # a delay appears as the phase slope 2 pi f d of the XF spectrum
+    f = np.fft.fftshift(np.fft.fftfreq(32))
+    S = xf_cross_spectrum(s, fractional_delay(s, 2.5), 32)
+    inner = np.abs(f) < 0.45
+    slope = np.polyfit(f[inner], np.unwrap(np.angle(S[inner])), 1)[0] / (2 * np.pi)
+    assert slope == pytest.approx(2.5, abs=0.02)

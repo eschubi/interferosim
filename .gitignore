@@ -86,6 +86,13 @@ docs/images/*
 !docs/images/lines_channel_maps.png
 !docs/images/lines_no_doppler.png
 !docs/images/lines_hi_absorption.png
+!docs/images/fourier_pairs.png
+!docs/images/fourier_convolution.png
+!docs/images/fourier_vcz.png
+!docs/images/fourier_fringe.png
+!docs/images/fourier_visibility_dish.png
+!docs/images/fourier_xf_fx.png
+!docs/images/fourier_delay_beam.png
 # Scratch output of the examples (CLI demo map, notebook 01) and scratch notebooks
 /*.png
 notebooks/my_example_sky.json
