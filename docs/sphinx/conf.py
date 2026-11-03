@@ -13,7 +13,7 @@ import interferosim  # noqa: E402
 # -- Project ---------------------------------------------------------------
 project = "Interferosim"
 author = "Erich Schubert"
-copyright = "2026, Erich Schubert (CC BY 4.0)"
+copyright = "2026, Erich Schubert (MIT License)"
 release = interferosim.__version__
 version = ".".join(release.split(".")[:2])
 

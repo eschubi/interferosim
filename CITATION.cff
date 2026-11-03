@@ -4,7 +4,7 @@ message: "If you use this software, please cite it as below."
 title: "Interferosim: an open-source simulator for radio interferometry"
 version: "0.9.7"
 date-released: "2026-10-12"
-license: CC-BY-4.0
+license: MIT
 repository-code: "https://github.com/eschubi/interferosim"
 authors:
   - family-names: Schubert

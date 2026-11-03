@@ -6,6 +6,14 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+### Changed
+- Licence: MIT License instead of CC BY 4.0 (`LICENSE`, `pyproject.toml`,
+  `CITATION.cff`, README, Sphinx and LaTeX documentation).
+
+### Removed
+- Hello-world example `interferosim.hello`, the command `interferosim-hello`
+  and its tests (only a test of the repository set-up).
+
 ### Fixed
 - README: the notebook tables showed 07–09 and C–E as "proposal" and B as
   "planned"; they now match `notebooks/README.md` (all notebooks available).

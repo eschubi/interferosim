@@ -56,17 +56,8 @@ Then:
 
 ```
 .venv\Scripts\activate          # Windows   (Linux/macOS: source .venv/bin/activate)
-interferosim-hello             # prints: Hello, world!
 interferosim-sky configs/skies/aas6_demo.json --overview -o demo.png
 jupyter lab notebooks          # kernel "Python (interferosim)"
-```
-
-## Hello world
-
-```python
-from interferosim.hello import hello_world
-print(hello_world("Interferosim"))
-# Hello, Interferosim!
 ```
 
 ## Example skies
@@ -201,7 +192,7 @@ installation of Doxygen with winget.
 
 ## Licence
 
-Creative Commons Attribution 4.0 International (CC BY 4.0), see `LICENSE`.
+MIT License, see `LICENSE`.
 
 ## Author
 

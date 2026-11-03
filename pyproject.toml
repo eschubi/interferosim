@@ -9,7 +9,7 @@ version = "0.9.7"
 description = "Open-source simulator for radio interferometry with interactive teaching notebooks"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "CC-BY-4.0"}
+license = {text = "MIT"}
 authors = [{name = "Erich Schubert"}]
 # Same base dependencies as aas6sim 1.1.0, plus matplotlib for plotting.
 dependencies = [
@@ -26,7 +26,6 @@ docs = ["sphinx>=7", "furo", "myst-parser", "sphinx-copybutton"]
 
 [project.scripts]
 interferosim-sky = "interferosim.sky.cli:main"
-interferosim-hello = "interferosim.hello:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
