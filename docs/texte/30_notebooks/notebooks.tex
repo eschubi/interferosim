@@ -1,5 +1,6 @@
 % docs/texte/30_notebooks/notebooks.tex -- chapter "Interactive Notebooks" (Interferosim)
-% Version: 0.3.0 (2026-10-31) -- notebook 00_general listed
+% Version: 0.4.0 (2026-11-03) -- section "Live Demo"; all notebooks of 1.0.0 listed
+%   0.3.0 (2026-10-31): notebook 00_general listed
 %   0.2.0 (2026-10-12): notebooks 01 and 02 listed
 %   0.1.0: placeholder
 % ================================================================
@@ -69,5 +70,24 @@ Notebook & Content \\
 \bottomrule
 \end{tabular}
 \end{center}
-Further notebooks (observation, imaging, deconvolution, Appendices A and
-B) follow with the corresponding packages.
+With version~1.0.0 the simulation chain (notebooks 00--09) and the theory
+notebooks A--E are complete.
+
+\section{Live Demo}\index{live demo}
+
+The page \texttt{demo/interferometer\_demo.html} is a live demonstration of
+a two-element interferometer for talks and screen recordings. It is a
+single self-contained file (HTML, canvas and JavaScript, no libraries)
+and runs in any browser without Python; the user interface is German by
+default and can be switched to English.
+
+Sliders set the frequency, flux density, direction and distance of the
+source (spherical or plane wave), source size, baseline, dish diameter,
+pointing, bandwidth (length of the wave train), system temperature,
+integration time, instrumental delay, slow motion and Earth rotation.
+Six panels show the wavefronts, the received signals of both antennas
+(in the same absolute time as the wavefronts), the correlator with the
+complex visibility, the fringe pattern over the direction, the fringes
+over time and the sensitivity. Seven guided steps lead through a
+demonstration. The delay compensation acts on the envelope after mixing,
+as in a real receiver; the formulas are those of the package.

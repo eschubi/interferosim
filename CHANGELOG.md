@@ -6,6 +6,14 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+### Changed
+- LaTeX documentation 1.0.0: chapter "Licence" written out (MIT License),
+  section "Live Demo" in the chapter "Interactive Notebooks", repository
+  structure with `signal/`, `demo/` and the API documentation; requirement
+  N-7 done.
+- `docs/images/array_geometry.tex`: the original of the redrawn standard
+  figure cannot be traced; the note is changed accordingly.
+
 ## [1.0.1] — 2026-11-09
 
 ### Added
