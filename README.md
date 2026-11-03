@@ -5,8 +5,7 @@ An open-source simulator for radio interferometry — from a two-element
 system up to small arrays — with interactive Jupyter notebooks for
 teaching. A project of the University of Vienna.
 
-Repository: <https://github.com/eschubi/interferosim> (private until the
-licence questions are settled).
+Repository: <https://github.com/eschubi/interferosim>
 
 **Status:** 0.9.7 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),

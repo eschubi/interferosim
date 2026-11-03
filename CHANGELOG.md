@@ -9,6 +9,8 @@ strictly higher than the previous one.
 ### Changed
 - Licence: MIT License instead of CC BY 4.0 (`LICENSE`, `pyproject.toml`,
   `CITATION.cff`, README, Sphinx and LaTeX documentation).
+- The repository is public: the notes "private until the licence questions
+  are settled" are removed from the README and the chapter "Version Control".
 
 ### Removed
 - Hello-world example `interferosim.hello`, the command `interferosim-hello`
