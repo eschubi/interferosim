@@ -6,6 +6,11 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-11-03
+
+First stable release: the simulation chain 00–09 and the theory notebooks
+A–E are complete; the code is under the MIT License.
+
 ### Changed
 - Licence: MIT License instead of CC BY 4.0 (`LICENSE`, `pyproject.toml`,
   `CITATION.cff`, README, Sphinx and LaTeX documentation).
