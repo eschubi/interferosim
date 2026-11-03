@@ -6,6 +6,10 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+### Fixed
+- README: the notebook tables showed 07–09 and C–E as "proposal" and B as
+  "planned"; they now match `notebooks/README.md` (all notebooks available).
+
 ## [0.9.7] — 2026-11-01
 
 ### Fixed
