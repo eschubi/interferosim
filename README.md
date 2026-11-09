@@ -51,10 +51,15 @@ clone; `uv` is not needed for this:
 git clone https://github.com/eschubi/interferosim
 cd interferosim
 python -m venv .venv
-.venv\Scripts\activate          # Windows   (Linux/macOS: source .venv/bin/activate)
+.\.venv\Scripts\Activate.ps1    # Windows PowerShell
+                                # (cmd.exe: .venv\Scripts\activate.bat; Linux/macOS: source .venv/bin/activate)
 python -m pip install .         # runtime dependencies only
 python -m pip install ".[notebooks]"   # optional: JupyterLab and ipywidgets for the notebooks
 ```
+
+If PowerShell refuses `Activate.ps1` ("running scripts is disabled"),
+allow local scripts once for your user:
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 
 Usage:
 
@@ -110,7 +115,8 @@ setup_venv.bat                 # Windows (double-click or command line)
 Then:
 
 ```
-.venv\Scripts\activate          # Windows   (Linux/macOS: source .venv/bin/activate)
+.\.venv\Scripts\Activate.ps1    # Windows PowerShell
+                                # (cmd.exe: .venv\Scripts\activate.bat; Linux/macOS: source .venv/bin/activate)
 interferosim-sky configs/skies/aas6_demo.json --overview -o demo.png
 jupyter lab notebooks          # kernel "Python (interferosim)"
 ```

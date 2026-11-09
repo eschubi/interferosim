@@ -1,5 +1,6 @@
 .. docs/sphinx/installation.rst -- installation
 .. Version 1.0.1 (2026-11-09): pip installation and uv development environment added
+.. 2026-11-09: activation command per Windows shell (PowerShell Activate.ps1, cmd activate.bat)
 
 Installation
 ============
@@ -17,7 +18,9 @@ needed for this:
    git clone https://github.com/eschubi/interferosim
    cd interferosim
    python -m venv .venv
-   .venv\Scripts\activate                     # Linux/macOS: source .venv/bin/activate
+   .\.venv\Scripts\Activate.ps1               # Windows PowerShell
+                                               # (cmd.exe: .venv\Scripts\activate.bat;
+                                               #  Linux/macOS: source .venv/bin/activate)
    python -m pip install .                     # runtime dependencies only
    python -m pip install ".[notebooks]"        # optional: JupyterLab, ipywidgets
 
