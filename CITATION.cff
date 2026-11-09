@@ -2,8 +2,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "Interferosim: an open-source simulator for radio interferometry"
-version: "1.0.0"
-date-released: "2026-11-03"
+version: "1.0.1"
+date-released: "2026-11-09"
 license: MIT
 repository-code: "https://github.com/eschubi/interferosim"
 authors:

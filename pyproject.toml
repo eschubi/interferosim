@@ -1,11 +1,14 @@
 # pyproject.toml -- package definition of interferosim
+# Version 1.0.1 (2026-11-09): development dependencies as PEP 735
+#   dependency groups (test, docs, dev) for uv; uv.lock committed.
+#   The optional extras stay unchanged, so pip users keep ".[notebooks,test]".
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "interferosim"
-version = "1.0.0"
+version = "1.0.1"
 description = "Open-source simulator for radio interferometry with interactive teaching notebooks"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -23,6 +26,26 @@ dependencies = [
 notebooks = ["jupyterlab", "ipywidgets>=8", "ipykernel"]
 test = ["pytest>=7", "nbval"]
 docs = ["sphinx>=7", "furo", "myst-parser", "sphinx-copybutton"]
+
+# Development dependencies (PEP 735). They are NOT installed by
+# "pip install ." and are never published with the package; uv installs
+# the group "dev" by default ("uv sync"). The runtime dependencies are only
+# those in [project] dependencies above.
+[dependency-groups]
+test = ["pytest>=7", "nbval"]
+docs = ["sphinx>=7", "furo", "myst-parser", "sphinx-copybutton"]
+dev = [
+    # notebooks are part of the daily development work (and of the nbval tests)
+    "jupyterlab",
+    "ipywidgets>=8",
+    "ipykernel",
+    {include-group = "test"},
+]
+
+[tool.uv]
+# "uv sync" installs the runtime dependencies plus the group "dev";
+# the documentation tools come with "uv sync --group docs".
+default-groups = ["dev"]
 
 [project.scripts]
 interferosim-sky = "interferosim.sky.cli:main"

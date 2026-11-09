@@ -7,7 +7,7 @@ teaching. A project of the University of Vienna.
 
 Repository: <https://github.com/eschubi/interferosim>
 
-**Status:** 1.0.0 — sky models (`interferosim.sky`, notebook
+**Status:** 1.0.1 — sky models (`interferosim.sky`, notebook
 `01_sky_models.ipynb` with a selector for all example skies),
 instrument (`interferosim.instrument`: horn, parabolic dish and Yagi,
 Ettus USRP B210 receiver, sites, stations and arrays; notebook
@@ -41,6 +41,62 @@ complex visibility, fringe pattern over the direction, fringes over time
 guide a demonstration; German (default) and English. The
 further stages are being migrated from `aas6sim` and the teaching
 notebooks step by step.
+
+## Installation
+
+Requires Python >= 3.11. The package installs with plain `pip` from a fresh
+clone; `uv` is not needed for this:
+
+```
+git clone https://github.com/eschubi/interferosim
+cd interferosim
+python -m venv .venv
+.venv\Scripts\activate          # Windows   (Linux/macOS: source .venv/bin/activate)
+python -m pip install .         # runtime dependencies only
+python -m pip install ".[notebooks]"   # optional: JupyterLab and ipywidgets for the notebooks
+```
+
+Usage:
+
+```python
+import interferosim
+from interferosim.sky import SkyModel
+print(interferosim.__version__)
+sky = SkyModel.from_json("configs/skies/cyg_a.json")   # see "Example skies"
+print(sky.total_flux_jy)                                # Jy
+print(abs(sky.visibility(1000.0, 0.0)))                 # |V| at u = 1000 wavelengths
+```
+
+```
+interferosim-sky configs/skies/aas6_demo.json --overview -o demo.png
+```
+
+## Development environment (uv)
+
+The development environment is managed with [uv](https://docs.astral.sh/uv/)
+and is reproducible from the lockfile `uv.lock` in the repository:
+
+```
+uv sync                  # creates .venv with the exact versions of uv.lock
+                         # (runtime dependencies + group "dev": JupyterLab,
+                         #  ipywidgets, ipykernel, pytest, nbval)
+uv sync --group docs     # additionally Sphinx and its extensions
+uv run pytest            # tests
+uv run jupyter lab notebooks
+```
+
+Dependencies are declared in `pyproject.toml`:
+
+| Where | What | Installed by |
+|---|---|---|
+| `[project] dependencies` | runtime: numpy, scipy, astropy, matplotlib | `pip install .`, `uv sync` |
+| `[project.optional-dependencies]` | extras `notebooks`, `test`, `docs` | `pip install ".[notebooks]"` |
+| `[dependency-groups]` | development: `dev` (notebooks + `test`), `test`, `docs` | `uv sync` (`dev` by default) |
+
+After changing a dependency in `pyproject.toml` run `uv lock` and commit
+`uv.lock` together with `pyproject.toml`. The environment `.venv/` itself is
+never committed (see `.gitignore`). The scripts `setup_venv.bat` /
+`setup_venv.sh` (below) remain as a pip-based alternative without uv.
 
 ## Quick start
 
