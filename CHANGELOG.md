@@ -6,6 +6,20 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [1.0.2] — 2026-11-09
+
+### Fixed
+- Live demo 0.2.0 (`demo/interferometer_demo.html`): the primary beam is now
+  the Airy pattern of `ParabolicDish.beam()` (equivalent aperture
+  1.02 D / 1.2, HPBW 1.2 λ/D) instead of a Gaussian with the same HPBW.
+  Off-axis the beam gain shown in the demo (readout, sensitivity, envelope
+  of the fringe pattern) now agrees with the package (checked numerically to
+  5·10⁻⁶); before, the Gaussian had no sidelobes and no null.
+- Live demo: the IBM Plex fonts (Latin-1 subsets, SIL Open Font License 1.1,
+  `demo/fonts/OFL.txt`) are embedded instead of loaded from Google Fonts. The
+  page no longer contacts third parties (no IP address sent to Google) and
+  looks the same offline.
+
 ## [1.0.1] — 2026-11-09
 
 ### Added
