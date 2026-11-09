@@ -1,5 +1,6 @@
 % docs/texte/10_engineering/repository.tex -- chapter "Repository Structure" (Interferosim)
-% Version: 0.1.0 (2026-10-12)
+% Version: 0.2.0 (2026-11-03) -- signal/, demo/, API documentation added (interferosim 1.0.0)
+%   0.1.0 (2026-10-12)
 % ================================================================
 
 \begin{tabular}{@{}ll@{}}
@@ -9,15 +10,18 @@
 \texttt{src/interferosim/} & Python package (core) \\
 \texttt{\quad sky/} & sky models \\
 \texttt{\quad instrument/} & antennas, receiver, array \\
-\texttt{\quad observation/} & geometry, uv-coverage, visibilities, correlator \\
+\texttt{\quad signal/} & IQ receiver signals, baseband, quantisation, XF/FX correlator \\
+\texttt{\quad observation/} & geometry, uv-coverage, visibilities, Sun, Doppler/LSR \\
 \texttt{\quad imaging/} & gridding, weighting, dirty image and beam \\
 \texttt{\quad deconvolution/} & H\"ogbom-CLEAN, Wiener filter, restoration \\
 \texttt{\quad io/} & FITS input/output \\
 \texttt{\quad plotting/}, \texttt{widgets/} & plots, ipywidgets front end \\
 \texttt{configs/} & antenna types, receivers, sites (TOML) \\
-\texttt{notebooks/} & one notebook per topic \\
+\texttt{notebooks/} & one notebook per topic (00--09, theory A--E) \\
+\texttt{demo/} & live two-element interferometer demo (HTML) \\
 \texttt{tests/} & pytest and nbval \\
 \texttt{binder/} & environment for Binder/JupyterHub \\
 \texttt{docs/} & this documentation (\LaTeX) \\
+\texttt{\quad api/}, \texttt{sphinx/} & API documentation (Doxygen, Sphinx) \\
 \bottomrule
 \end{tabular}
