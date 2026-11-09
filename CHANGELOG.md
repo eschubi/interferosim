@@ -6,6 +6,23 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-11-09
+
+### Added
+- `uv.lock`: lockfile for a reproducible development environment (`uv sync`).
+- `pyproject.toml`: development dependencies as PEP 735 dependency groups
+  `dev` (JupyterLab, ipywidgets, ipykernel, group `test`), `test` (pytest,
+  nbval) and `docs` (Sphinx, Furo, MyST, sphinx-copybutton); `[tool.uv]`
+  installs `dev` by default. `pip install .` installs only the runtime
+  dependencies.
+- README and Sphinx page "Installation": installation from a fresh clone
+  with `pip install .` (without uv), a usage example, and how to recreate
+  the development environment with uv.
+
+### Unchanged
+- The optional extras `notebooks`, `test` and `docs` and the scripts
+  `setup_venv.*` remain available as the pip-based alternative.
+
 ## [1.0.0] — 2026-11-03
 
 First stable release: the simulation chain 00–09 and the theory notebooks

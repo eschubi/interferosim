@@ -1,9 +1,45 @@
 .. docs/sphinx/installation.rst -- installation
+.. Version 1.0.1 (2026-11-09): pip installation and uv development environment added
 
 Installation
 ============
 
 Python 3.11 or newer is required.
+
+Installation with pip
+---------------------
+
+The package installs from a fresh clone with plain ``pip``; ``uv`` is not
+needed for this:
+
+.. code-block:: text
+
+   git clone https://github.com/eschubi/interferosim
+   cd interferosim
+   python -m venv .venv
+   .venv\Scripts\activate                     # Linux/macOS: source .venv/bin/activate
+   python -m pip install .                     # runtime dependencies only
+   python -m pip install ".[notebooks]"        # optional: JupyterLab, ipywidgets
+
+Development environment with uv
+-------------------------------
+
+The development environment is managed with `uv <https://docs.astral.sh/uv/>`_
+and reproduced exactly from the lockfile ``uv.lock`` in the repository:
+
+.. code-block:: text
+
+   uv sync                  # .venv with runtime dependencies + group "dev"
+   uv sync --group docs     # additionally the documentation tools
+   uv run pytest
+   uv run jupyter lab notebooks
+
+Development dependencies are PEP 735 dependency groups
+(``[dependency-groups]`` in ``pyproject.toml``): ``dev`` (JupyterLab,
+ipywidgets, ipykernel and the group ``test``), ``test`` (pytest, nbval) and
+``docs``. ``pip install .`` never installs them. After a change of
+dependencies run ``uv lock`` and commit ``uv.lock`` with ``pyproject.toml``;
+``.venv/`` is never committed.
 
 With the scripts
 ----------------
