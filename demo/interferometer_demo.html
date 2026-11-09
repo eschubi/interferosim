@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<!-- demo/interferometer_demo.html -- live two-element interferometer demo (Interferosim 1.0.2) -->
+<!-- demo/interferometer_demo.html -- live two-element interferometer demo (Interferosim 1.0.3) -->
 <!--
+  Version 0.2.1 (2026-11-09): besselJ1(), asymptotic branch for x > 25: sign of the first sine
+  correction corrected (- 3/(8x) sin w, was +). Affects sidelobes of the primary beam far off
+  axis and the visibility of large sources (discVis).
   Version 0.2.0 (2026-11-09): primary beam as in the package (ParabolicDish.beam): Airy pattern
   (2 J1(x)/x)^2 of the equivalent uniformly illuminated aperture d_eff = 1.02 D / 1.2, which has
   the HPBW 1.2 lambda / D, instead of a Gaussian with that HPBW (differed off-axis: no sidelobes,
@@ -262,7 +265,9 @@ const tr = k => T[S.lang][k] || k;
 
 // ------------------------------------------------------------------ physics
 function besselJ1(x) {                           // integral (1/π) ∫0^π cos(t − x sin t) dt, Simpson; asymptotic for x > 25
-  if (x > 25) return Math.sqrt(2 / (Math.PI * x)) * (Math.cos(x - 0.75 * Math.PI) + 0.375 / x * Math.sin(x - 0.75 * Math.PI));
+  // Hankel asymptotic J1 ~ sqrt(2/(pi x)) [cos w - 3/(8x) sin w], w = x - 3 pi/4 (0.2.1: sign of the
+  // sine term corrected, was +; error at x = 25.5 now 1e-5 instead of 4e-3)
+  if (x > 25) return Math.sqrt(2 / (Math.PI * x)) * (Math.cos(x - 0.75 * Math.PI) - 0.375 / x * Math.sin(x - 0.75 * Math.PI));
   const n = 64, h = Math.PI / n; let s = 0;
   for (let i = 0; i <= n; i++) { const t = i * h, w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2); s += w * Math.cos(t - x * Math.sin(t)); }
   return s * h / 3 / Math.PI;
