@@ -8,6 +8,15 @@ strictly higher than the previous one.
 
 ## [1.0.2] — 2026-11-09
 
+### Changed
+- LaTeX documentation 1.0.0: chapter "Licence" written out (MIT License),
+  section "Live Demo" in the chapter "Interactive Notebooks", repository
+  structure with `signal/`, `demo/` and the API documentation; requirement
+  N-7 done.
+- `docs/images/array_geometry.tex`: the original of the redrawn standard
+  figure cannot be traced; the note is changed accordingly.
+- Title page of the LaTeX documentation: version 1.0.0 (was 0.0.1).
+
 ### Fixed
 - Live demo 0.2.0 (`demo/interferometer_demo.html`): the primary beam is now
   the Airy pattern of `ParabolicDish.beam()` (equivalent aperture

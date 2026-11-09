@@ -1,5 +1,7 @@
 % docs/texte/00_frontmatter/history.tex -- version history
 % (moved from texte/history.tex; 2026-10-12 translated to English)
+% 2026-11-03: table as longtable (breaks across pages; the float
+%   table cut off all rows after 0.0.21)
 % ================================================================
 % Strukturfile für Kapitel
 % ================================================================
@@ -13,9 +15,19 @@ Intermediate versions are not listed but can be reconstructed at any
 time from version control.
 
 
-\tabelle{ll l >{\raggedright\arraybackslash}p{8.4cm}}{Version history}{tab:history}{\normalsize}{\hline
+{\normalsize
+\begin{longtable}{ll l >{\raggedright\arraybackslash}p{8.4cm}}
+\caption{Version history}\label{tab:history} \\
+    \hline
     Version & Date & Author & Remark \\
     \hline
+\endfirsthead
+    \hline
+    Version & Date & Author & Remark \\
+    \hline
+\endhead
+    \hline
+\endfoot
     0.0.1 & 2026-10-12 & SE & Initial version, skeleton from uni-work~0.1.1 \\
     0.0.2 & 2026-10-12 & SE & Repository structure, English, project-specific abbreviations \\
     0.0.3 & 2026-10-12 & SE & Basic design: UML package and class diagrams (draft) \\
@@ -43,5 +55,6 @@ time from version control.
     0.0.25 & 2026-11-01 & SE & Baseband and quantisation; theory notebook C; Doxygen PDF with Unicode style (interferosim 0.9.2) \\
     0.0.26 & 2026-11-01 & SE & Sensitivity and coherence; theory notebook D (interferosim 0.9.3) \\
     0.0.27 & 2026-11-01 & SE & Horizontal coordinates, precession; theory notebook E (interferosim 0.9.4) \\
-    0.0.28 & 2026-11-03 & SE & Licence: MIT License, chapter written out; repository public; first stable release (interferosim 1.0.0) \\
+    1.0.0 & 2026-11-03 & SE & First stable release (interferosim 1.0.0): licence MIT, chapter written out; repository public; live demo; repository structure updated \\
+\end{longtable}
 }
