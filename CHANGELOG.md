@@ -6,6 +6,16 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+## [1.0.3] — 2026-11-09
+
+### Fixed
+- Live demo 0.2.1: `besselJ1()` used the wrong sign for the first sine
+  correction of the asymptotic branch (x > 25): J1 ~ sqrt(2/(pi x))
+  [cos w - 3/(8x) sin w]. The error of J1 drops from 4·10⁻³ to 2·10⁻⁵;
+  far sidelobes of the primary beam (now within 4·10⁻⁸ of
+  `ParabolicDish.beam()` over ±60°) and the visibility of large sources
+  are correct again.
+
 ## [1.0.2] — 2026-11-09
 
 ### Changed

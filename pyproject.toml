@@ -3,13 +3,14 @@
 #   dependency groups (test, docs, dev) for uv; uv.lock committed.
 #   The optional extras stay unchanged, so pip users keep ".[notebooks,test]".
 # Version 1.0.2 (2026-11-09): version number only (live demo 0.2.0).
+# Version 1.0.3 (2026-11-09): version number only (live demo 0.2.1).
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "interferosim"
-version = "1.0.2"
+version = "1.0.3"
 description = "Open-source simulator for radio interferometry with interactive teaching notebooks"
 readme = "README.md"
 requires-python = ">=3.11"
