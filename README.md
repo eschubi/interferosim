@@ -165,6 +165,31 @@ arrays: `aas6_sim_stations` (two 3 m dishes, 11.1 km east-west) and
 Teaching notebooks in `notebooks/`, one per topic, each with an
 interactive selector (ipywidgets):
 
+### Workflow
+
+The notebooks follow the workflow of Interferosim from the sky to the
+image. A simulated observation (branch 1, "Sim-Measure") and a real
+measurement with SDR receivers (branch 2, "SDR-Measure") both deliver IQ
+samples of every station; from this common interface on, correlation,
+imaging and deconvolution are the same (block 3). "NB" in the figure gives
+the notebook for each step; the dashed blue path is the analytic shortcut
+(`VisibilitySimulator`) without IQ samples. Details: chapter "Introduction
+and workflow" of the Sphinx documentation (`docs/sphinx/introduction.rst`).
+
+<p align="center">
+  <img src="docs/images/workflow.png" alt="Interferosim workflow: simulation and measurement branch, common IQ interface, FX correlator, visibilities, imaging, deconvolution" width="620">
+</p>
+
+| Workflow step | Notebook |
+|---|---|
+| Sky model | `01_sky_models.ipynb` |
+| Instrument and observation | `02_instrument.ipynb`, `04_observation.ipynb` |
+| Signal simulation (Sim-Measure) | `03_signal_simulation.ipynb` |
+| FX correlator | `05_correlator.ipynb` |
+| Imaging | `06_imaging.ipynb` |
+| Deconvolution | `07_deconvolution.ipynb` |
+| Applications | `08_sun_first_target.ipynb`, `09_spectral_lines.ipynb` |
+
 ### Simulation chain
 
 | Notebook | Content | Status |
@@ -202,7 +227,8 @@ the theory notebooks.
 |---|---|
 | Sky models (point, extended, HI 21 cm, OH masers, solar disc) | `interferosim.sky` |
 | Antennas (selectable types), receiver (Ettus USRP B210), array | `interferosim.instrument` |
-| Geometry, uv-coverage, visibilities, correlator | `interferosim.observation` |
+| Geometry, uv-coverage, analytic visibilities, transit, Sun, spectral lines | `interferosim.observation` |
+| SDR signal simulation (IQ samples per station), FX correlator | `interferosim.signal` |
 | Gridding, weighting, dirty image and beam | `interferosim.imaging` |
 | Högbom-CLEAN, Wiener filter, restoration | `interferosim.deconvolution` |
 | FITS input/output | `interferosim.io` |

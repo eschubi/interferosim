@@ -6,6 +6,33 @@ strictly higher than the previous one.
 
 ## [Unreleased]
 
+### Added
+- Sphinx documentation: chapter "Introduction and workflow"
+  (`docs/sphinx/introduction.rst`), first chapter of the user guide. It
+  describes the simulation branch (Sim-Measure), the measurement branch
+  (SDR-Measure), the common IQ interface, the common processing and the
+  analytic shortcut, with a table of the matching notebooks.
+- `docs/images/workflow.tex` (TikZ) with `workflow.pdf` / `workflow.png`:
+  workflow figure for the new chapter, drawn after the hand sketch; also
+  shown as overview on the start page (`docs/sphinx/index.rst`).
+
+### Changed
+- Sphinx start page: status paragraph brought up to date (observation,
+  signal/FX correlator, imaging, deconvolution and all notebooks are
+  available; open: `io` and `widgets`).
+- README, chapter "Notebooks": new section "Workflow" with the workflow
+  figure and a table of the notebooks per workflow step.
+
+### Fixed
+- README, table "Processing chain": the correlator is in
+  `interferosim.signal`, not in `interferosim.observation`; row for the SDR
+  signal simulation and FX correlator (`interferosim.signal`) added, the
+  observation row lists transit, Sun and spectral lines.
+- Sphinx chapter "The radio interferometer", table "Processing chain of
+  Interferosim": same correction (FX correlator in `interferosim.signal`);
+  the outdated notes "correlator in preparation" and "deconvolution in
+  preparation" removed.
+
 ## [1.0.3] — 2026-11-09
 
 ### Fixed
